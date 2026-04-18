@@ -1,0 +1,279 @@
+import { useEffect, useState, useCallback, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
+import PianoKeyboard from '../components/PianoKeyboard.jsx'
+import HearingsIndicator from '../components/HearingsIndicator.jsx'
+import ProgressIndicator from '../components/ProgressIndicator.jsx'
+import { getMajorScaleNotes, getTonicTriad } from '../engines/sequenceGenerator.js'
+import { TONAL_CONTEXT_TEMPO, COLORS } from '../config/constants.js'
+import { TONAL_MODES, getStoredTonalMode, storeTonalMode } from '../lib/utils.js'
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)) }
+
+export default function ExerciseScreen({
+  exercise,
+  hearingsLeft,
+  noteIndex,
+  lastNoteResult,
+  isFirstExercise,
+  activeOctaves,
+  onNote,
+  onPlay,
+  onEnd,
+  audio,
+}) {
+  const { t, i18n } = useTranslation()
+  const lang = i18n.language?.slice(0, 2) ?? 'es'
+
+  const [keyboardLocked,  setKeyboardLocked]  = useState(false)
+  const [contextPlaying,  setContextPlaying]  = useState(false)
+  const [tonalMode,       setTonalMode]        = useState(getStoredTonalMode)
+  const [showModeMenu,    setShowModeMenu]     = useState(false)
+  const [endConfirm,      setEndConfirm]       = useState(false)
+
+  // Ref used to interrupt the async playTonalContext loop on stop
+  const contextActiveRef = useRef(false)
+  const endConfirmTimerRef = useRef(null)
+
+  const totalNotes    = exercise?.sequence?.length ?? 0
+  const hearingsTotal = exercise?.idmComponents?.H ?? 3
+  const hearingsUsed  = hearingsTotal - hearingsLeft
+  const canPlay       = hearingsLeft > 0 && audio.ready && !keyboardLocked
+  const tonic         = exercise?.tonic ?? 'C'
+
+  const tonicHighlight = [`${tonic}3`, `${tonic}4`]
+
+  // ── Mode helpers ──────────────────────────────────────────────────────────
+  function handleModeChange(mode) {
+    setTonalMode(mode)
+    storeTonalMode(mode)
+    setShowModeMenu(false)
+  }
+
+  const MODE_LABELS = {
+    [TONAL_MODES.SCALE_AND_CHORDS]: t('tonal_context.mode_scale_and_chords'),
+    [TONAL_MODES.SCALE_ONLY]:       t('tonal_context.mode_scale_only'),
+    [TONAL_MODES.CHORDS_ONLY]:      t('tonal_context.mode_chords_only'),
+  }
+
+  // ── Auto-play tonal context on first exercise ─────────────────────────────
+  useEffect(() => {
+    if (audio.ready && exercise && isFirstExercise) {
+      playTonalContext(false)
+    }
+  }, [audio.ready, exercise?.tonic])
+
+  // ── Tonal context playback ────────────────────────────────────────────────
+  async function playTonalContext(costsHearing = true) {
+    if (!audio.ready || contextActiveRef.current) return
+    if (costsHearing) {
+      if (hearingsLeft <= 0) return
+      onPlay()
+    }
+
+    audio.stopAll()
+    contextActiveRef.current = true
+    setContextPlaying(true)
+    setKeyboardLocked(true)
+
+    if (tonalMode === TONAL_MODES.SCALE_AND_CHORDS || tonalMode === TONAL_MODES.SCALE_ONLY) {
+      const { all: scaleNotes } = getMajorScaleNotes(tonic)
+      const dur = await audio.playSequence(scaleNotes, TONAL_CONTEXT_TEMPO)
+      if (!contextActiveRef.current) return
+      await delay((dur ?? scaleNotes.length * (60 / TONAL_CONTEXT_TEMPO)) * 1000 + 300)
+      if (!contextActiveRef.current) return
+    }
+
+    if (tonalMode === TONAL_MODES.SCALE_AND_CHORDS || tonalMode === TONAL_MODES.CHORDS_ONLY) {
+      const triad = getTonicTriad(tonic)
+      const dur = await audio.playTriad(triad)
+      if (!contextActiveRef.current) return
+      await delay((dur ?? 1) * 1000 + 300)
+    }
+
+    contextActiveRef.current = false
+    setContextPlaying(false)
+    setKeyboardLocked(false)
+  }
+
+  function stopTonalContext() {
+    contextActiveRef.current = false
+    audio.stopAll()
+    setContextPlaying(false)
+    setKeyboardLocked(false)
+  }
+
+  // ── Play exercise sequence ────────────────────────────────────────────────
+  async function handlePlaySequence() {
+    if (!canPlay) return
+    onPlay()
+    audio.stopAll()
+    const notes = exercise.sequence.map(s => s.note)
+    await audio.playSequence(notes, exercise.tempo)
+  }
+
+  // ── End session (with confirm) ────────────────────────────────────────────
+  function handleEndClick() {
+    if (endConfirm) {
+      clearTimeout(endConfirmTimerRef.current)
+      stopTonalContext()
+      onEnd()
+    } else {
+      setEndConfirm(true)
+      endConfirmTimerRef.current = setTimeout(() => setEndConfirm(false), 2500)
+    }
+  }
+
+  // ── Note feedback ─────────────────────────────────────────────────────────
+  const feedbackColor = lastNoteResult === 'correct' ? COLORS.CORRECT
+    : lastNoteResult === 'wrong' ? COLORS.WRONG : null
+  const feedbackLabel = lastNoteResult === 'correct' ? t('exercise.correct_note')
+    : lastNoteResult === 'wrong' ? t('exercise.wrong_note') : null
+
+  return (
+    <div className="screen-enter flex flex-col items-center min-h-screen px-4 pt-5 gap-5">
+
+      {/* ── Top control bar ─────────────────────────────────────────────── */}
+      <div className="w-full max-w-2xl mx-auto flex items-center justify-between gap-3
+                      bg-slate-800/60 border border-slate-700 rounded-2xl px-4 py-3" style={{ padding: '10px' }}>
+
+        {/* Exit button */}
+        <button
+          onClick={handleEndClick}
+          title={t('exercise.end_session_title')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium
+            border transition-all duration-150 flex-shrink-0
+            ${endConfirm
+              ? 'bg-red-900/60 border-red-700 text-red-300'
+              : 'bg-slate-700/60 border-slate-600 text-slate-400 hover:text-slate-200 hover:border-slate-500'
+            }`} style={{ padding: '10px' }}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          {endConfirm ? t('exercise.end_confirm') : t('exercise.end_session_title')}
+        </button>
+
+        <span className="text-slate-400 text-sm font-medium truncate">
+          {t('tonal_context.tonality', { tonic })}
+        </span>
+
+        {/* Mode selector */}
+        <div className="relative flex-shrink-0">
+          <button
+            onClick={() => setShowModeMenu(v => !v)}
+            className="flex items-center gap-1.5 px-3 py-2.5 text-sm text-slate-400
+              hover:text-slate-200 border border-slate-700 hover:border-slate-500
+              rounded-xl transition-colors bg-slate-700/40" style={{ padding: '10px' }}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+            <span className="hidden sm:inline">{MODE_LABELS[tonalMode]}</span>
+            <svg className="w-3 h-3 opacity-50" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+          {showModeMenu && (
+            <div className="absolute right-0 top-full mt-2 bg-slate-800 border border-slate-700
+                            rounded-xl shadow-xl z-20 min-w-max overflow-hidden">
+              {Object.entries(MODE_LABELS).map(([mode, label]) => (
+                <button
+                  key={mode}
+                  onClick={() => handleModeChange(mode)}
+                  className={`block w-full text-left px-4 py-3 text-sm transition-colors
+                    ${tonalMode === mode
+                      ? 'text-indigo-400 bg-indigo-900/30'
+                      : 'text-slate-300 hover:bg-slate-700'}`} style={{ padding: '10px' }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Tonal context + hearings row ─────────────────────────────────── */}
+      <div className="w-full max-w-2xl mx-auto flex items-center justify-between gap-3">
+        <HearingsIndicator used={hearingsUsed} total={hearingsTotal} />
+
+        {/* Play tonal context / Stop */}
+        {contextPlaying ? (
+          <button
+            onClick={stopTonalContext}
+            className="flex items-center gap-2 px-5 py-3 bg-red-900/40 border border-red-800/60
+              text-red-300 rounded-xl text-sm font-medium hover:bg-red-900/60 transition-colors" style={{ padding: '10px' }}
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <rect x="4" y="4" width="12" height="12" rx="1" />
+            </svg>
+            {t('tonal_context.stop')}
+          </button>
+        ) : (
+          <button
+            onClick={() => playTonalContext(true)}
+            disabled={hearingsLeft <= 0 || keyboardLocked}
+            title={`${t('tonal_context.heading')} (−1 ${t('exercise.hearings_label')})`}
+            className="flex items-center gap-2 px-5 py-3 bg-slate-700 border border-slate-600
+              text-slate-200 rounded-xl text-sm font-medium
+              hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors" style={{ padding: '10px' }}
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" />
+            </svg>
+            {t('tonal_context.heading')}
+          </button>
+        )}
+      </div>
+
+      {/* ── Progress + feedback — vertically centered in remaining space ─── */}
+      <div className="flex-1 flex flex-col items-center justify-center gap-3">
+        <ProgressIndicator current={noteIndex} total={totalNotes} />
+        <div className="h-7 flex items-center">
+          {keyboardLocked && !feedbackLabel ? (
+            <span className="text-indigo-300 text-sm animate-pulse">
+              {t('tonal_context.playing_scale')}
+            </span>
+          ) : feedbackLabel ? (
+            <span
+              className="text-sm font-medium px-3 py-1 rounded-full transition-all duration-150"
+              style={{ padding: '5px', color: feedbackColor, backgroundColor: `${feedbackColor}22` }}
+            >
+              {feedbackLabel}
+            </span>
+          ) : null}
+        </div>
+      </div>
+
+      {/* ── Play button + keyboard pinned to bottom ──────────────────────── */}
+      <div className="w-full flex flex-col items-center gap-4 pb-0">
+        <div className="w-full max-w-2xl px-4">
+          <button
+            onClick={handlePlaySequence}
+            disabled={!canPlay}
+            className="w-full flex items-center justify-center gap-3 py-5 bg-indigo-600 text-white
+              rounded-2xl text-lg font-bold hover:bg-indigo-500 active:scale-[0.98]
+              disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150
+              shadow-lg shadow-indigo-900/40" style={{ padding: '20px' }}
+          >
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+            </svg>
+            {t('common.play')}
+          </button>
+        </div>
+        <div className="w-full">
+          <PianoKeyboard
+            onNote={onNote}
+            highlightTonic={tonicHighlight}
+            activeOctaves={activeOctaves ?? [3, 4]}
+            disabled={keyboardLocked || noteIndex >= totalNotes}
+            language={lang}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
