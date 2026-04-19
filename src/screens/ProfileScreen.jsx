@@ -92,13 +92,13 @@ export default function ProfileScreen() {
       <Card>
         <SectionLabel>{t('profile.your_code')}</SectionLabel>
         <div className="flex items-center justify-between mt-2" >
-          <span className="font-mono text-3xl font-bold text-indigo-400 tracking-widest">
+          <span className="font-mono text-3xl font-bold text-cyan-400 tracking-widest">
             {user.userCode ?? '——'}
           </span>
           <button
             onClick={copyCode}
-            className="flex items-center gap-1.5 px-4 py-2.5 bg-slate-700 text-slate-300 rounded-xl text-sm
-              hover:bg-slate-600 transition-colors font-medium" style={{ padding: '10px' }}
+            className="flex items-center gap-1.5 px-4 py-2.5 bg-zinc-800 text-zinc-300 rounded-xl text-sm
+              hover:bg-zinc-800 transition-colors font-medium" style={{ padding: '10px' }}
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -107,29 +107,29 @@ export default function ProfileScreen() {
             {copied ? t('profile.copied') : t('profile.copy_code')}
           </button>
         </div>
-        <p className="text-slate-500 text-xs mt-2" style={{ paddingTop: '10px' }}>{t('profile.code_instruction')}</p>
+        <p className="text-zinc-500 text-xs mt-2" style={{ paddingTop: '10px' }}>{t('profile.code_instruction')}</p>
       </Card>
 
       {/* ── Switch Account (Logout) ────────────────────────────────────────── */}
       <Card>
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg className="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-white text-sm font-medium">{t('profile.logout')}</p>
-            <p className="text-slate-500 text-xs mt-0.5 leading-snug"style={{ paddingTop: '10px', paddingBottom: '10px' }}>
+            <p className="text-zinc-500 text-xs mt-0.5 leading-snug"style={{ paddingTop: '10px', paddingBottom: '10px' }}>
               {t('profile.code_instruction')}
             </p>
           </div>
         </div>
         <button
           onClick={user.logout}
-          className="mt-4 w-full py-3.5 bg-slate-700 text-slate-300 rounded-xl text-sm font-medium
-            hover:bg-slate-600 transition-colors" style={{ paddingTop: '10px', paddingBottom: '10px' }}
+          className="mt-4 w-full py-3.5 bg-zinc-800 text-zinc-300 rounded-xl text-sm font-medium
+            hover:bg-zinc-800 transition-colors" style={{ paddingTop: '10px', paddingBottom: '10px' }}
         >
           {t('profile.logout')}
         </button>
@@ -138,15 +138,15 @@ export default function ProfileScreen() {
       {/* ── Change User Code ──────────────────────────────────────────────── */}
       <Card>
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg className="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                 d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
             </svg>
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-white text-sm font-medium">{t('profile.change_code')}</p>
-            <p className="text-slate-500 text-xs mt-0.5 leading-snug" style={{ paddingTop: '10px', paddingBottom: '10px' }}>
+            <p className="text-zinc-500 text-xs mt-0.5 leading-snug" style={{ paddingTop: '10px', paddingBottom: '10px' }}>
               {t('profile.enter_code_label')}
             </p>
           </div>
@@ -155,8 +155,8 @@ export default function ProfileScreen() {
         {!showCodeEntry ? (
           <button
             onClick={() => setShowCodeEntry(true)}
-            className="mt-3 w-full py-2 bg-slate-700 text-slate-300 rounded-xl text-sm font-medium
-              hover:bg-slate-600 transition-colors"style={{ paddingTop: '10px', paddingBottom: '10px' }}
+            className="mt-3 w-full py-2 bg-zinc-800 text-zinc-300 rounded-xl text-sm font-medium
+              hover:bg-zinc-800 transition-colors"style={{ paddingTop: '10px', paddingBottom: '10px' }}
           >
             {t('profile.change_code')}
           </button>
@@ -167,22 +167,22 @@ export default function ProfileScreen() {
               onChange={e => { setCodeInput(e.target.value.toUpperCase()); setCodeError(false) }}
               placeholder={t('profile.enter_code_placeholder')}
               maxLength={6}
-              className={`bg-slate-900 border rounded-xl px-3 py-2.5 text-white font-mono text-center
-                tracking-widest uppercase text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500
-                ${codeError ? 'border-red-500' : 'border-slate-600'}`} style={{ paddingTop: '5px', paddingBottom: '5px' }}
+              className={`bg-zinc-950 border rounded-xl px-3 py-2.5 text-white font-mono text-center
+                tracking-widest uppercase text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500
+                ${codeError ? 'border-rose-500' : 'border-zinc-700'}`} style={{ paddingTop: '5px', paddingBottom: '5px' }}
             />
-            {codeError && <p className="text-red-400 text-xs">{t('welcome_new.code_not_found')}</p>}
+            {codeError && <p className="text-rose-500 text-xs">{t('welcome_new.code_not_found')}</p>}
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => { setShowCodeEntry(false); setCodeError(false) }}
-                className="flex-1 py-3 bg-slate-700 text-slate-300 rounded-xl text-sm hover:bg-slate-600 transition-colors"style={{ paddingTop: '10px', paddingBottom: '10px' }}
+                className="flex-1 py-3 bg-zinc-800 text-zinc-300 rounded-xl text-sm hover:bg-zinc-800 transition-colors"style={{ paddingTop: '10px', paddingBottom: '10px' }}
               >
                 {t('common.cancel')}
               </button>
               <button
                 type="submit"
-                className="flex-1 py-3 bg-indigo-600 text-white rounded-xl text-sm hover:bg-indigo-500 transition-colors"
+                className="flex-1 py-3 bg-cyan-600 text-white rounded-xl text-sm hover:bg-cyan-500 transition-colors"
               >
                 {t('common.confirm')}
               </button>
@@ -203,7 +203,7 @@ export default function ProfileScreen() {
       <Card>
         <SectionLabel>{t('profile.global_stats')}</SectionLabel>
         {loading ? (
-          <p className="text-slate-500 text-sm mt-3">{t('common.loading')}</p>
+          <p className="text-zinc-500 text-sm mt-3">{t('common.loading')}</p>
         ) : (
           <div className="mt-3 space-y-0">
             <StatRow label={t('profile.total_sessions')}  value={stats?.totalSessions ?? 0} />
@@ -217,18 +217,18 @@ export default function ProfileScreen() {
       </Card>
 
       {/* ── Reset Progress ────────────────────────────────────────────────── */}
-      <div className="bg-red-950/30 border border-red-900/40 rounded-2xl p-5" style={{ padding: '20px' }}>
-        <SectionLabel className="text-red-400">{t('profile.reset_heading')}</SectionLabel>
+      <div className="bg-rose-950/30 border border-rose-900/40 rounded-2xl p-5" style={{ padding: '20px' }}>
+        <SectionLabel className="text-rose-500">{t('profile.reset_heading')}</SectionLabel>
 
         {resetPhase === 'idle' && (
           <>
-            <p className="text-slate-500 text-xs mt-2 mb-4 leading-relaxed"style={{ paddingTop: '5px', paddingBottom: '5px' }}>
+            <p className="text-zinc-500 text-xs mt-2 mb-4 leading-relaxed"style={{ paddingTop: '5px', paddingBottom: '5px' }}>
               {t('profile.reset_warning')}
             </p>
             <button
               onClick={() => setResetPhase('confirm')}
-              className="px-6 py-3 bg-red-900/40 border border-red-800/50 text-red-400 rounded-xl
-                text-sm hover:bg-red-900/60 transition-colors"style={{ padding: '5px' }}
+              className="px-6 py-3 bg-rose-950/40 border border-rose-800/50 text-rose-500 rounded-xl
+                text-sm hover:bg-rose-950/60 transition-colors"style={{ padding: '5px' }}
             >
               {t('profile.reset_button')}
             </button>
@@ -237,17 +237,17 @@ export default function ProfileScreen() {
 
         {resetPhase === 'confirm' && (
           <div className="flex flex-col gap-3 mt-3">
-            <p className="text-red-300 text-sm font-medium">{t('profile.reset_warning')}</p>
+            <p className="text-rose-400 text-sm font-medium">{t('profile.reset_warning')}</p>
             <div className="flex gap-2">
               <button
                 onClick={() => setResetPhase('idle')}
-                className="flex-1 py-3 bg-slate-700 text-slate-300 rounded-xl text-sm hover:bg-slate-600 transition-colors"
+                className="flex-1 py-3 bg-zinc-800 text-zinc-300 rounded-xl text-sm hover:bg-zinc-800 transition-colors"
               >
                 {t('profile.reset_cancel')}
               </button>
               <button
                 onClick={handleReset}
-                className="flex-1 py-3 bg-red-700 text-white rounded-xl text-sm hover:bg-red-600 transition-colors"
+                className="flex-1 py-3 bg-rose-700 text-white rounded-xl text-sm hover:bg-rose-600 transition-colors"
               >
                 {t('profile.reset_confirm')}
               </button>
@@ -256,7 +256,7 @@ export default function ProfileScreen() {
         )}
 
         {resetPhase === 'done' && (
-          <p className="text-green-400 text-sm mt-3">✓ {t('common.confirm')}</p>
+          <p className="text-emerald-400 text-sm mt-3">✓ {t('common.confirm')}</p>
         )}
       </div>
 
@@ -269,7 +269,7 @@ export default function ProfileScreen() {
 
 function Card({ children }) {
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6" style={{ padding: '20px' }}>
+    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6" style={{ padding: '20px' }}>
       {children}
     </div>
   )
@@ -277,7 +277,7 @@ function Card({ children }) {
 
 function SectionLabel({ children, className = '' }) {
   return (
-    <p className={`text-slate-400 text-xs font-medium uppercase tracking-widest ${className}`} >
+    <p className={`text-zinc-400 text-xs font-medium uppercase tracking-widest ${className}`} >
       {children}
     </p>
   )
@@ -285,8 +285,8 @@ function SectionLabel({ children, className = '' }) {
 
 function StatRow({ label, value }) {
   return (
-    <div className="flex items-center justify-between py-3 border-b border-slate-700/50 last:border-0" style={{ padding: '20px' }}>
-      <span className="text-slate-400 text-sm">{label}</span>
+    <div className="flex items-center justify-between py-3 border-b border-zinc-800/50 last:border-0" style={{ padding: '20px' }}>
+      <span className="text-zinc-400 text-sm">{label}</span>
       <span className="text-white text-sm font-mono font-medium">{value}</span>
     </div>
   )

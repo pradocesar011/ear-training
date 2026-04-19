@@ -134,7 +134,7 @@ export default function ExerciseScreen({
 
       {/* ── Top control bar ─────────────────────────────────────────────── */}
       <div className="w-full max-w-2xl mx-auto flex items-center justify-between gap-3
-                      bg-slate-800/60 border border-slate-700 rounded-2xl px-4 py-3" style={{ padding: '10px' }}>
+                      bg-zinc-900/60 border border-zinc-800 rounded-2xl px-4 py-3" style={{ padding: '10px' }}>
 
         {/* Exit button */}
         <button
@@ -143,8 +143,8 @@ export default function ExerciseScreen({
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium
             border transition-all duration-150 flex-shrink-0
             ${endConfirm
-              ? 'bg-red-900/60 border-red-700 text-red-300'
-              : 'bg-slate-700/60 border-slate-600 text-slate-400 hover:text-slate-200 hover:border-slate-500'
+              ? 'bg-rose-950/60 border-rose-700 text-rose-400'
+              : 'bg-zinc-800/60 border-zinc-700 text-zinc-400 hover:text-zinc-100 hover:border-zinc-700'
             }`} style={{ padding: '10px' }}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,7 +154,7 @@ export default function ExerciseScreen({
           {endConfirm ? t('exercise.end_confirm') : t('exercise.end_session_title')}
         </button>
 
-        <span className="text-slate-400 text-sm font-medium truncate">
+        <span className="text-zinc-400 text-sm font-medium truncate">
           {t('tonal_context.tonality', { tonic })}
         </span>
 
@@ -162,9 +162,9 @@ export default function ExerciseScreen({
         <div className="relative flex-shrink-0">
           <button
             onClick={() => setShowModeMenu(v => !v)}
-            className="flex items-center gap-1.5 px-3 py-2.5 text-sm text-slate-400
-              hover:text-slate-200 border border-slate-700 hover:border-slate-500
-              rounded-xl transition-colors bg-slate-700/40" style={{ padding: '10px' }}
+            className="flex items-center gap-1.5 px-3 py-2.5 text-sm text-zinc-400
+              hover:text-zinc-100 border border-zinc-800 hover:border-zinc-700
+              rounded-xl transition-colors bg-zinc-800/40" style={{ padding: '10px' }}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -176,7 +176,7 @@ export default function ExerciseScreen({
             </svg>
           </button>
           {showModeMenu && (
-            <div className="absolute right-0 top-full mt-2 bg-slate-800 border border-slate-700
+            <div className="absolute right-0 top-full mt-2 bg-zinc-900 border border-zinc-800
                             rounded-xl shadow-xl z-20 min-w-max overflow-hidden">
               {Object.entries(MODE_LABELS).map(([mode, label]) => (
                 <button
@@ -184,8 +184,8 @@ export default function ExerciseScreen({
                   onClick={() => handleModeChange(mode)}
                   className={`block w-full text-left px-4 py-3 text-sm transition-colors
                     ${tonalMode === mode
-                      ? 'text-indigo-400 bg-indigo-900/30'
-                      : 'text-slate-300 hover:bg-slate-700'}`} style={{ padding: '10px' }}
+                      ? 'text-cyan-400 bg-cyan-950/30'
+                      : 'text-zinc-300 hover:bg-zinc-800'}`} style={{ padding: '10px' }}
                 >
                   {label}
                 </button>
@@ -203,8 +203,8 @@ export default function ExerciseScreen({
         {contextPlaying ? (
           <button
             onClick={stopTonalContext}
-            className="flex items-center gap-2 px-5 py-3 bg-red-900/40 border border-red-800/60
-              text-red-300 rounded-xl text-sm font-medium hover:bg-red-900/60 transition-colors" style={{ padding: '10px' }}
+            className="flex items-center gap-2 px-5 py-3 bg-rose-950/40 border border-rose-800/60
+              text-rose-400 rounded-xl text-sm font-medium hover:bg-rose-950/60 transition-colors" style={{ padding: '10px' }}
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <rect x="4" y="4" width="12" height="12" rx="1" />
@@ -216,9 +216,9 @@ export default function ExerciseScreen({
             onClick={() => playTonalContext(true)}
             disabled={hearingsLeft <= 0 || keyboardLocked}
             title={`${t('tonal_context.heading')} (−1 ${t('exercise.hearings_label')})`}
-            className="flex items-center gap-2 px-5 py-3 bg-slate-700 border border-slate-600
-              text-slate-200 rounded-xl text-sm font-medium
-              hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors" style={{ padding: '10px' }}
+            className="flex items-center gap-2 px-5 py-3 bg-zinc-800 border border-zinc-700
+              text-zinc-100 rounded-xl text-sm font-medium
+              hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors" style={{ padding: '10px' }}
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" />
@@ -233,7 +233,7 @@ export default function ExerciseScreen({
         <ProgressIndicator current={noteIndex} total={totalNotes} />
         <div className="h-7 flex items-center">
           {keyboardLocked && !feedbackLabel ? (
-            <span className="text-indigo-300 text-sm animate-pulse">
+            <span className="text-cyan-300 text-sm animate-pulse">
               {t('tonal_context.playing_scale')}
             </span>
           ) : feedbackLabel ? (
@@ -253,8 +253,8 @@ export default function ExerciseScreen({
           <button
             onClick={handlePlaySequence}
             disabled={!canPlay}
-            className="w-full flex items-center justify-center gap-3 py-5 bg-indigo-600 text-white
-              rounded-2xl text-lg font-bold hover:bg-indigo-500 active:scale-[0.98]
+            className="w-full flex items-center justify-center gap-3 py-5 bg-cyan-600 text-white
+              rounded-2xl text-lg font-bold hover:bg-cyan-500 active:scale-[0.98]
               disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150
               shadow-lg shadow-indigo-900/40" style={{ padding: '20px' }}
           >

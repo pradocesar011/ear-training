@@ -278,7 +278,7 @@ export const SRS_UNLOCK_THRESHOLDS = [
 // ── Color feedback (spec section 11) ─────────────────────────────────────────
 
 export const COLORS = {
-  CORRECT: '#22c55e',
+  CORRECT: '#10b981',
   WRONG:   '#ef4444',
   NEUTRAL: '#6b7280',
 }

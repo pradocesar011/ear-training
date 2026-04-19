@@ -6,7 +6,7 @@ import {
 import { supabase } from '../lib/supabase.js'
 import { Section } from './AdminDashboard.jsx'
 
-const USER_COLORS = ['#818cf8', '#22c55e', '#f59e0b', '#f472b6']
+const USER_COLORS = ['#06b6d4', '#10b981', '#f97316', '#a855f7']
 const MAX_USERS   = 4
 
 export default function AdminComparison() {
@@ -87,12 +87,12 @@ export default function AdminComparison() {
     : allUsers.filter(u => !selected.find(s => s.id === u.id))
 
   const tooltipStyle = {
-    contentStyle: { background: '#1e293b', border: '1px solid #334155', borderRadius: 6 },
-    labelStyle:   { color: '#64748b', fontSize: 11 },
+    contentStyle: { background: '#27272a', border: '1px solid #3f3f46', borderRadius: 6 },
+    labelStyle:   { color: '#71717a', fontSize: 11 },
   }
 
   if (loading) {
-    return <div className="text-slate-400 text-sm">Loading…</div>
+    return <div className="text-zinc-400 text-sm">Loading…</div>
   }
 
   return (
@@ -127,8 +127,8 @@ export default function AdminComparison() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search by code…"
-              className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white
-                placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full max-w-xs mb-2"
+              className="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white
+                placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 w-full max-w-xs mb-2"
             />
             {search && (
               <div className="flex flex-wrap gap-2 mt-2">
@@ -136,15 +136,15 @@ export default function AdminComparison() {
                   <button
                     key={u.id}
                     onClick={() => addUser(u)}
-                    className="px-3 py-1.5 bg-slate-700 text-slate-300 rounded-lg text-sm font-mono
-                      hover:bg-slate-600 transition-colors"
+                    className="px-3 py-1.5 bg-zinc-800 text-zinc-300 rounded-lg text-sm font-mono
+                      hover:bg-zinc-800 transition-colors"
                     style={{ paddingTop: '10px', paddingBottom: '10px' }}
                   >
                     {u.code}
                   </button>
                 ))}
                 {!filtered.length && (
-                  <span className="text-slate-500 text-sm">No users found</span>
+                  <span className="text-zinc-500 text-sm">No users found</span>
                 )}
               </div>
             )}
@@ -160,9 +160,9 @@ export default function AdminComparison() {
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={idmData} margin={{ top: 4, right: 4, left: -20, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                  <XAxis dataKey="n" stroke="#334155" tick={{ fill: '#475569', fontSize: 10 }} />
-                  <YAxis stroke="#334155" tick={{ fill: '#475569', fontSize: 10 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+                  <XAxis dataKey="n" stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }} />
+                  <YAxis stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }} />
                   <Tooltip {...tooltipStyle} />
                   <Legend wrapperStyle={{ fontSize: 11, color: '#94a3b8' }} />
                   {selected.map((u, i) => (
@@ -185,9 +185,9 @@ export default function AdminComparison() {
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={precData} margin={{ top: 4, right: 4, left: -20, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                  <XAxis dataKey="n" stroke="#334155" tick={{ fill: '#475569', fontSize: 10 }} />
-                  <YAxis domain={[0, 100]} stroke="#334155" tick={{ fill: '#475569', fontSize: 10 }}
+                  <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+                  <XAxis dataKey="n" stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }} />
+                  <YAxis domain={[0, 100]} stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }}
                     tickFormatter={v => `${v}%`} />
                   <Tooltip {...tooltipStyle} formatter={(v, name) => [`${v}%`, name]} />
                   <Legend wrapperStyle={{ fontSize: 11, color: '#94a3b8' }} />
@@ -210,7 +210,7 @@ export default function AdminComparison() {
       )}
 
       {selected.length === 0 && (
-        <p className="text-slate-500 text-sm text-center py-12">
+        <p className="text-zinc-500 text-sm text-center py-12">
           Search and select users above to compare their learning curves.
         </p>
       )}

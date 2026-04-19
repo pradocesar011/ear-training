@@ -10,9 +10,9 @@ const TABS = [
 
 export default function AdminShell() {
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex flex-col">
-      <nav className="bg-slate-800 border-b border-slate-700 px-6 py-3 flex items-center gap-1 sticky top-0 z-20">
-        <span className="text-slate-500 text-xs font-semibold uppercase tracking-widest mr-6">
+    <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
+      <nav className="bg-zinc-900 border-b border-zinc-800 px-6 py-3 flex items-center gap-1 sticky top-0 z-20">
+        <span className="text-zinc-500 text-xs font-semibold uppercase tracking-widest mr-6">
           Admin
         </span>
         {TABS.map(({ to, label, end }) => (
@@ -23,8 +23,8 @@ export default function AdminShell() {
             className={({ isActive }) =>
               `px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-indigo-600 text-white'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                  ? 'bg-cyan-600 text-white'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
               }`
             }
           >

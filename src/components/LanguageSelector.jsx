@@ -17,8 +17,8 @@ export default function LanguageSelector({ onChange }) {
           onClick={() => select(lang)}
           className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-colors
             ${current === lang
-              ? 'bg-indigo-600 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}` }style={{ padding: '10px' }}
+              ? 'bg-cyan-600 text-white'
+              : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-800'}` }style={{ padding: '10px' }}
         >
           {lang.toUpperCase()}
         </button>

@@ -7,8 +7,8 @@ export default function IDMTrendBadge({ trend }) {
   const { t } = useTranslation()
 
   const config = {
-    up:     { icon: '↑', color: 'text-green-400',  label: t('result.trend_up') },
-    stable: { icon: '→', color: 'text-slate-400',  label: t('result.trend_stable') },
+    up:     { icon: '↑', color: 'text-emerald-400',  label: t('result.trend_up') },
+    stable: { icon: '→', color: 'text-zinc-400',  label: t('result.trend_stable') },
     down:   { icon: '↓', color: 'text-orange-400', label: t('result.trend_down') },
   }
 

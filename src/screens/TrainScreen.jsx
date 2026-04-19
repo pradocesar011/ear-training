@@ -136,7 +136,7 @@ export default function TrainScreen() {
           {t('train.ready_to_train')}
         </h1>
         {!loadingStats && dueCount > 0 && (
-          <p className="text-indigo-300 text-sm mt-2">
+          <p className="text-cyan-300 text-sm mt-2">
             {t('train.intervals_due', { count: dueCount })}
           </p>
         )}
@@ -217,8 +217,8 @@ export default function TrainScreen() {
       <button
         onClick={handleStart}
         disabled={!user.userCode}
-        className="w-full max-w-sm py-5 bg-indigo-600 text-white text-xl font-bold rounded-2xl
-          hover:bg-indigo-500 active:scale-95 disabled:opacity-40 transition-all duration-150
+        className="w-full max-w-sm py-5 bg-cyan-600 text-white text-xl font-bold rounded-2xl
+          hover:bg-cyan-500 active:scale-95 disabled:opacity-40 transition-all duration-150
           shadow-xl shadow-indigo-900/40 mt-2"style={{ padding: '20px' }}
       >
         {t('common.start_session')}
@@ -228,8 +228,8 @@ export default function TrainScreen() {
       {!loadingStats && (
         <div className="w-full max-w-sm">
           {lastSession ? (
-            <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5" style={{ padding: '10px' }}>
-              <p className="text-slate-400 text-xs uppercase tracking-widest mb-4">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5" style={{ padding: '10px' }}>
+              <p className="text-zinc-400 text-xs uppercase tracking-widest mb-4">
                 {t('train.last_session')}
               </p>
               <div className="grid grid-cols-3 gap-3 text-center">
@@ -246,12 +246,12 @@ export default function TrainScreen() {
                   label={t('session.mean_precision')}
                 />
               </div>
-              <p className="text-slate-600 text-xs text-center mt-4">
+              <p className="text-zinc-500 text-xs text-center mt-4">
                 {new Date(lastSession.date).toLocaleDateString()}
               </p>
             </div>
           ) : (
-            <p className="text-slate-500 text-sm text-center">{t('train.no_sessions_yet')}</p>
+            <p className="text-zinc-500 text-sm text-center">{t('train.no_sessions_yet')}</p>
           )}
         </div>
       )}
@@ -280,7 +280,7 @@ function MiniPiano({ activeOctaves }) {
 
   return (
     <div
-      className="relative rounded-md overflow-hidden border border-slate-700 mt-1"
+      className="relative rounded-md overflow-hidden border border-zinc-800 mt-1"
       style={{ width: totalWidth, height: WHITE_H }}
     >
       {[1, 2, 3, 4, 5, 6].map(oct => {
@@ -299,9 +299,9 @@ function MiniPiano({ activeOctaves }) {
                   top: 0,
                   width: WHITE_W - 1,
                   height: WHITE_H,
-                  backgroundColor: isActive ? '#cbd5e1' : '#334155',
+                  backgroundColor: isActive ? '#d4d4d8' : '#3f3f46',
                   borderRadius: '0 0 2px 2px',
-                  borderRight: i < 6 ? '1px solid #1e293b' : 'none',
+                  borderRight: i < 6 ? '1px solid #27272a' : 'none',
                 }}
               />
             ))}
@@ -313,7 +313,7 @@ function MiniPiano({ activeOctaves }) {
                 bottom: 2,
                 width: WHITE_W,
                 fontSize: 5,
-                color: isActive ? '#64748b' : '#1e293b',
+                color: isActive ? '#71717a' : '#27272a',
                 lineHeight: 1,
               }}
             >
@@ -329,7 +329,7 @@ function MiniPiano({ activeOctaves }) {
                   top: 0,
                   width: BLACK_W,
                   height: BLACK_H,
-                  backgroundColor: isActive ? '#0f172a' : '#0f172a',
+                  backgroundColor: isActive ? '#09090b' : '#09090b',
                   borderRadius: '0 0 2px 2px',
                   opacity: isActive ? 1 : 0.6,
                 }}
@@ -347,7 +347,7 @@ function MiniPiano({ activeOctaves }) {
 function SectionCard({ label, children }) {
   return (
     <div
-      className="w-full max-w-lg bg-slate-800/70 border border-slate-700 rounded-2xl"
+      className="w-full max-w-lg bg-zinc-900/70 border border-zinc-800 rounded-2xl"
       style={{ padding: '10px' }}
     >
       <p className="text-white text-sm font-semibold" style={{ padding: '5px' }}>{label}</p>
@@ -364,10 +364,10 @@ function OptionButton({ label, sublabel, active, onClick, muted }) {
       className={`flex flex-col items-center justify-center min-h-[64px] py-4 px-4 rounded-xl
         font-semibold transition-all duration-150 w-full
         ${active
-          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/40'
+          ? 'bg-cyan-600 text-white shadow-lg shadow-indigo-900/40'
           : muted
-            ? 'bg-slate-700/40 text-slate-600 cursor-default'
-            : 'bg-slate-700 text-slate-200 hover:bg-slate-600'}
+            ? 'bg-zinc-800/40 text-zinc-500 cursor-default'
+            : 'bg-zinc-800 text-zinc-100 hover:bg-zinc-800'}
       `}
     >
       <span className="text-lg leading-tight">{label}</span>
@@ -384,10 +384,10 @@ function OctaveButton({ label, active, muted, onClick }) {
       className={`flex items-center justify-center min-h-[52px] rounded-xl
         text-base font-bold transition-all duration-150 w-full
         ${active
-          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/40'
+          ? 'bg-cyan-600 text-white shadow-lg shadow-indigo-900/40'
           : muted
-            ? 'bg-slate-700/40 text-slate-600 cursor-default'
-            : 'bg-slate-700 text-slate-200 hover:bg-slate-600'}
+            ? 'bg-zinc-800/40 text-zinc-500 cursor-default'
+            : 'bg-zinc-800 text-zinc-100 hover:bg-zinc-800'}
       `}
     >
       {label}
@@ -399,7 +399,7 @@ function StatCell({ value, label }) {
   return (
     <div>
       <div className="text-xl font-bold text-white font-mono">{value}</div>
-      <div className="text-slate-400 text-xs mt-0.5 leading-tight">{label}</div>
+      <div className="text-zinc-400 text-xs mt-0.5 leading-tight">{label}</div>
     </div>
   )
 }

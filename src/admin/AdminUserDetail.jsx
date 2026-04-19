@@ -79,8 +79,8 @@ export default function AdminUserDetail() {
 
   const TREND_STYLE = {
     improving: { label: 'Improving', color: 'text-emerald-400 bg-emerald-900/30' },
-    stable:    { label: 'Stable',    color: 'text-slate-400  bg-slate-700/50'    },
-    declining: { label: 'Declining', color: 'text-amber-400  bg-amber-900/30'    },
+    stable:    { label: 'Stable',    color: 'text-zinc-400  bg-zinc-800/50'    },
+    declining: { label: 'Declining', color: 'text-orange-400  bg-orange-950/30'    },
   }
 
   // ── Chart data ────────────────────────────────────────────────────────────
@@ -160,21 +160,21 @@ export default function AdminUserDetail() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-64 text-slate-400">
+      <div className="flex items-center justify-center min-h-64 text-zinc-400">
         Loading…
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex flex-col">
+    <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
     <div className="flex-1 flex justify-center">
     <div className="w-full max-w-6xl px-6 py-6 flex flex-col gap-6">
 
       {/* Back */}
       <button
         onClick={() => navigate('/admin')}
-        className="flex items-center gap-1.5 text-slate-400 hover:text-white text-sm transition-colors w-fit"
+        className="flex items-center gap-1.5 text-zinc-400 hover:text-white text-sm transition-colors w-fit"
         style={{ paddingTop: '20px' }}
       >
         ← Back to Global
@@ -184,7 +184,7 @@ export default function AdminUserDetail() {
       <div>
         <h1 className="text-2xl font-bold text-white mb-1">User detail</h1>
         <div className="flex items-center gap-3">
-          <span className="font-mono text-indigo-400 text-2xl font-bold">{user?.code}</span>
+          <span className="font-mono text-cyan-400 text-2xl font-bold">{user?.code}</span>
           {trend && (
             <span className={`text-xs px-2 py-1 rounded-full font-medium ${TREND_STYLE[trend].color}`}>
               {TREND_STYLE[trend].label}
@@ -200,11 +200,11 @@ export default function AdminUserDetail() {
         <SummaryCard label="Sessions"    value={completedSessions.length} />
         <SummaryCard label="Practice time" value={totalTimeSec ? formatDuration(totalTimeSec) : '—'} />
         <SummaryCard label="Current IDM"
-          value={currentIDM != null ? currentIDM.toFixed(1) : '—'} color="text-indigo-400" />
+          value={currentIDM != null ? currentIDM.toFixed(1) : '—'} color="text-cyan-400" />
         <SummaryCard label="Min IDM"
-          value={minIDM != null ? minIDM.toFixed(1) : '—'} color="text-slate-400" />
+          value={minIDM != null ? minIDM.toFixed(1) : '—'} color="text-zinc-400" />
         <SummaryCard label="Max IDM"
-          value={maxIDM != null ? maxIDM.toFixed(1) : '—'} color="text-amber-400" />
+          value={maxIDM != null ? maxIDM.toFixed(1) : '—'} color="text-orange-400" />
         <SummaryCard label="Mean precision"
           value={meanPrec != null ? formatPrecision(meanPrec) : '—'} color="text-emerald-400" />
       </div>
@@ -217,16 +217,16 @@ export default function AdminUserDetail() {
               <div className="h-44">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={idmChartData} margin={{ top: 4, right: 4, left: -20, bottom: 4 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                    <XAxis dataKey="n" stroke="#334155" tick={{ fill: '#475569', fontSize: 10 }} />
-                    <YAxis stroke="#334155" tick={{ fill: '#475569', fontSize: 10 }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+                    <XAxis dataKey="n" stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }} />
+                    <YAxis stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }} />
                     <Tooltip
-                      contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 6 }}
-                      labelStyle={{ color: '#64748b', fontSize: 11 }}
-                      itemStyle={{ color: '#818cf8' }}
+                      contentStyle={{ background: '#27272a', border: '1px solid #3f3f46', borderRadius: 6 }}
+                      labelStyle={{ color: '#71717a', fontSize: 11 }}
+                      itemStyle={{ color: '#06b6d4' }}
                     />
-                    <Line type="monotone" dataKey="idm" stroke="#818cf8" strokeWidth={2}
-                      dot={{ fill: '#818cf8', r: 3 }} connectNulls />
+                    <Line type="monotone" dataKey="idm" stroke="#06b6d4" strokeWidth={2}
+                      dot={{ fill: '#06b6d4', r: 3 }} connectNulls />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -236,18 +236,18 @@ export default function AdminUserDetail() {
               <div className="h-44">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={precChartData} margin={{ top: 4, right: 4, left: -20, bottom: 4 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                    <XAxis dataKey="n" stroke="#334155" tick={{ fill: '#475569', fontSize: 10 }} />
-                    <YAxis domain={[0, 100]} stroke="#334155" tick={{ fill: '#475569', fontSize: 10 }}
+                    <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+                    <XAxis dataKey="n" stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }} />
+                    <YAxis domain={[0, 100]} stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }}
                       tickFormatter={v => `${v}%`} />
                     <Tooltip
-                      contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 6 }}
-                      labelStyle={{ color: '#64748b', fontSize: 11 }}
-                      itemStyle={{ color: '#22c55e' }}
+                      contentStyle={{ background: '#27272a', border: '1px solid #3f3f46', borderRadius: 6 }}
+                      labelStyle={{ color: '#71717a', fontSize: 11 }}
+                      itemStyle={{ color: '#10b981' }}
                       formatter={v => [`${v}%`, 'Precision']}
                     />
-                    <Line type="monotone" dataKey="precision" stroke="#22c55e" strokeWidth={2}
-                      dot={{ fill: '#22c55e', r: 3 }} connectNulls />
+                    <Line type="monotone" dataKey="precision" stroke="#10b981" strokeWidth={2}
+                      dot={{ fill: '#10b981', r: 3 }} connectNulls />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -258,16 +258,16 @@ export default function AdminUserDetail() {
             <div className="h-32">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={durationChartData} margin={{ top: 4, right: 4, left: -20, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                  <XAxis dataKey="n" stroke="#334155" tick={{ fill: '#475569', fontSize: 10 }} />
-                  <YAxis stroke="#334155" tick={{ fill: '#475569', fontSize: 10 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+                  <XAxis dataKey="n" stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }} />
+                  <YAxis stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }} />
                   <Tooltip
-                    contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 6 }}
-                    labelStyle={{ color: '#64748b', fontSize: 11 }}
-                    itemStyle={{ color: '#64748b' }}
+                    contentStyle={{ background: '#27272a', border: '1px solid #3f3f46', borderRadius: 6 }}
+                    labelStyle={{ color: '#71717a', fontSize: 11 }}
+                    itemStyle={{ color: '#71717a' }}
                     formatter={v => [`${v} min`, 'Duration']}
                   />
-                  <Bar dataKey="mins" fill="#334155" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="mins" fill="#3f3f46" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -281,7 +281,7 @@ export default function AdminUserDetail() {
         action={
           <button
             onClick={exportExercises}
-            className="px-3 py-1 bg-slate-700 text-slate-400 rounded text-xs hover:bg-slate-600 transition-colors"
+            className="px-3 py-1 bg-zinc-800 text-zinc-400 rounded text-xs hover:bg-zinc-800 transition-colors"
           >
             Export CSV
           </button>
@@ -290,7 +290,7 @@ export default function AdminUserDetail() {
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="text-slate-500 border-b border-slate-700 text-xs uppercase tracking-wide">
+              <tr className="text-zinc-500 border-b border-zinc-800 text-xs uppercase tracking-wide">
                 {['Date', 'Session', 'IDM', 'dbar', 'S', 'C', 'X', 'N', 'D/Dref', 'R', 'H',
                   'Auditions', 'Precision', 'Resp. time'].map(col => (
                   <th key={col} className="text-left py-2 px-3 font-medium whitespace-nowrap">{col}</th>
@@ -299,14 +299,14 @@ export default function AdminUserDetail() {
             </thead>
             <tbody>
               {pagedEx.map(ex => (
-                <tr key={ex.id} className="border-b border-slate-800/60 text-slate-300 hover:bg-slate-700/20">
-                  <td className="py-2 px-3 whitespace-nowrap text-slate-500">
+                <tr key={ex.id} className="border-b border-zinc-900/60 text-zinc-300 hover:bg-zinc-800/20">
+                  <td className="py-2 px-3 whitespace-nowrap text-zinc-500">
                     {ex.created_at ? new Date(ex.created_at).toLocaleString() : '—'}
                   </td>
-                  <td className="py-2 px-3 text-slate-500 font-mono text-xs truncate max-w-16">
+                  <td className="py-2 px-3 text-zinc-500 font-mono text-xs truncate max-w-16">
                     {ex.session_id?.slice(0, 8)}
                   </td>
-                  <td className="py-2 px-3 font-mono text-indigo-300">{ex.idm?.toFixed(2) ?? '—'}</td>
+                  <td className="py-2 px-3 font-mono text-cyan-300">{ex.idm?.toFixed(2) ?? '—'}</td>
                   <td className="py-2 px-3">{ex.d_bar?.toFixed(2) ?? '—'}</td>
                   <td className="py-2 px-3">{ex.s ?? '—'}</td>
                   <td className="py-2 px-3">{ex.c?.toFixed(2) ?? '—'}</td>
@@ -319,8 +319,8 @@ export default function AdminUserDetail() {
                   <td className="py-2 px-3 font-mono">
                     {ex.precision != null ? (
                       <span style={{
-                        color: ex.precision >= 0.8 ? '#22c55e'
-                          : ex.precision >= 0.5 ? '#f59e0b' : '#ef4444',
+                        color: ex.precision >= 0.8 ? '#10b981'
+                          : ex.precision >= 0.5 ? '#f97316' : '#ef4444',
                       }}>
                         {formatPrecision(ex.precision)}
                       </span>
@@ -335,15 +335,15 @@ export default function AdminUserDetail() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-700">
-            <span className="text-slate-500 text-xs">
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-zinc-800">
+            <span className="text-zinc-500 text-xs">
               Page {exPage} of {totalPages} — {exercises.length} exercises
             </span>
             <div className="flex gap-2">
               <button
                 onClick={() => setExPage(p => Math.max(1, p - 1))}
                 disabled={exPage === 1}
-                className="px-3 py-1 bg-slate-700 text-slate-300 rounded text-xs hover:bg-slate-600
+                className="px-3 py-1 bg-zinc-800 text-zinc-300 rounded text-xs hover:bg-zinc-800
                   disabled:opacity-40 transition-colors"
               >
                 ← Prev
@@ -351,7 +351,7 @@ export default function AdminUserDetail() {
               <button
                 onClick={() => setExPage(p => Math.min(totalPages, p + 1))}
                 disabled={exPage === totalPages}
-                className="px-3 py-1 bg-slate-700 text-slate-300 rounded text-xs hover:bg-slate-600
+                className="px-3 py-1 bg-zinc-800 text-zinc-300 rounded text-xs hover:bg-zinc-800
                   disabled:opacity-40 transition-colors"
               >
                 Next →
@@ -367,7 +367,7 @@ export default function AdminUserDetail() {
         action={
           <button
             onClick={exportSRS}
-            className="px-3 py-1 bg-slate-700 text-slate-400 rounded text-xs hover:bg-slate-600 transition-colors"
+            className="px-3 py-1 bg-zinc-800 text-zinc-400 rounded text-xs hover:bg-zinc-800 transition-colors"
           >
             Export CSV
           </button>
@@ -376,7 +376,7 @@ export default function AdminUserDetail() {
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="text-slate-500 border-b border-slate-700 text-xs uppercase tracking-wide">
+              <tr className="text-zinc-500 border-b border-zinc-800 text-xs uppercase tracking-wide">
                 {['Interval', 'Direction', 'Box', 'Exposures', 'Correct', 'Wrong',
                   'Half-life (d)', 'Recall', 'Last seen', 'Next review'].map(col => (
                   <th key={col} className="text-left py-2 px-3 font-medium whitespace-nowrap">{col}</th>
@@ -390,23 +390,23 @@ export default function AdminUserDetail() {
                 const delta    = lastSeen ? (now - lastSeen) / 86400000 : 0
                 const p        = recallProbability(delta, h)
                 return (
-                  <tr key={item.id} className="border-b border-slate-800/60 text-slate-300 hover:bg-slate-700/20">
+                  <tr key={item.id} className="border-b border-zinc-900/60 text-zinc-300 hover:bg-zinc-800/20">
                     <td className="py-2 px-3 font-mono font-bold">{item.interval_type}</td>
                     <td className="py-2 px-3 capitalize">{item.direction}</td>
                     <td className="py-2 px-3">{item.leitner_box}</td>
                     <td className="py-2 px-3">{item.exposures}</td>
                     <td className="py-2 px-3 text-emerald-400">{item.correct_count}</td>
-                    <td className="py-2 px-3 text-red-400">{item.wrong_count}</td>
+                    <td className="py-2 px-3 text-rose-500">{item.wrong_count}</td>
                     <td className="py-2 px-3 font-mono">{h.toFixed(1)}</td>
                     <td className="py-2 px-3 font-mono">
-                      <span style={{ color: p >= 0.7 ? '#22c55e' : p >= 0.4 ? '#f59e0b' : '#ef4444' }}>
+                      <span style={{ color: p >= 0.7 ? '#10b981' : p >= 0.4 ? '#f97316' : '#ef4444' }}>
                         {Math.round(p * 100)}%
                       </span>
                     </td>
-                    <td className="py-2 px-3 text-slate-500 whitespace-nowrap">
+                    <td className="py-2 px-3 text-zinc-500 whitespace-nowrap">
                       {lastSeen ? lastSeen.toLocaleDateString() : '—'}
                     </td>
-                    <td className="py-2 px-3 text-slate-500 whitespace-nowrap">
+                    <td className="py-2 px-3 text-zinc-500 whitespace-nowrap">
                       {item.next_review ? new Date(item.next_review).toLocaleDateString() : '—'}
                     </td>
                   </tr>
@@ -416,11 +416,11 @@ export default function AdminUserDetail() {
               {/* Locked intervals */}
               {lockedIntervals.map(({ interval, direction }) => (
                 <tr key={`${interval}-${direction}`}
-                  className="border-b border-slate-800/30 opacity-40">
+                  className="border-b border-zinc-900/30 opacity-40">
                   <td className="py-2 px-3 font-mono font-bold">{interval}</td>
                   <td className="py-2 px-3 capitalize">{direction}</td>
                   <td className="py-2 px-3" colSpan={8}>
-                    <span className="text-xs px-2 py-0.5 bg-slate-700 text-slate-400 rounded">
+                    <span className="text-xs px-2 py-0.5 bg-zinc-800 text-zinc-400 rounded">
                       Pending
                     </span>
                   </td>
@@ -436,11 +436,11 @@ export default function AdminUserDetail() {
   )
 }
 
-function SummaryCard({ label, value, color = 'text-slate-200' }) {
+function SummaryCard({ label, value, color = 'text-zinc-100' }) {
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-xl text-center" style={{ padding: '5px' }}>
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl text-center" style={{ padding: '5px' }}>
       <div className={`text-xl font-bold font-mono ${color}`}>{value}</div>
-      <div className="text-slate-500 text-xs mt-1 leading-tight">{label}</div>
+      <div className="text-zinc-500 text-xs mt-1 leading-tight">{label}</div>
     </div>
   )
 }

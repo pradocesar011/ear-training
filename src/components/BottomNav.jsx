@@ -56,7 +56,7 @@ export default function BottomNav() {
   const { t } = useTranslation()
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 bg-slate-900 border-t border-slate-700/60
+    <nav className="fixed bottom-0 inset-x-0 z-40 bg-zinc-950 border-t border-zinc-800/60
                     flex items-stretch safe-area-inset-bottom"
          style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {TABS.map(({ to, end, labelKey, icon }) => (
@@ -66,7 +66,7 @@ export default function BottomNav() {
           end={end}
           className={({ isActive }) =>
             `flex-1 flex flex-col items-center justify-center py-2 gap-0.5 transition-colors
-             ${isActive ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`
+             ${isActive ? 'text-cyan-400' : 'text-zinc-500 hover:text-zinc-300'}`
           }
         >
           {({ isActive }) => (

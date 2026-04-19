@@ -148,26 +148,26 @@ export default function AdminActions() {
       <Section title="Export data as CSV">
         <div className="flex flex-wrap items-end gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-slate-500 text-xs">From</label>
+            <label className="text-zinc-500 text-xs">From</label>
             <input
               type="date"
               value={dateFrom}
               onChange={e => setDateFrom(e.target.value)}
-              className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white
-                focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white
+                focus:outline-none focus:ring-2 focus:ring-cyan-500"
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-slate-500 text-xs">To</label>
+            <label className="text-zinc-500 text-xs">To</label>
             <input
               type="date"
               value={dateTo}
               onChange={e => setDateTo(e.target.value)}
-              className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white
-                focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white
+                focus:outline-none focus:ring-2 focus:ring-cyan-500"
             />
           </div>
-          <label className="flex items-center gap-2 text-slate-300 text-sm cursor-pointer select-none pb-2">
+          <label className="flex items-center gap-2 text-zinc-300 text-sm cursor-pointer select-none pb-2">
             <input
               type="checkbox"
               checked={anonymize}
@@ -179,43 +179,43 @@ export default function AdminActions() {
           <button
             onClick={handleExport}
             disabled={exportLoading}
-            className="px-5 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium
-              hover:bg-indigo-500 disabled:opacity-40 transition-colors" style={{ paddingTop: '10px', paddingBottom: '10px' }}
+            className="px-5 py-2 bg-cyan-600 text-white rounded-lg text-sm font-medium
+              hover:bg-cyan-500 disabled:opacity-40 transition-colors" style={{ paddingTop: '10px', paddingBottom: '10px' }}
           >
             {exportLoading ? 'Exporting…' : 'Export 4 CSV files'}
           </button>
         </div>
-        <p className="text-slate-600 text-xs" style={{ paddingTop: '10px' }}>
+        <p className="text-zinc-500 text-xs" style={{ paddingTop: '10px' }}>
           Exports users, sessions, exercises, and SRS items as separate CSV files.
           Leave dates empty to export all data.
         </p>
       </Section>
 
       {/* ── Reset user ────────────────────────────────────────────── */}
-      <div className="bg-red-950/30 border border-red-900/40 rounded-xl" style={{ padding: '20px' }}>
-        <h3 className="text-red-400 text-xs font-medium uppercase tracking-widest" style={{ paddingBottom: '10px' }}>
+      <div className="bg-rose-950/30 border border-rose-900/40 rounded-xl" style={{ padding: '20px' }}>
+        <h3 className="text-rose-500 text-xs font-medium uppercase tracking-widest" style={{ paddingBottom: '10px' }}>
           Reset user progress
         </h3>
 
         {resetPhase === 'idle' && (
           <form onSubmit={handleResetSubmit} className="flex gap-3 items-end">
             <div className="flex flex-col gap-1">
-              <label className="text-slate-500 text-xs">User code</label>
+              <label className="text-zinc-500 text-xs">User code</label>
               <input
                 value={resetCode}
                 onChange={e => setResetCode(e.target.value.toUpperCase())}
                 placeholder="e.g. AB3X7K"
                 maxLength={6}
-                className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white
-                  font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-red-500
+                className="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white
+                  font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-rose-500
                   w-40"
               />
             </div>
             <button
               type="submit"
               disabled={!resetCode.trim()}
-              className="px-5 py-2 bg-red-900/50 border border-red-800/60 text-red-300 rounded-lg text-sm
-                hover:bg-red-900/80 disabled:opacity-40 transition-colors" style={{ paddingTop: '10px', paddingBottom: '10px' }}
+              className="px-5 py-2 bg-rose-950/50 border border-rose-800/60 text-rose-400 rounded-lg text-sm
+                hover:bg-rose-950/80 disabled:opacity-40 transition-colors" style={{ paddingTop: '10px', paddingBottom: '10px' }}
             >
               Reset…
             </button>
@@ -224,7 +224,7 @@ export default function AdminActions() {
 
         {resetPhase === 'confirm' && (
           <div className="flex flex-col gap-3 max-w-sm">
-            <p className="text-red-300 text-sm">
+            <p className="text-rose-400 text-sm">
               This will permanently delete all sessions, exercises and SRS data for{' '}
               <span className="font-mono font-bold">{resetCode}</span>.
               Type the code again to confirm.
@@ -234,20 +234,20 @@ export default function AdminActions() {
               onChange={e => { setResetConfirm(e.target.value.toUpperCase()); setResetMsg('') }}
               placeholder="Re-enter code"
               maxLength={6}
-              className="bg-slate-900 border border-red-700 rounded-lg px-3 py-2 text-sm text-white
-                font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-red-500 w-40"
+              className="bg-zinc-950 border border-rose-700 rounded-lg px-3 py-2 text-sm text-white
+                font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-rose-500 w-40"
             />
-            {resetMsg && <p className="text-red-400 text-xs">{resetMsg}</p>}
+            {resetMsg && <p className="text-rose-500 text-xs">{resetMsg}</p>}
             <div className="flex gap-2">
               <button
                 onClick={() => { setResetPhase('idle'); setResetConfirm(''); setResetMsg('') }}
-                className="px-4 py-2 bg-slate-700 text-slate-300 rounded-lg text-sm hover:bg-slate-600 transition-colors" style={{ paddingTop: '10px', paddingBottom: '10px' }}
+                className="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-lg text-sm hover:bg-zinc-800 transition-colors" style={{ paddingTop: '10px', paddingBottom: '10px' }}
               >
                 Cancel
               </button>
               <button
                 onClick={handleResetConfirm}
-                className="px-4 py-2 bg-red-700 text-white rounded-lg text-sm hover:bg-red-600 transition-colors" style={{ paddingTop: '10px', paddingBottom: '10px' }}
+                className="px-4 py-2 bg-rose-700 text-white rounded-lg text-sm hover:bg-rose-600 transition-colors" style={{ paddingTop: '10px', paddingBottom: '10px' }}
               >
                 Confirm reset
               </button>
@@ -256,7 +256,7 @@ export default function AdminActions() {
         )}
 
         {(resetPhase === 'done' || resetPhase === 'error') && (
-          <p className={`text-sm ${resetPhase === 'done' ? 'text-green-400' : 'text-red-400'}`}>
+          <p className={`text-sm ${resetPhase === 'done' ? 'text-emerald-400' : 'text-rose-500'}`}>
             {resetMsg}
           </p>
         )}
@@ -264,7 +264,7 @@ export default function AdminActions() {
 
       {/* ── Error log ─────────────────────────────────────────────── */}
       <Section title="System error log">
-        <p className="text-slate-600 text-sm py-4 text-center">
+        <p className="text-zinc-500 text-sm py-4 text-center">
           No error log table configured. Errors are currently not persisted server-side.
         </p>
       </Section>

@@ -108,7 +108,7 @@ export default function AdminSessionLog() {
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-64 text-slate-400">Loading…</div>
+    return <div className="flex items-center justify-center min-h-64 text-zinc-400">Loading…</div>
   }
 
   return (
@@ -142,7 +142,7 @@ export default function AdminSessionLog() {
 
           <button
             onClick={resetFilters}
-            className="px-3 py-2 bg-slate-700 text-slate-400 rounded-lg text-sm hover:bg-slate-600 transition-colors"
+            className="px-3 py-2 bg-zinc-800 text-zinc-400 rounded-lg text-sm hover:bg-zinc-800 transition-colors"
             style={{ paddingTop: '10px', paddingBottom: '10px' }}
           >
             Clear
@@ -156,7 +156,7 @@ export default function AdminSessionLog() {
         action={
           <button
             onClick={handleExport}
-            className="px-3 py-1 bg-slate-700 text-slate-400 rounded text-xs hover:bg-slate-600 transition-colors"
+            className="px-3 py-1 bg-zinc-800 text-zinc-400 rounded text-xs hover:bg-zinc-800 transition-colors"
             style={{ paddingTop: '10px', paddingBottom: '10px' }}
           >
             Export CSV
@@ -166,7 +166,7 @@ export default function AdminSessionLog() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-slate-500 border-b border-slate-700 text-xs uppercase tracking-wide">
+              <tr className="text-zinc-500 border-b border-zinc-800 text-xs uppercase tracking-wide">
                 {['User', 'Date', 'Duration', 'Exercises', 'Precision', 'IDM start', 'IDM end'].map(col => (
                   <th key={col} className="text-left py-3 px-3 font-medium whitespace-nowrap">{col}</th>
                 ))}
@@ -181,11 +181,11 @@ export default function AdminSessionLog() {
                   ? s.idm_end - s.idm_start : null
                 return (
                   <tr key={s.id}
-                    className="border-b border-slate-800/60 text-slate-300 hover:bg-slate-700/20">
-                    <td className="py-3 px-3 font-mono text-indigo-400 font-bold">
+                    className="border-b border-zinc-900/60 text-zinc-300 hover:bg-zinc-800/20">
+                    <td className="py-3 px-3 font-mono text-cyan-400 font-bold">
                       {userMap[s.user_id] ?? '—'}
                     </td>
-                    <td className="py-3 px-3 text-slate-400 whitespace-nowrap">
+                    <td className="py-3 px-3 text-zinc-400 whitespace-nowrap">
                       {new Date(s.started_at).toLocaleString()}
                     </td>
                     <td className="py-3 px-3 font-mono">
@@ -195,13 +195,13 @@ export default function AdminSessionLog() {
                     <td className="py-3 px-3 font-mono">
                       {prec != null ? (
                         <span style={{
-                          color: prec >= 0.7 ? '#22c55e' : prec >= 0.4 ? '#f59e0b' : '#ef4444',
+                          color: prec >= 0.7 ? '#10b981' : prec >= 0.4 ? '#f97316' : '#ef4444',
                         }}>
                           {formatPrecision(prec)}
                         </span>
                       ) : '—'}
                     </td>
-                    <td className="py-3 px-3 font-mono text-slate-400">
+                    <td className="py-3 px-3 font-mono text-zinc-400">
                       {s.idm_start?.toFixed(1) ?? '—'}
                     </td>
                     <td className="py-3 px-3 font-mono">
@@ -209,7 +209,7 @@ export default function AdminSessionLog() {
                         <span>
                           {s.idm_end.toFixed(1)}
                           {idmDelta != null && (
-                            <span className={`ml-1.5 text-xs ${idmDelta > 0 ? 'text-emerald-400' : idmDelta < 0 ? 'text-red-400' : 'text-slate-500'}`}>
+                            <span className={`ml-1.5 text-xs ${idmDelta > 0 ? 'text-emerald-400' : idmDelta < 0 ? 'text-rose-500' : 'text-zinc-500'}`}>
                               {idmDelta > 0 ? '+' : ''}{idmDelta.toFixed(1)}
                             </span>
                           )}
@@ -220,7 +220,7 @@ export default function AdminSessionLog() {
                 )
               })}
               {!paged.length && (
-                <tr><td colSpan={7} className="py-10 text-center text-slate-500">No sessions match filters</td></tr>
+                <tr><td colSpan={7} className="py-10 text-center text-zinc-500">No sessions match filters</td></tr>
               )}
             </tbody>
           </table>
@@ -228,15 +228,15 @@ export default function AdminSessionLog() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-700">
-            <span className="text-slate-500 text-xs">
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-zinc-800">
+            <span className="text-zinc-500 text-xs">
               Page {page} of {totalPages}
             </span>
             <div className="flex gap-2">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1 bg-slate-700 text-slate-300 rounded text-xs hover:bg-slate-600
+                className="px-3 py-1 bg-zinc-800 text-zinc-300 rounded text-xs hover:bg-zinc-800
                   disabled:opacity-40 transition-colors"
                 style={{ paddingTop: '10px', paddingBottom: '10px' }}
               >
@@ -245,7 +245,7 @@ export default function AdminSessionLog() {
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1 bg-slate-700 text-slate-300 rounded text-xs hover:bg-slate-600
+                className="px-3 py-1 bg-zinc-800 text-zinc-300 rounded text-xs hover:bg-zinc-800
                   disabled:opacity-40 transition-colors"
                 style={{ paddingTop: '10px', paddingBottom: '10px' }}
               >
@@ -262,14 +262,14 @@ export default function AdminSessionLog() {
 function FilterInput({ label, value, onChange, placeholder, type = 'text', className = '' }) {
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-slate-500 text-xs">{label}</label>
+      <label className="text-zinc-500 text-xs">{label}</label>
       <input
         type={type}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white
-          placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${className}`}
+        className={`bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white
+          placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${className}`}
       />
     </div>
   )

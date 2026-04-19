@@ -136,7 +136,7 @@ export default function PianoKeyboard({
                 const noteStr = `${name}${octave}`
                 const color   = keyColor(noteStr, highlightCorrect, highlightWrong, highlightTonic, isActive)
                 const bgColor = color ?? (isActive ? '#e2e8f0' : '#94a3b8')
-                const txtColor = color ? '#fff' : (isActive ? '#1e293b' : '#475569')
+                const txtColor = color ? '#fff' : (isActive ? '#27272a' : '#71717a')
                 const canPress = isActive && !disabled
 
                 return (
@@ -151,7 +151,7 @@ export default function PianoKeyboard({
                       width:           WHITE_KEY_W,
                       height:          WHITE_KEY_H,
                       background:      bgColor,
-                      border:          '1px solid #475569',
+                      border:          '1px solid #71717a',
                       borderTop:       'none',
                       borderRadius:    '0 0 5px 5px',
                       display:         'flex',
@@ -178,8 +178,8 @@ export default function PianoKeyboard({
                 const noteStr = `${name}${octave}`
                 const leftPx  = BLACK_OFFSETS[name]
                 const color   = keyColor(noteStr, highlightCorrect, highlightWrong, highlightTonic, isActive)
-                const bgColor = color ?? (isActive ? '#1e293b' : '#334155')
-                const txtColor = color ? '#fff' : (isActive ? '#94a3b8' : '#475569')
+                const bgColor = color ?? (isActive ? '#27272a' : '#3f3f46')
+                const txtColor = color ? '#fff' : (isActive ? '#94a3b8' : '#71717a')
                 const canPress = isActive && !disabled
 
                 return (
@@ -223,7 +223,7 @@ export default function PianoKeyboard({
                   right:          0,
                   textAlign:      'center',
                   fontSize:       9,
-                  color:          '#475569',
+                  color:          '#71717a',
                   pointerEvents:  'none',
                   zIndex:         3,
                 }}>

@@ -111,7 +111,7 @@ export default function ProgressScreen() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-full text-slate-400">
+      <div className="flex items-center justify-center min-h-full text-zinc-400">
         {t('common.loading')}
       </div>
     )
@@ -128,17 +128,17 @@ export default function ProgressScreen() {
         <StatCard
           value={currentIDM != null ? currentIDM.toFixed(1) : '—'}
           label={t('progress.current_idm')}
-          color="text-indigo-400"
+          color="text-cyan-400"
         />
         <StatCard
           value={totalSessions}
           label={t('profile.total_sessions')}
-          color="text-slate-200"
+          color="text-zinc-100"
         />
         <StatCard
           value={totalExercises}
           label={t('profile.total_exercises')}
-          color="text-slate-200"
+          color="text-zinc-100"
         />
         <StatCard
           value={meanPrecision != null ? `${Math.round(meanPrecision)}%` : '—'}
@@ -151,13 +151,13 @@ export default function ProgressScreen() {
       {totalSessions > 1 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Section title={t('progress.idm_chart')}>
-            <Chart data={idmChartData} dataKey="idm" color="#818cf8" />
+            <Chart data={idmChartData} dataKey="idm" color="#06b6d4" />
           </Section>
           <Section title={t('progress.accuracy_chart')}>
             <Chart
               data={accuracyData.filter(d => d.accuracy != null)}
               dataKey="accuracy"
-              color="#22c55e"
+              color="#10b981"
               formatter={v => `${v}%`}
               domain={[0, 100]}
             />
@@ -191,7 +191,7 @@ export default function ProgressScreen() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-slate-500 text-xs border-b border-slate-700">
+                <tr className="text-zinc-500 text-xs border-b border-zinc-800">
                   <th className="text-left py-3 px-3 font-medium">#</th>
                   <th className="text-left py-3 px-3 font-medium">{t('progress.col_date')}</th>
                   <th className="text-left py-3 px-3 font-medium">{t('progress.col_duration')}</th>
@@ -202,15 +202,15 @@ export default function ProgressScreen() {
               </thead>
               <tbody>
                 {sessionRows.map(row => (
-                  <tr key={row.n} className="border-b border-slate-800 text-slate-300">
-                    <td className="py-3 px-3 text-slate-500">{row.n}</td>
+                  <tr key={row.n} className="border-b border-zinc-900 text-zinc-300">
+                    <td className="py-3 px-3 text-zinc-500">{row.n}</td>
                     <td className="py-3 px-3">{row.date}</td>
                     <td className="py-3 px-3 font-mono">{row.duration}</td>
                     <td className="py-3 px-3">{row.exercises}</td>
                     <td className="py-3 px-3 font-mono">{row.accuracy}</td>
                     <td className="py-3 px-3 font-mono">
                       {row.idmProgress != null ? (
-                        <span className={row.idmProgress > 0 ? 'text-emerald-400' : row.idmProgress < 0 ? 'text-red-400' : 'text-slate-500'}>
+                        <span className={row.idmProgress > 0 ? 'text-emerald-400' : row.idmProgress < 0 ? 'text-rose-500' : 'text-zinc-500'}>
                           {row.idmProgress > 0 ? '+' : ''}{row.idmProgress.toFixed(1)}
                         </span>
                       ) : '—'}
@@ -225,8 +225,8 @@ export default function ProgressScreen() {
 
       {!totalSessions && (
         <div className="flex flex-col items-center justify-center py-16 gap-3">
-          <p className="text-slate-400 text-center">{t('common.no_data')}</p>
-          <p className="text-slate-600 text-sm text-center">{t('train.no_sessions_yet')}</p>
+          <p className="text-zinc-400 text-center">{t('common.no_data')}</p>
+          <p className="text-zinc-500 text-sm text-center">{t('train.no_sessions_yet')}</p>
         </div>
       )}
 
@@ -239,17 +239,17 @@ export default function ProgressScreen() {
 
 function StatCard({ value, label, color }) {
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5 text-center" style={{ padding: '10px' }}>
+    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 text-center" style={{ padding: '10px' }}>
       <div className={`text-2xl font-bold font-mono ${color}`}>{value}</div>
-      <div className="text-slate-500 text-xs mt-1.5 leading-tight">{label}</div>
+      <div className="text-zinc-500 text-xs mt-1.5 leading-tight">{label}</div>
     </div>
   )
 }
 
 function Section({ title, children }) {
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6" style={{ padding: '10px' }}>
-      <h3 className="text-slate-400 text-xs font-medium uppercase tracking-widest mb-5" style={{ paddingBottom: '10px' }}>
+    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6" style={{ padding: '10px' }}>
+      <h3 className="text-zinc-400 text-xs font-medium uppercase tracking-widest mb-5" style={{ paddingBottom: '10px' }}>
         {title}
       </h3>
       {children}
@@ -262,17 +262,17 @@ function Chart({ data, dataKey, color, formatter, domain }) {
     <div className="h-40">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 4, right: 8, left: -16, bottom: 4 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-          <XAxis dataKey="n" stroke="#334155" tick={{ fill: '#475569', fontSize: 11 }} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+          <XAxis dataKey="n" stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 11 }} />
           <YAxis
             domain={domain}
-            stroke="#334155"
-            tick={{ fill: '#475569', fontSize: 11 }}
+            stroke="#3f3f46"
+            tick={{ fill: '#71717a', fontSize: 11 }}
             tickFormatter={formatter}
           />
           <Tooltip
-            contentStyle={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8 }}
-            labelStyle={{ color: '#64748b', fontSize: 12 }}
+            contentStyle={{ background: '#09090b', border: '1px solid #3f3f46', borderRadius: 8 }}
+            labelStyle={{ color: '#71717a', fontSize: 12 }}
             itemStyle={{ color }}
             formatter={formatter ? (v) => [formatter(v), ''] : undefined}
           />
@@ -297,12 +297,12 @@ function IntervalCard({ title, items, color, emptyText, t }) {
   const tagBg       = color === 'emerald' ? 'bg-emerald-900/30 text-emerald-300' : 'bg-orange-900/30 text-orange-300'
 
   return (
-    <div className={`bg-slate-800 border ${borderColor} rounded-2xl p-5`} style={{ padding: '10px' }}>
+    <div className={`bg-zinc-900 border ${borderColor} rounded-2xl p-5`} style={{ padding: '10px' }}>
       <h3 className={`text-xs font-medium uppercase tracking-widest mb-3 ${titleColor}`}>
         {title}
       </h3>
       {items.length === 0 ? (
-        <p className="text-slate-600 text-sm">{emptyText}</p>
+        <p className="text-zinc-500 text-sm">{emptyText}</p>
       ) : (
         <div className="flex flex-wrap gap-2">
           {items.map(item => (

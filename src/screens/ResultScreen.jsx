@@ -27,13 +27,13 @@ export default function ResultScreen({ result, isLastExercise, onNext, onEnd }) 
 
   const precisionPct = Math.round(precision * 100)
   const precisionColor =
-    precisionPct >= 80 ? '#22c55e' :
-    precisionPct >= 51 ? '#f59e0b' :
+    precisionPct >= 80 ? '#10b981' :
+    precisionPct >= 51 ? '#f97316' :
     '#ef4444'
 
   return (
     <div className="screen-enter flex flex-col items-center justify-start min-h-screen px-4 py-8 gap-6">
-      <h2 className="text-slate-400 text-sm font-medium uppercase tracking-widest">
+      <h2 className="text-zinc-400 text-sm font-medium uppercase tracking-widest">
         {t('result.heading')}
       </h2>
 
@@ -45,7 +45,7 @@ export default function ResultScreen({ result, isLastExercise, onNext, onEnd }) 
         >
           {formatPrecision(precision)}
         </div>
-        <div className="text-slate-400 text-sm mt-1">{t('result.precision')}</div>
+        <div className="text-zinc-400 text-sm mt-1">{t('result.precision')}</div>
       </div>
 
       {/* Trend badge */}
@@ -53,7 +53,7 @@ export default function ResultScreen({ result, isLastExercise, onNext, onEnd }) 
 
       {/* Keyboard visualization */}
       <div className="w-full max-w-2xl">
-        <p className="text-slate-400 text-xs mb-3 text-center">{t('result.correct_answer')}</p>
+        <p className="text-zinc-400 text-xs mb-3 text-center">{t('result.correct_answer')}</p>
         <PianoKeyboard
           onNote={() => {}}
           highlightCorrect={correctHighlight}
@@ -67,9 +67,9 @@ export default function ResultScreen({ result, isLastExercise, onNext, onEnd }) 
       <div className="w-full max-w-sm">
         <div className="flex flex-col gap-1.5">
           {expectedSequence.map((note, i) => (
-            <div key={i} className="flex items-center justify-between px-3 py-2 bg-slate-800 rounded-lg" style={{ padding: '10px' }}>
-              <span className="text-slate-400 text-sm w-6">{i + 1}</span>
-              <span className="text-slate-300 text-sm font-mono flex-1 text-center">{note}</span>
+            <div key={i} className="flex items-center justify-between px-3 py-2 bg-zinc-900 rounded-lg" style={{ padding: '10px' }}>
+              <span className="text-zinc-400 text-sm w-6">{i + 1}</span>
+              <span className="text-zinc-300 text-sm font-mono flex-1 text-center">{note}</span>
               <span
                 className="text-sm font-mono flex-1 text-center"
                 style={{ color: correct[i] ? COLORS.CORRECT : COLORS.WRONG }}
@@ -90,16 +90,16 @@ export default function ResultScreen({ result, isLastExercise, onNext, onEnd }) 
         {!isLastExercise && (
           <button
             onClick={onNext}
-            className="flex-1 py-4 px-6 bg-indigo-600 text-white rounded-xl font-semibold
-              hover:bg-indigo-500 transition-colors" style={{ padding: '20px' }}
+            className="flex-1 py-4 px-6 bg-cyan-600 text-white rounded-xl font-semibold
+              hover:bg-cyan-500 transition-colors" style={{ padding: '20px' }}
           >
             {t('common.next_exercise')}
           </button>
         )}
         <button
           onClick={onEnd}
-          className="flex-1 py-4 px-6 bg-slate-700 text-slate-300 rounded-xl font-semibold
-            hover:bg-slate-600 transition-colors" style={{ padding: '20px' }}
+          className="flex-1 py-4 px-6 bg-zinc-800 text-zinc-300 rounded-xl font-semibold
+            hover:bg-zinc-800 transition-colors" style={{ padding: '20px' }}
         >
           {isLastExercise ? t('session.summary_heading') : t('common.end_session')}
         </button>

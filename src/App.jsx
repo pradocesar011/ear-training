@@ -87,7 +87,7 @@ function TrainTab() {
     return (
       <>
         {showReminder && (
-          <div className="fixed top-0 inset-x-0 bg-amber-900/80 text-amber-200 text-sm text-center py-2 px-4 z-50">
+          <div className="fixed top-0 inset-x-0 bg-orange-950/80 text-orange-200 text-sm text-center py-2 px-4 z-50">
             {t('session.time_reminder')}
           </div>
         )}

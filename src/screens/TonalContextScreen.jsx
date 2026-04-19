@@ -41,13 +41,13 @@ export default function TonalContextScreen({ tonic, audio, onReady }) {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 gap-8">
       <div className="text-center">
-        <p className="text-slate-400 text-sm font-medium uppercase tracking-widest mb-2">
+        <p className="text-zinc-400 text-sm font-medium uppercase tracking-widest mb-2">
           {t('tonal_context.heading')}
         </p>
         <h2 className="text-3xl sm:text-4xl font-bold text-white">
           {t('tonal_context.tonality', { tonic })}
         </h2>
-        <p className="text-slate-400 mt-3 text-sm">
+        <p className="text-zinc-400 mt-3 text-sm">
           {t('tonal_context.instruction')}
         </p>
       </div>
@@ -60,12 +60,12 @@ export default function TonalContextScreen({ tonic, audio, onReady }) {
               {[0,1,2].map(i => (
                 <div
                   key={i}
-                  className="w-1.5 h-6 bg-indigo-400 rounded-full animate-pulse"
+                  className="w-1.5 h-6 bg-cyan-400 rounded-full animate-pulse"
                   style={{ animationDelay: `${i * 150}ms` }}
                 />
               ))}
             </div>
-            <span className="text-indigo-300 text-sm">{statusLabel}</span>
+            <span className="text-cyan-300 text-sm">{statusLabel}</span>
           </>
         ) : null}
       </div>
@@ -74,8 +74,8 @@ export default function TonalContextScreen({ tonic, audio, onReady }) {
       <button
         onClick={playContext}
         disabled={status === 'playing_scale' || status === 'playing_triad'}
-        className="px-6 py-2 bg-slate-700 text-slate-300 rounded-lg text-sm
-          hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="px-6 py-2 bg-zinc-800 text-zinc-300 rounded-lg text-sm
+          hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         {t('common.play')}
       </button>
@@ -83,8 +83,8 @@ export default function TonalContextScreen({ tonic, audio, onReady }) {
       {/* Ready button — always visible so user can skip if needed */}
       <button
         onClick={onReady}
-        className="px-10 py-4 bg-indigo-600 text-white text-lg font-semibold rounded-xl
-          hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-900/30"
+        className="px-10 py-4 bg-cyan-600 text-white text-lg font-semibold rounded-xl
+          hover:bg-cyan-500 transition-colors shadow-lg shadow-indigo-900/30"
       >
         {t('common.ready')}
       </button>

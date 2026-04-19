@@ -16,30 +16,30 @@ export default function PrecisionChart({ history }) {
     <div className="w-full h-48">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#3f3f46" />
           <XAxis
             dataKey="exercise"
-            stroke="#64748b"
+            stroke="#71717a"
             tick={{ fill: '#94a3b8', fontSize: 12 }}
           />
           <YAxis
             domain={[0, 100]}
-            stroke="#64748b"
+            stroke="#71717a"
             tick={{ fill: '#94a3b8', fontSize: 12 }}
             tickFormatter={v => `${v}%`}
           />
           <Tooltip
-            contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 6 }}
+            contentStyle={{ background: '#27272a', border: '1px solid #3f3f46', borderRadius: 6 }}
             labelStyle={{ color: '#94a3b8' }}
-            itemStyle={{ color: '#818cf8' }}
+            itemStyle={{ color: '#06b6d4' }}
             formatter={v => [`${v}%`, t('session.mean_precision')]}
           />
           <Line
             type="monotone"
             dataKey="precision"
-            stroke="#818cf8"
+            stroke="#06b6d4"
             strokeWidth={2}
-            dot={{ fill: '#818cf8', r: 3 }}
+            dot={{ fill: '#06b6d4', r: 3 }}
             activeDot={{ r: 5 }}
           />
         </LineChart>

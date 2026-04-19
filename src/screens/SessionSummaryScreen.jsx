@@ -19,37 +19,37 @@ export default function SessionSummaryScreen({ summary, userCode, onNewSession }
       {/* Stats grid */}
       <div className="grid grid-cols-3 gap-4 w-full max-w-xl">
         {statItems.map(({ label, value }) => (
-          <div key={label} className="bg-slate-800 border border-slate-700 rounded-xl p-4 text-center" style={{ padding: '10px' }}>
+          <div key={label} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center" style={{ padding: '10px' }}>
             <div className="text-2xl font-bold text-white font-mono">{value}</div>
-            <div className="text-slate-400 text-xs mt-1">{label}</div>
+            <div className="text-zinc-400 text-xs mt-1">{label}</div>
           </div>
         ))}
       </div>
 
       {/* Precision chart */}
       {history.length > 1 && (
-        <div className="w-full max-w-xl bg-slate-800 border border-slate-700 rounded-xl p-5" style={{ padding: '10px' }}>
-          <h3 className="text-slate-400 text-sm mb-4" style={{ paddingBottom: '10px' }}>{t('session.precision_evolution')}</h3>
+        <div className="w-full max-w-xl bg-zinc-900 border border-zinc-800 rounded-xl p-5" style={{ padding: '10px' }}>
+          <h3 className="text-zinc-400 text-sm mb-4" style={{ paddingBottom: '10px' }}>{t('session.precision_evolution')}</h3>
           <PrecisionChart history={history} />
         </div>
       )}
 
       {/* User code — prominent */}
-      <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 text-center w-full max-w-xs" style={{ padding: '20px' }}>
-        <p className="text-slate-400 text-xs uppercase tracking-widest mb-2" style={{ paddingBottom: '5px' }}>
+      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 text-center w-full max-w-xs" style={{ padding: '20px' }}>
+        <p className="text-zinc-400 text-xs uppercase tracking-widest mb-2" style={{ paddingBottom: '5px' }}>
           {t('common.your_code')}
         </p>
-        <div className="font-mono text-3xl font-bold text-indigo-400 tracking-widest">
+        <div className="font-mono text-3xl font-bold text-cyan-400 tracking-widest">
           {userCode}
         </div>
-        <p className="text-slate-500 text-xs mt-2">{t('common.save_code')}</p>
+        <p className="text-zinc-500 text-xs mt-2">{t('common.save_code')}</p>
       </div>
 
       {/* New session */}
       <button
         onClick={onNewSession}
-        className="px-10 py-4 bg-indigo-600 text-white text-lg font-semibold rounded-xl
-          hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-900/30" style={{ padding: '20px' }}
+        className="px-10 py-4 bg-cyan-600 text-white text-lg font-semibold rounded-xl
+          hover:bg-cyan-500 transition-colors shadow-lg shadow-indigo-900/30" style={{ padding: '20px' }}
       >
         {t('common.new_session')}
       </button>

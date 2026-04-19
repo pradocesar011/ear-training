@@ -103,7 +103,7 @@ export default function AdminIntervals() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-64 text-slate-400">
+      <div className="flex items-center justify-center min-h-64 text-zinc-400">
         Loading…
       </div>
     )
@@ -112,7 +112,7 @@ export default function AdminIntervals() {
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-bold text-white" style={{ paddingTop: '20px' }}>Global Intervals Analysis</h1>
-      <p className="text-slate-500 text-sm -mt-4" style={{ paddingTop: '10px' }}>
+      <p className="text-zinc-500 text-sm -mt-4" style={{ paddingTop: '10px' }}>
         Aggregated SRS data across all users. Default sort: highest error rate first.
       </p>
 
@@ -120,7 +120,7 @@ export default function AdminIntervals() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-slate-500 border-b border-slate-700 text-xs uppercase tracking-wide">
+              <tr className="text-zinc-500 border-b border-zinc-800 text-xs uppercase tracking-wide">
                 {COLS.map(col => (
                   <th
                     key={col.key}
@@ -130,7 +130,7 @@ export default function AdminIntervals() {
                   >
                     {col.label}
                     {sortCol === col.key && (
-                      <span className="ml-1 text-indigo-400">{sortDir === 'asc' ? '↑' : '↓'}</span>
+                      <span className="ml-1 text-cyan-400">{sortDir === 'asc' ? '↑' : '↓'}</span>
                     )}
                   </th>
                 ))}
@@ -140,24 +140,24 @@ export default function AdminIntervals() {
               {sorted.map(row => {
                 const errPct = Math.round(row.error_rate * 100)
                 const errColor = errPct >= 60 ? '#ef4444'
-                  : errPct >= 35 ? '#f59e0b' : '#22c55e'
+                  : errPct >= 35 ? '#f97316' : '#10b981'
                 return (
                   <tr key={`${row.interval}-${row.direction}`}
-                    className="border-b border-slate-800/60 text-slate-300 hover:bg-slate-700/20">
-                    <td className="py-3 px-3 font-mono font-bold text-indigo-300">{row.interval}</td>
-                    <td className="py-3 px-3 capitalize text-slate-400">{row.direction}</td>
+                    className="border-b border-zinc-900/60 text-zinc-300 hover:bg-zinc-800/20">
+                    <td className="py-3 px-3 font-mono font-bold text-cyan-300">{row.interval}</td>
+                    <td className="py-3 px-3 capitalize text-zinc-400">{row.direction}</td>
                     <td className="py-3 px-3 font-mono">
                       <span style={{ color: errColor }}>{errPct}%</span>
                     </td>
-                    <td className="py-3 px-3 text-slate-400">{row.total_attempts}</td>
+                    <td className="py-3 px-3 text-zinc-400">{row.total_attempts}</td>
                     <td className="py-3 px-3 font-mono">{row.mean_half_life.toFixed(1)}d</td>
                     <td className="py-3 px-3 font-mono">{row.mean_exposures.toFixed(1)}</td>
-                    <td className="py-3 px-3 text-slate-500">{row.user_count}</td>
+                    <td className="py-3 px-3 text-zinc-500">{row.user_count}</td>
                   </tr>
                 )
               })}
               {!sorted.length && (
-                <tr><td colSpan={7} className="py-10 text-center text-slate-500">No SRS data yet</td></tr>
+                <tr><td colSpan={7} className="py-10 text-center text-zinc-500">No SRS data yet</td></tr>
               )}
             </tbody>
           </table>
@@ -170,7 +170,7 @@ export default function AdminIntervals() {
             {notIntroduced.map(({ interval, direction }) => (
               <span
                 key={`${interval}-${direction}`}
-                className="text-xs px-2 py-1 bg-slate-700/50 text-slate-500 rounded-lg font-mono"
+                className="text-xs px-2 py-1 bg-zinc-800/50 text-zinc-500 rounded-lg font-mono"
               >
                 {interval} <span className="opacity-60 capitalize">{direction}</span>
               </span>

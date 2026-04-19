@@ -8,10 +8,10 @@ import { INTERVAL_INTRODUCTION_ORDER } from '../config/constants.js'
 const BOX_DESCS = ['box_desc_1', 'box_desc_2', 'box_desc_3', 'box_desc_4', 'box_desc_5']
 
 const BOX_COLORS = {
-  1: { dot: 'bg-red-400',     border: 'border-red-900/40',     text: 'text-red-400' },
+  1: { dot: 'bg-rose-400',     border: 'border-rose-900/40',     text: 'text-rose-500' },
   2: { dot: 'bg-orange-400',  border: 'border-orange-900/40',  text: 'text-orange-400' },
-  3: { dot: 'bg-yellow-400',  border: 'border-yellow-900/40',  text: 'text-yellow-400' },
-  4: { dot: 'bg-green-400',   border: 'border-green-900/40',   text: 'text-green-400' },
+  3: { dot: 'bg-orange-400',  border: 'border-orange-900/40',  text: 'text-orange-400' },
+  4: { dot: 'bg-emerald-400',   border: 'border-emerald-900/40',   text: 'text-emerald-400' },
   5: { dot: 'bg-emerald-400', border: 'border-emerald-900/40', text: 'text-emerald-400' },
 }
 
@@ -38,7 +38,7 @@ export default function IntervalsScreen() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-full text-slate-400">
+      <div className="flex items-center justify-center min-h-full text-zinc-400">
         {t('common.loading')}
       </div>
     )
@@ -47,7 +47,7 @@ export default function IntervalsScreen() {
   if (!srsItems.length) {
     return (
       <div className="flex flex-col items-center justify-center min-h-full px-6 gap-3">
-        <p className="text-slate-400 text-center">{t('intervals_screen.no_intervals_yet')}</p>
+        <p className="text-zinc-400 text-center">{t('intervals_screen.no_intervals_yet')}</p>
       </div>
     )
   }
@@ -92,10 +92,10 @@ export default function IntervalsScreen() {
               <span className={`text-sm font-semibold ${colors.text}`}>
                 {t('intervals_screen.box_label', { n: box })}
               </span>
-              <span className="text-slate-600 text-xs">
+              <span className="text-zinc-500 text-xs">
                 {t(`intervals_screen.${BOX_DESCS[box - 1]}`)}
               </span>
-              <span className="text-slate-600 text-xs ml-auto">{items.length}</span>
+              <span className="text-zinc-500 text-xs ml-auto">{items.length}</span>
             </div>
 
             {/* Card grid */}
@@ -112,36 +112,36 @@ export default function IntervalsScreen() {
       {lockedIntervals.length > 0 && (
         <div>
           <div className="flex items-center gap-2 mb-3" style={{ padding: '10px' }}>
-            <div className="w-2.5 h-2.5 rounded-full bg-slate-600" />
-            <span className="text-slate-500 text-sm font-semibold">
+            <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
+            <span className="text-zinc-500 text-sm font-semibold">
               {t('intervals_screen.locked')}
             </span>
-            <span className="text-slate-600 text-xs">
+            <span className="text-zinc-500 text-xs">
               {t('intervals_screen.locked_desc')}
             </span>
-            <span className="text-slate-600 text-xs ml-auto">{lockedIntervals.length}</span>
+            <span className="text-zinc-500 text-xs ml-auto">{lockedIntervals.length}</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {lockedIntervals.slice(0, 9).map(({ interval, direction }) => (
               <div
                 key={`${interval}-${direction}`}
-                className="bg-slate-800/40 border border-slate-700/30 rounded-xl p-3 opacity-40" style={{ padding: '5px' }}
+                className="bg-zinc-900/40 border border-zinc-800/30 rounded-xl p-3 opacity-40" style={{ padding: '5px' }}
               >
                 <div className="flex items-start justify-between mb-1">
-                  <span className="text-slate-400 text-sm font-medium leading-tight">
+                  <span className="text-zinc-400 text-sm font-medium leading-tight">
                     {t(`intervals.${interval}`)}
                   </span>
-                  <svg className="w-3.5 h-3.5 text-slate-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                       d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
                   </svg>
                 </div>
-                <span className="text-slate-500 text-xs">{t(`intervals.${direction}`)}</span>
+                <span className="text-zinc-500 text-xs">{t(`intervals.${direction}`)}</span>
               </div>
             ))}
             {lockedIntervals.length > 9 && (
-              <div className="bg-slate-800/40 border border-slate-700/30 rounded-xl p-3 opacity-40 flex items-center justify-center" style={{ padding: '5px' }}>
-                <span className="text-slate-600 text-sm">+{lockedIntervals.length - 9}</span>
+              <div className="bg-zinc-900/40 border border-zinc-800/30 rounded-xl p-3 opacity-40 flex items-center justify-center" style={{ padding: '5px' }}>
+                <span className="text-zinc-500 text-sm">+{lockedIntervals.length - 9}</span>
               </div>
             )}
           </div>
@@ -157,8 +157,8 @@ export default function IntervalsScreen() {
 
 function IntervalCard({ item, t, now }) {
   const pct = Math.round(item.recall * 100)
-  const recallColor  = pct >= 70 ? '#22c55e' : pct >= 40 ? '#f59e0b' : '#ef4444'
-  const borderClass  = pct >= 70 ? 'border-green-800/50'  : pct >= 40 ? 'border-amber-800/50'  : 'border-red-800/50'
+  const recallColor  = pct >= 70 ? '#10b981' : pct >= 40 ? '#f97316' : '#ef4444'
+  const borderClass  = pct >= 70 ? 'border-emerald-800/50'  : pct >= 40 ? 'border-orange-800/50'  : 'border-rose-800/50'
   const bgInline     = pct >= 70 ? 'rgba(20,83,45,0.12)'  : pct >= 40 ? 'rgba(92,55,5,0.12)'   : 'rgba(69,10,10,0.12)'
 
   let reviewLabel = '—'
@@ -167,24 +167,24 @@ function IntervalCard({ item, t, now }) {
     else if (item.isDueToday) reviewLabel = t('intervals_screen.today')
     else                      reviewLabel = item.nextReview.toLocaleDateString()
   }
-  const reviewColor = item.isOverdue ? 'text-red-400' : item.isDueToday ? 'text-amber-400' : 'text-slate-500'
+  const reviewColor = item.isOverdue ? 'text-rose-500' : item.isDueToday ? 'text-orange-400' : 'text-zinc-500'
 
   return (
     <div
-      className={`border ${borderClass} bg-slate-800 rounded-xl p-4 flex flex-col gap-2.5`}
+      className={`border ${borderClass} bg-zinc-900 rounded-xl p-4 flex flex-col gap-2.5`}
       style={{ backgroundColor: bgInline, padding: '20px' }}
     >
       {/* Name + direction */}
       <div>
-        <p className="text-slate-200 text-sm font-semibold leading-tight">
+        <p className="text-zinc-100 text-sm font-semibold leading-tight">
           {t(`intervals.${item.interval_type}`)}
         </p>
-        <p className="text-slate-500 text-xs mt-0.5">{t(`intervals.${item.direction}`)}</p>
+        <p className="text-zinc-500 text-xs mt-0.5">{t(`intervals.${item.direction}`)}</p>
       </div>
 
       {/* Recall badge + bar */}
       <div className="flex items-center gap-2">
-        <div className="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+        <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all"
             style={{ width: `${pct}%`, backgroundColor: recallColor }}
@@ -196,10 +196,10 @@ function IntervalCard({ item, t, now }) {
       </div>
 
       {/* Stats row */}
-      <div className="flex justify-between text-xs text-slate-500">
+      <div className="flex justify-between text-xs text-zinc-500">
         <span>{item.exposures}× {t('intervals_screen.exposures').toLowerCase()}</span>
-        <span className="text-green-500/70">{item.correct_count ?? 0}✓</span>
-        <span className="text-red-500/70">{item.wrong_count ?? 0}✗</span>
+        <span className="text-emerald-500/70">{item.correct_count ?? 0}✓</span>
+        <span className="text-rose-500/70">{item.wrong_count ?? 0}✗</span>
       </div>
 
       {/* Next review */}
