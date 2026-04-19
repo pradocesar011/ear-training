@@ -70,16 +70,6 @@ function pickTonic(low, high) {
 }
 
 /**
- * Pick a value from a progression field that may be a single number or a
- * two-element array [optionA, optionB].
- */
-function pickOption(field) {
-  return Array.isArray(field)
-    ? field[Math.floor(Math.random() * field.length)]
-    : field
-}
-
-/**
  * Find the IDM_PROGRESSION entry for a given target IDM.
  * Falls back to the last entry if targetIDM >= all range upper bounds.
  */
@@ -136,17 +126,27 @@ function weightedPickOrder(pool, prevIntervalType, targetIDM) {
 
 /**
  * Build one candidate sequence of `totalNotes` notes from `pool`.
+ * Enforces maxS (max leap count) during construction — once maxS leaps are
+ * placed, only step intervals are eligible for remaining notes.
  * Returns null if fewer than 3 notes could be placed.
  */
-function buildSequence(totalNotes, pool, effectiveLow, effectiveHigh, targetIDM = 5) {
+function buildSequence(totalNotes, pool, effectiveLow, effectiveHigh, targetIDM = 5, maxS = Infinity) {
   const tonicMidi = pickTonic(effectiveLow, effectiveHigh)
   const tonicNote = midiToNote(tonicMidi)
   const sequence  = [{ note: tonicNote }]
   let currentMidi = tonicMidi
   let prevIntervalType = null
+  let leapCount = 0
 
   for (let i = 1; i < totalNotes; i++) {
-    const ordered = weightedPickOrder(pool, prevIntervalType, targetIDM)
+    // Once maxS leaps are used, restrict to steps only
+    const stepOnly = leapCount >= maxS
+    const eligible = stepOnly
+      ? pool.filter(item => STEP_INTERVALS.has(item.interval_type))
+      : pool
+    const activePool = eligible.length > 0 ? eligible : pool
+
+    const ordered = weightedPickOrder(activePool, prevIntervalType, targetIDM)
     let placed = false
     for (const item of ordered) {
       const nextMidi = applyInterval(
@@ -161,6 +161,7 @@ function buildSequence(totalNotes, pool, effectiveLow, effectiveHigh, targetIDM 
         })
         currentMidi = nextMidi
         prevIntervalType = item.interval_type
+        if (!STEP_INTERVALS.has(item.interval_type)) leapCount++
         placed = true
         break
       }
@@ -194,12 +195,7 @@ export function generateSequence({ targetIDM, availableItems, lowMidi, highMidi 
   const effectiveHigh = highMidi ?? DEFAULT_HIGH_MIDI
 
   const progression = findProgression(targetIDM)
-  const { allowedIntervals, allowedDirections, maxSnorm, maxC, maxX } = progression
-
-  // Resolve chunksN and notesPerChunk (may each be a number or [option1, option2])
-  const chunksN      = pickOption(progression.chunksN)
-  const notesPerChunk = pickOption(progression.notesPerChunk)
-  const totalNotes   = chunksN * notesPerChunk
+  const { allowedIntervals, allowedDirections, minNotes, maxNotes, maxS, maxC, maxX } = progression
 
   // Filter pool to only progression-allowed intervals and directions
   let pool = availableItems.filter(item =>
@@ -216,16 +212,18 @@ export function generateSequence({ targetIDM, availableItems, lowMidi, highMidi 
   let bestIDMDist  = Infinity
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const sequence = buildSequence(totalNotes, pool, effectiveLow, effectiveHigh, targetIDM)
+    // Pick a random sequence length within the progression tier's range
+    const totalNotes = minNotes + Math.floor(Math.random() * (maxNotes - minNotes + 1))
+
+    const sequence = buildSequence(totalNotes, pool, effectiveLow, effectiveHigh, targetIDM, maxS)
     if (!sequence) continue
 
     const tonicName = sequence[0].note.slice(0, -1)
     const idmComponents = computeIDM({ sequence, tonic: tonicName, currentIDM: targetIDM })
 
-    // Check S_norm / C / X constraints (small tolerance to handle float edge cases)
-    if (idmComponents.s_norm > maxSnorm + 0.05) continue
-    if (idmComponents.C      > maxC     + 0.05) continue
-    if (idmComponents.X      > maxX     + 0.05) continue
+    // S is enforced during build; only check C and X post-hoc
+    if (idmComponents.C > maxC + 0.05) continue
+    if (idmComponents.X > maxX + 0.05) continue
 
     const idmDist = Math.abs(idmComponents.idm - targetIDM)
 
@@ -243,7 +241,7 @@ export function generateSequence({ targetIDM, availableItems, lowMidi, highMidi 
       { interval_type: 'M2', direction: 'ascending' },
       { interval_type: 'M2', direction: 'descending' },
     ]
-    let sequence = buildSequence(Math.max(totalNotes, 3), fallbackPool, effectiveLow, effectiveHigh, targetIDM)
+    let sequence = buildSequence(Math.max(minNotes, 3), fallbackPool, effectiveLow, effectiveHigh, targetIDM, maxS)
 
     // If still null, manually construct a minimum 2-note sequence
     if (!sequence) {

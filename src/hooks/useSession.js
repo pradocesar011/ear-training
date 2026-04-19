@@ -211,7 +211,7 @@ export function useSession(userId) {
         tempo,
         idm:               idmComponents.idm,
         d_bar:             idmComponents.dBar,
-        s:                 idmComponents.s_norm,
+        s:                 idmComponents.S,
         c:                 idmComponents.C,
         x:                 idmComponents.X,
         n_chunks:          idmComponents.nChunks,

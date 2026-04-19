@@ -75,23 +75,17 @@ export const IDM_CONSTANT_K = D_DENSITY + RHYTHMIC_COMPLEXITY  // always 1.0
 
 // ── Chunk system (Cornelius & Brown, 2020) ────────────────────────────────────
 
-export const CHUNK = {
-  MEMORY_LIMIT: 5,   // N / 5 denominator (musical working memory)
-}
+// Working memory limit for N normalisation (N / WORKING_MEMORY_CHUNK_LIMIT)
+export const WORKING_MEMORY_CHUNK_LIMIT = 5
 
-// Silence between chunks scales with IDM (more processing time at lower levels)
-export const CHUNK_SILENCE_DURATIONS = [
-  { maxIDM: 3.0,      beats: 1.00 },   // one quarter note
-  { maxIDM: 6.0,      beats: 0.50 },   // one eighth note
-  { maxIDM: Infinity, beats: 0.25 },   // one sixteenth note
-]
-
-// Notes per chunk increases as IDM rises
-export const CHUNK_SIZE_BY_IDM = [
-  { maxIDM: 3.0,      notesPerChunk: 2 },
-  { maxIDM: 6.0,      notesPerChunk: 3 },
-  { maxIDM: 9.0,      notesPerChunk: 4 },
-  { maxIDM: Infinity, notesPerChunk: 5 },
+// Chunk rules based on sequence length.
+// silenceEnabled: whether to insert silence between chunks during playback.
+// notesPerChunk:  grouping size (null = no chunking; use 2 as cognitive-unit estimate for N).
+// silenceBeats:   half-beat pause inserted between chunks.
+export const CHUNK_RULES = [
+  { maxNotes: 5,        silenceEnabled: false, notesPerChunk: null, silenceBeats: 0   },
+  { maxNotes: 8,        silenceEnabled: true,  notesPerChunk: 2,    silenceBeats: 0.5 },
+  { maxNotes: Infinity, silenceEnabled: true,  notesPerChunk: 3,    silenceBeats: 0.5 },
 ]
 
 // ── Allowed hearings per IDM range (Cornelius & Brown, 2020) ─────────────────
@@ -167,80 +161,54 @@ export const INTERVAL_INTRODUCTION_ORDER = [
   { interval: 'm6', direction: 'descending' },
 ]
 
-// ── IDM progression ranges (spec section 5) ──────────────────────────────────
-// Defines exact generation constraints per IDM range.
-// chunksN and notesPerChunk may be a single number or an array of two options.
+// ── IDM progression tiers ─────────────────────────────────────────────────────
+// S is the raw leap count (third or larger). With S dominant, tiers are wider
+// and calibrated to achievable IDM ranges under the new formula.
+//
+// minNotes / maxNotes: total sequence length (tonic + intervals).
+// maxS:               maximum leap count allowed during generation.
+// maxC / maxX:        post-generation constraint checks (proportion, 0–1).
 
 export const IDM_PROGRESSION = [
   {
-    range: [1.0, 1.5],
-    allowedIntervals:   ['M2', 'm2'],
-    allowedDirections:  ['ascending'],
-    maxSnorm: 0.2, maxC: 0.0, maxX: 0.0,
-    chunksN: 2, notesPerChunk: 2,
+    // Practical IDM ~2.2–2.9: steps only, very short, all ascending or mixed
+    range: [1.0, 3.0],
+    allowedIntervals:  ['M2', 'm2'],
+    allowedDirections: ['ascending', 'descending'],
+    minNotes: 2, maxNotes: 4, maxS: 0,
+    maxC: 0.5, maxX: 0.0,
   },
   {
-    range: [1.5, 2.0],
-    allowedIntervals:   ['M2', 'm2', 'P5'],
-    allowedDirections:  ['ascending'],
-    maxSnorm: 0.3, maxC: 0.0, maxX: 0.0,
-    chunksN: 2, notesPerChunk: 2,
+    // Practical IDM ~3.0–4.5: one perfect leap introduced, short-medium sequences
+    range: [3.0, 4.5],
+    allowedIntervals:  ['M2', 'm2', 'P5', 'P4', 'P8'],
+    allowedDirections: ['ascending', 'descending'],
+    minNotes: 3, maxNotes: 6, maxS: 1,
+    maxC: 0.5, maxX: 0.0,
   },
   {
-    range: [2.0, 2.5],
-    allowedIntervals:   ['M2', 'm2', 'P5', 'P4', 'P8'],
-    allowedDirections:  ['ascending'],
-    maxSnorm: 0.4, maxC: 0.0, maxX: 0.0,
-    chunksN: 2, notesPerChunk: 2,
+    // Practical IDM ~4.5–6.0: thirds introduced, up to two leaps
+    range: [4.5, 6.0],
+    allowedIntervals:  ['M2', 'm2', 'P5', 'P4', 'P8', 'M3', 'm3'],
+    allowedDirections: ['ascending', 'descending'],
+    minNotes: 4, maxNotes: 8, maxS: 2,
+    maxC: 0.5, maxX: 0.0,
   },
   {
-    range: [2.5, 3.0],
-    allowedIntervals:   ['M2', 'm2', 'P5', 'P4', 'P8'],
-    allowedDirections:  ['ascending', 'descending'],
-    maxSnorm: 0.4, maxC: 0.0, maxX: 0.0,
-    chunksN: [2, 3], notesPerChunk: 2,
-  },
-  {
-    range: [3.0, 4.0],
-    allowedIntervals:   ['M2', 'm2', 'P5', 'P4', 'P8'],
-    allowedDirections:  ['ascending', 'descending'],
-    maxSnorm: 0.5, maxC: 0.25, maxX: 0.0,
-    chunksN: 3, notesPerChunk: 2,
-  },
-  {
-    range: [4.0, 5.0],
-    allowedIntervals:   ['M2', 'm2', 'P5', 'P4', 'P8', 'M3'],
-    allowedDirections:  ['ascending', 'descending'],
-    maxSnorm: 0.6, maxC: 0.5, maxX: 0.0,
-    chunksN: 3, notesPerChunk: 3,
-  },
-  {
-    range: [5.0, 6.0],
-    allowedIntervals:   ['M2', 'm2', 'P5', 'P4', 'P8', 'M3', 'm3'],
-    allowedDirections:  ['ascending', 'descending'],
-    maxSnorm: 0.7, maxC: 0.5, maxX: 0.0,
-    chunksN: [3, 4], notesPerChunk: 3,
-  },
-  {
+    // Practical IDM ~6.0–8.0: dissonant intervals, up to four leaps
     range: [6.0, 8.0],
-    allowedIntervals:   ['M2', 'm2', 'P5', 'P4', 'P8', 'M3', 'm3', 'TT', 'M7', 'm7'],
-    allowedDirections:  ['ascending', 'descending'],
-    maxSnorm: 0.8, maxC: 0.75, maxX: 0.4,
-    chunksN: 4, notesPerChunk: [3, 4],
+    allowedIntervals:  ['M2', 'm2', 'P5', 'P4', 'P8', 'M3', 'm3', 'TT', 'M7', 'm7'],
+    allowedDirections: ['ascending', 'descending'],
+    minNotes: 6, maxNotes: 10, maxS: 4,
+    maxC: 0.75, maxX: 0.4,
   },
   {
-    range: [8.0, 10.0],
-    allowedIntervals:   ['M2', 'm2', 'P5', 'P4', 'P8', 'M3', 'm3', 'TT', 'M7', 'm7', 'M6'],
-    allowedDirections:  ['ascending', 'descending'],
-    maxSnorm: 0.9, maxC: 1.0, maxX: 0.7,
-    chunksN: [4, 5], notesPerChunk: 4,
-  },
-  {
-    range: [10.0, 12.0],
-    allowedIntervals:   ['M2', 'm2', 'P5', 'P4', 'P8', 'M3', 'm3', 'TT', 'M7', 'm7', 'M6', 'm6'],
-    allowedDirections:  ['ascending', 'descending'],
-    maxSnorm: 1.0, maxC: 1.0, maxX: 1.0,
-    chunksN: 5, notesPerChunk: [4, 5],
+    // Practical IDM ~8.0–12.0: all intervals, long sequences, many leaps
+    range: [8.0, 12.0],
+    allowedIntervals:  ['M2', 'm2', 'P5', 'P4', 'P8', 'M3', 'm3', 'TT', 'M7', 'm7', 'M6', 'm6'],
+    allowedDirections: ['ascending', 'descending'],
+    minNotes: 8, maxNotes: 12, maxS: 6,
+    maxC: 1.0, maxX: 1.0,
   },
 ]
 

@@ -4,7 +4,7 @@ import PianoKeyboard from '../components/PianoKeyboard.jsx'
 import HearingsIndicator from '../components/HearingsIndicator.jsx'
 import ProgressIndicator from '../components/ProgressIndicator.jsx'
 import { getMajorScaleNotes, getTonicTriad } from '../engines/sequenceGenerator.js'
-import { TONAL_CONTEXT_TEMPO, COLORS, CHUNK } from '../config/constants.js'
+import { TONAL_CONTEXT_TEMPO, COLORS, CHUNK_RULES, WORKING_MEMORY_CHUNK_LIMIT } from '../config/constants.js'
 import { TONAL_MODES, getStoredTonalMode, storeTonalMode, getStoredCheatMode } from '../lib/utils.js'
 
 function delay(ms) { return new Promise(r => setTimeout(r, ms)) }
@@ -109,7 +109,13 @@ export default function ExerciseScreen({
     onPlay()
     audio.stopAll()
     const notes = exercise.sequence.map(s => s.note)
-    await audio.playSequence(notes, exercise.tempo)
+    const rule = CHUNK_RULES.find(r => notes.length <= r.maxNotes) ?? CHUNK_RULES[CHUNK_RULES.length - 1]
+    await audio.playSequence(
+      notes,
+      exercise.tempo,
+      rule.silenceEnabled ? rule.notesPerChunk : 0,
+      rule.silenceEnabled ? rule.silenceBeats  : 0,
+    )
   }
 
   // ── End session (with confirm) ────────────────────────────────────────────
@@ -231,8 +237,8 @@ export default function ExerciseScreen({
 
       {/* ── Cheat Mode Panel ────────────────────────────────────────────── */}
       {cheatMode && exercise && (() => {
-        const { idm, dBar, s_norm, C, X, nChunks } = exercise.idmComponents
-        const nOver5 = nChunks / CHUNK.MEMORY_LIMIT
+        const { idm, dBar, S, C, X, nChunks } = exercise.idmComponents
+        const nOver5 = nChunks / WORKING_MEMORY_CHUNK_LIMIT
         const intervals = exercise.sequence.filter(s => s.interval)
         return (
           <div className="w-full max-w-2xl mx-auto bg-zinc-900/80 border border-orange-800/50
@@ -241,13 +247,13 @@ export default function ExerciseScreen({
 
             {/* Formula symbolic */}
             <p className="text-zinc-400">
-              IDM = <span className="text-zinc-200">d̄</span> + <span className="text-zinc-200">S_norm</span> + <span className="text-zinc-200">C</span> + <span className="text-zinc-200">X</span> + <span className="text-zinc-200">N/5</span> + <span className="text-zinc-200">K</span>
+              IDM = <span className="text-zinc-200">d̄</span> + <span className="text-zinc-200">S</span> + <span className="text-zinc-200">C</span> + <span className="text-zinc-200">X</span> + <span className="text-zinc-200">N/5</span> + <span className="text-zinc-200">K</span>
             </p>
 
             {/* Formula with numbers */}
             <p className="text-zinc-300">
               IDM = <span className="text-cyan-300">{dBar.toFixed(2)}</span>
-              {' + '}<span className="text-cyan-300">{s_norm.toFixed(2)}</span>
+              {' + '}<span className="text-cyan-300">{S}</span>
               {' + '}<span className="text-cyan-300">{C.toFixed(2)}</span>
               {' + '}<span className="text-cyan-300">{X.toFixed(2)}</span>
               {' + '}<span className="text-cyan-300">{nOver5.toFixed(2)}</span>

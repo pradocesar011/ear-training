@@ -18,8 +18,8 @@
 import {
   INTERVAL_DI,
   DIRECTION_FDI,
-  CHUNK,
-  CHUNK_SIZE_BY_IDM,
+  CHUNK_RULES,
+  WORKING_MEMORY_CHUNK_LIMIT,
   HEARINGS_TABLE,
   IDM_CONSTANT_K,
   GROUP_INDEX,
@@ -69,16 +69,14 @@ export function computeDBar(intervals) {
 }
 
 /**
- * 4.2 — S_norm (normalized melodic leap proportion)
+ * 4.2 — S (raw melodic leap count)
  * A leap = any interval that is a third or larger (not m2 or M2).
- * S_norm = leaps / (n − 1) where n − 1 = total number of intervals.
- * Ranges 0.0–1.0.
+ * S is the dominant difficulty variable — even a few leaps push the IDM up significantly.
  */
-export function computeSNorm(intervals) {
+export function computeS(intervals) {
   if (!intervals.length) return 0
   const steps = new Set(['m2', 'M2'])
-  const leaps = intervals.filter(({ interval }) => !steps.has(interval)).length
-  return leaps / intervals.length
+  return intervals.filter(({ interval }) => !steps.has(interval)).length
 }
 
 /**
@@ -113,17 +111,20 @@ export function computeX(notes, tonicNote) {
 
 /**
  * 4.5 — N (number of chunks) and N/5
- * Chunk size is determined by CHUNK_SIZE_BY_IDM table.
+ * Chunk size is determined by sequence length via CHUNK_RULES.
  * n = total note count (including tonic).
+ *
+ * For sequences with no chunking (≤ 5 notes), we estimate 2 notes per
+ * cognitive unit to still produce a meaningful N value.
  */
-export function computeNChunks(n, currentIDM) {
-  const entry = CHUNK_SIZE_BY_IDM.find(e => currentIDM <= e.maxIDM)
-    ?? CHUNK_SIZE_BY_IDM[CHUNK_SIZE_BY_IDM.length - 1]
-  return Math.ceil(n / entry.notesPerChunk)
+export function computeNChunks(n) {
+  const rule = CHUNK_RULES.find(r => n <= r.maxNotes) ?? CHUNK_RULES[CHUNK_RULES.length - 1]
+  const chunkSize = rule.notesPerChunk ?? 2
+  return Math.ceil(n / chunkSize)
 }
 
-export function computeNOver5(n, currentIDM) {
-  return computeNChunks(n, currentIDM) / CHUNK.MEMORY_LIMIT
+export function computeNOver5(n) {
+  return computeNChunks(n) / WORKING_MEMORY_CHUNK_LIMIT
 }
 
 /**
@@ -141,8 +142,8 @@ export function computeHearings(idm) {
  * @param {Array<{note: string, interval?: string, direction?: string}>} params.sequence
  *   First element is the tonic note (no interval). Remaining elements have interval + direction.
  * @param {string}  params.tonic      - e.g. 'C'
- * @param {number}  params.currentIDM - IDM used to determine chunk size
- * @returns {{ idm, dBar, s_norm, C, X, nChunks, dDensity, R, H }}
+ * @param {number}  params.currentIDM - used only to determine allowed hearings (H)
+ * @returns {{ idm, dBar, S, C, X, nChunks, dDensity, R, H }}
  */
 export function computeIDM({ sequence, tonic, currentIDM }) {
   const intervals = sequence
@@ -152,18 +153,17 @@ export function computeIDM({ sequence, tonic, currentIDM }) {
   const notes = sequence.map(s => s.note)
 
   const dBar    = computeDBar(intervals)
-  const s_norm  = computeSNorm(intervals)
+  const S       = computeS(intervals)
   const C       = computeC(intervals)
   const X       = computeX(notes, tonic)
-  const nChunks = computeNChunks(notes.length, currentIDM)
-  const nOver5  = nChunks / CHUNK.MEMORY_LIMIT
+  const nChunks = computeNChunks(notes.length)
+  const nOver5  = nChunks / WORKING_MEMORY_CHUNK_LIMIT
   const H       = computeHearings(currentIDM)
 
   // K = D/D_ref + R = IDM_CONSTANT_K (fixed at 1.0; tempo = 60 BPM, R = 0)
-  const idm = dBar + s_norm + C + X + nOver5 + IDM_CONSTANT_K
+  const idm = dBar + S + C + X + nOver5 + IDM_CONSTANT_K
 
-  // dDensity and R are stored for record-keeping; both are now fixed constants
-  return { idm, dBar, s_norm, C, X, nChunks, dDensity: IDM_CONSTANT_K, R: 0, H }
+  return { idm, dBar, S, C, X, nChunks, dDensity: IDM_CONSTANT_K, R: 0, H }
 }
 
 /**

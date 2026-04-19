@@ -48,17 +48,37 @@ export function useAudio() {
     samplerRef.current.triggerAttackRelease(note, duration, Tone.now())
   }, [ready, ensureStarted])
 
-  const playSequence = useCallback(async (notes, tempo) => {
+  /**
+   * Play a sequence of notes at the given tempo (BPM).
+   *
+   * When chunkSize > 1 and silenceBeats > 0, a half-beat pause is inserted
+   * between each group of chunkSize notes.
+   *
+   * Returns total playback duration in seconds.
+   */
+  const playSequence = useCallback(async (notes, tempo, chunkSize = 0, silenceBeats = 0) => {
     await ensureStarted()
     if (!samplerRef.current || !ready) return
 
     const secondsPerBeat = 60 / tempo
     const now = Tone.now()
-    notes.forEach((note, i) => {
-      samplerRef.current.triggerAttackRelease(note, '4n', now + i * secondsPerBeat)
-    })
-    // Return total duration so callers can wait
-    return notes.length * secondsPerBeat
+
+    if (chunkSize > 1 && silenceBeats > 0) {
+      // Schedule notes with inter-chunk silence
+      notes.forEach((note, i) => {
+        const chunkIdx = Math.floor(i / chunkSize)
+        const t = now + (i + chunkIdx * silenceBeats) * secondsPerBeat
+        samplerRef.current.triggerAttackRelease(note, '4n', t)
+      })
+      const numChunks = Math.ceil(notes.length / chunkSize)
+      return (notes.length + (numChunks - 1) * silenceBeats) * secondsPerBeat
+    } else {
+      // Play continuously
+      notes.forEach((note, i) => {
+        samplerRef.current.triggerAttackRelease(note, '4n', now + i * secondsPerBeat)
+      })
+      return notes.length * secondsPerBeat
+    }
   }, [ready, ensureStarted])
 
   const playTriad = useCallback(async (notes) => {
