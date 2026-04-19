@@ -89,20 +89,66 @@ function findProgression(targetIDM) {
   ) ?? IDM_PROGRESSION[IDM_PROGRESSION.length - 1]
 }
 
+// ── Weighted interval selection ───────────────────────────────────────────────
+
+const STEP_INTERVALS = new Set(['m2', 'M2'])
+const PERFECT_LEAPS  = new Set(['P4', 'P5'])
+
+/**
+ * Weight for a given pool item based on IDM and the previous interval type.
+ *
+ * At low IDM (≤ 2.5):  steps are heavily favored, perfect leaps are rare.
+ * By IDM 5+:           all intervals are equally weighted.
+ * Consecutive P4/P5:   strongly penalized at any IDM.
+ */
+function intervalWeight(intervalType, prevIntervalType, targetIDM) {
+  // biasFactor: 1 at IDM=1, 0 at IDM=5
+  const biasFactor = Math.max(0, (5 - targetIDM) / 4)
+
+  let weight = 1.0
+  if (STEP_INTERVALS.has(intervalType)) {
+    weight *= 1 + 2 * biasFactor            // up to 3× for steps at low IDM
+  } else if (PERFECT_LEAPS.has(intervalType)) {
+    weight *= Math.max(0.15, 1 - biasFactor) // down to 0.15× for P4/P5 at low IDM
+  }
+
+  // Penalize consecutive perfect leaps regardless of IDM
+  if (PERFECT_LEAPS.has(intervalType) && PERFECT_LEAPS.has(prevIntervalType)) {
+    weight *= 0.1
+  }
+
+  return Math.max(weight, 0.01) // never zero
+}
+
+/**
+ * Return pool items sorted by weighted-random priority (Gumbel-max trick).
+ * Higher weight → more likely to appear first.
+ */
+function weightedPickOrder(pool, prevIntervalType, targetIDM) {
+  return [...pool]
+    .map(item => ({
+      item,
+      key: -Math.log(Math.random()) / intervalWeight(item.interval_type, prevIntervalType, targetIDM),
+    }))
+    .sort((a, b) => a.key - b.key)
+    .map(x => x.item)
+}
+
 /**
  * Build one candidate sequence of `totalNotes` notes from `pool`.
  * Returns null if fewer than 3 notes could be placed.
  */
-function buildSequence(totalNotes, pool, effectiveLow, effectiveHigh) {
+function buildSequence(totalNotes, pool, effectiveLow, effectiveHigh, targetIDM = 5) {
   const tonicMidi = pickTonic(effectiveLow, effectiveHigh)
   const tonicNote = midiToNote(tonicMidi)
   const sequence  = [{ note: tonicNote }]
   let currentMidi = tonicMidi
+  let prevIntervalType = null
 
   for (let i = 1; i < totalNotes; i++) {
-    const shuffled = [...pool].sort(() => Math.random() - 0.5)
+    const ordered = weightedPickOrder(pool, prevIntervalType, targetIDM)
     let placed = false
-    for (const item of shuffled) {
+    for (const item of ordered) {
       const nextMidi = applyInterval(
         currentMidi, item.interval_type, item.direction,
         effectiveLow, effectiveHigh
@@ -114,6 +160,7 @@ function buildSequence(totalNotes, pool, effectiveLow, effectiveHigh) {
           direction: item.direction,
         })
         currentMidi = nextMidi
+        prevIntervalType = item.interval_type
         placed = true
         break
       }
@@ -169,7 +216,7 @@ export function generateSequence({ targetIDM, availableItems, lowMidi, highMidi 
   let bestIDMDist  = Infinity
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const sequence = buildSequence(totalNotes, pool, effectiveLow, effectiveHigh)
+    const sequence = buildSequence(totalNotes, pool, effectiveLow, effectiveHigh, targetIDM)
     if (!sequence) continue
 
     const tonicName = sequence[0].note.slice(0, -1)
@@ -194,10 +241,34 @@ export function generateSequence({ targetIDM, availableItems, lowMidi, highMidi 
   if (!bestResult) {
     const fallbackPool = pool.length > 0 ? pool : [
       { interval_type: 'M2', direction: 'ascending' },
-      { interval_type: 'P5', direction: 'ascending' },
+      { interval_type: 'M2', direction: 'descending' },
     ]
-    const sequence = buildSequence(Math.max(totalNotes, 3), fallbackPool, effectiveLow, effectiveHigh)
-      ?? [{ note: midiToNote(pickTonic(effectiveLow, effectiveHigh)) }]
+    let sequence = buildSequence(Math.max(totalNotes, 3), fallbackPool, effectiveLow, effectiveHigh, targetIDM)
+
+    // If still null, manually construct a minimum 2-note sequence
+    if (!sequence) {
+      const tonicMidi = pickTonic(effectiveLow, effectiveHigh)
+      outer: for (const fb of fallbackPool) {
+        for (const dir of [fb.direction, fb.direction === 'ascending' ? 'descending' : 'ascending']) {
+          const nextMidi = applyInterval(tonicMidi, fb.interval_type, dir, effectiveLow, effectiveHigh)
+          if (nextMidi !== null) {
+            sequence = [
+              { note: midiToNote(tonicMidi) },
+              { note: midiToNote(nextMidi), interval: fb.interval_type, direction: dir },
+            ]
+            break outer
+          }
+        }
+      }
+      // Absolute worst case: clamp a M2 up within range
+      if (!sequence) {
+        const nextMidi = Math.min(tonicMidi + 2, effectiveHigh)
+        sequence = [
+          { note: midiToNote(tonicMidi) },
+          { note: midiToNote(nextMidi), interval: 'M2', direction: 'ascending' },
+        ]
+      }
+    }
 
     const tonicName = sequence[0].note.slice(0, -1)
     bestResult = {

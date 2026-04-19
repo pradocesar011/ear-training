@@ -41,7 +41,7 @@ export default function ExerciseScreen({
   const canPlay       = hearingsLeft > 0 && audio.ready && !keyboardLocked
   const tonic         = exercise?.tonic ?? 'C'
 
-  const tonicHighlight = [`${tonic}3`, `${tonic}4`]
+  const tonicHighlight = exercise?.sequence?.[0]?.note ? [exercise.sequence[0].note] : []
 
   // ── Mode helpers ──────────────────────────────────────────────────────────
   function handleModeChange(mode) {
