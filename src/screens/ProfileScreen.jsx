@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase.js'
 import { useAppContext } from '../context/AppContext.jsx'
 import LanguageSelector from '../components/LanguageSelector.jsx'
-import { formatDuration, storeIDM } from '../lib/utils.js'
+import { formatDuration, storeIDM, getStoredCheatMode, storeCheatMode } from '../lib/utils.js'
 
 const INITIAL_IDM = 2.0
 
@@ -18,6 +18,7 @@ export default function ProfileScreen() {
   const [showCodeEntry, setShowCodeEntry] = useState(false)
   const [codeInput,     setCodeInput]     = useState('')
   const [codeError,     setCodeError]     = useState(false)
+  const [cheatMode,     setCheatMode]     = useState(getStoredCheatMode)
 
   useEffect(() => {
     if (user.userId) fetchStats()
@@ -197,6 +198,38 @@ export default function ProfileScreen() {
         <div className="mt-3" style={{ paddingTop: '10px', paddingBottom: '10px' }}>
           <LanguageSelector onChange={user.changeLanguage} />
         </div>
+      </Card>
+
+      {/* ── Cheat Mode ────────────────────────────────────────────────────── */}
+      <Card>
+        <div className="flex items-center justify-between">
+          <div>
+            <SectionLabel>Developer</SectionLabel>
+            <p className="text-white text-sm font-medium mt-1">Cheat Mode</p>
+            <p className="text-zinc-500 text-xs leading-snug" style={{ paddingTop: '6px' }}>
+              Shows IDM breakdown and the expected answer during exercises.
+            </p>
+          </div>
+          <button
+            onClick={() => { const next = !cheatMode; setCheatMode(next); storeCheatMode(next) }}
+            className={`relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2
+              transition-colors duration-200 focus:outline-none ml-4
+              ${cheatMode ? 'bg-cyan-600 border-cyan-600' : 'bg-zinc-700 border-zinc-700'}`}
+            role="switch"
+            aria-checked={cheatMode}
+          >
+            <span
+              className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm
+                transition-transform duration-200 mt-0.5
+                ${cheatMode ? 'translate-x-5' : 'translate-x-0.5'}`}
+            />
+          </button>
+        </div>
+        {cheatMode && (
+          <p className="text-orange-400 text-xs font-mono border-t border-zinc-800" style={{ paddingTop: '10px', marginTop: '10px' }}>
+            Cheat mode ON — answers visible during training.
+          </p>
+        )}
       </Card>
 
       {/* ── Statistics ────────────────────────────────────────────────────── */}

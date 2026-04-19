@@ -4,8 +4,8 @@ import PianoKeyboard from '../components/PianoKeyboard.jsx'
 import HearingsIndicator from '../components/HearingsIndicator.jsx'
 import ProgressIndicator from '../components/ProgressIndicator.jsx'
 import { getMajorScaleNotes, getTonicTriad } from '../engines/sequenceGenerator.js'
-import { TONAL_CONTEXT_TEMPO, COLORS } from '../config/constants.js'
-import { TONAL_MODES, getStoredTonalMode, storeTonalMode } from '../lib/utils.js'
+import { TONAL_CONTEXT_TEMPO, COLORS, CHUNK } from '../config/constants.js'
+import { TONAL_MODES, getStoredTonalMode, storeTonalMode, getStoredCheatMode } from '../lib/utils.js'
 
 function delay(ms) { return new Promise(r => setTimeout(r, ms)) }
 
@@ -29,6 +29,7 @@ export default function ExerciseScreen({
   const [tonalMode,       setTonalMode]        = useState(getStoredTonalMode)
   const [showModeMenu,    setShowModeMenu]     = useState(false)
   const [endConfirm,      setEndConfirm]       = useState(false)
+  const cheatMode = getStoredCheatMode()
 
   // Ref used to interrupt the async playTonalContext loop on stop
   const contextActiveRef = useRef(false)
@@ -227,6 +228,49 @@ export default function ExerciseScreen({
           </button>
         )}
       </div>
+
+      {/* ── Cheat Mode Panel ────────────────────────────────────────────── */}
+      {cheatMode && exercise && (() => {
+        const { idm, dBar, s_norm, C, X, nChunks } = exercise.idmComponents
+        const nOver5 = nChunks / CHUNK.MEMORY_LIMIT
+        const intervals = exercise.sequence.filter(s => s.interval)
+        return (
+          <div className="w-full max-w-2xl mx-auto bg-zinc-900/80 border border-orange-800/50
+                          rounded-2xl px-4 py-3 font-mono text-xs flex flex-col gap-2" style={{ padding: '12px' }}>
+            <p className="text-orange-400 font-semibold text-xs uppercase tracking-widest">Cheat Mode</p>
+
+            {/* Formula symbolic */}
+            <p className="text-zinc-400">
+              IDM = <span className="text-zinc-200">d̄</span> + <span className="text-zinc-200">S_norm</span> + <span className="text-zinc-200">C</span> + <span className="text-zinc-200">X</span> + <span className="text-zinc-200">N/5</span> + <span className="text-zinc-200">K</span>
+            </p>
+
+            {/* Formula with numbers */}
+            <p className="text-zinc-300">
+              IDM = <span className="text-cyan-300">{dBar.toFixed(2)}</span>
+              {' + '}<span className="text-cyan-300">{s_norm.toFixed(2)}</span>
+              {' + '}<span className="text-cyan-300">{C.toFixed(2)}</span>
+              {' + '}<span className="text-cyan-300">{X.toFixed(2)}</span>
+              {' + '}<span className="text-cyan-300">{nOver5.toFixed(2)}</span>
+              {' + '}<span className="text-cyan-300">1.00</span>
+              {' = '}<span className="text-orange-300 font-bold">{idm.toFixed(2)}</span>
+            </p>
+
+            {/* Pattern answer */}
+            <div className="border-t border-zinc-800 pt-2 flex flex-wrap gap-1" style={{ paddingTop: '8px' }}>
+              <span className="px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
+                {exercise.sequence[0]?.note} <span className="text-zinc-500">(tonic)</span>
+              </span>
+              {intervals.map((s, i) => (
+                <span key={i} className="px-2 py-0.5 rounded bg-zinc-800 text-zinc-200">
+                  {s.note}
+                  <span className="text-cyan-400"> {s.interval}</span>
+                  <span className="text-zinc-500"> {s.direction === 'ascending' ? '↑' : '↓'}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )
+      })()}
 
       {/* ── Progress + feedback — vertically centered in remaining space ─── */}
       <div className="flex-1 flex flex-col items-center justify-center gap-3">

@@ -32,6 +32,14 @@ export function storeTonalMode(mode) {
   try { localStorage.setItem(LS_TONAL_MODE_KEY, mode) } catch {}
 }
 
+const LS_CHEAT_MODE_KEY     = 'ear_cheat_mode'
+export function getStoredCheatMode() {
+  try { return localStorage.getItem(LS_CHEAT_MODE_KEY) === 'true' } catch { return false }
+}
+export function storeCheatMode(enabled) {
+  try { localStorage.setItem(LS_CHEAT_MODE_KEY, String(enabled)) } catch {}
+}
+
 const LS_ACTIVE_OCTAVES_KEY = 'ear_active_octaves'
 export function getStoredActiveOctaves() {
   try {
