@@ -56,13 +56,13 @@ export const ERROR_PENALTY = {
 // ── DDA thresholds (Cornelius & Brown, 2020) ─────────────────────────────────
 
 export const DDA = {
-  MASTERY_PRECISION:         0.80,   // precision ≥ 80% triggers IDM +1
-  MASTERY_CONSECUTIVE_WINS:  3,      // must hold for 3 consecutive sessions
-  OVERLOAD_PRECISION:        0.50,   // precision ≤ 50% triggers IDM -1
-  OVERLOAD_CONSECUTIVE_ERRORS: 3,    // 3 consecutive errors also trigger IDM -1
-  IDM_MIN:                   1.0,
-  IDM_MAX:                   12.0,
-  IDM_STEP:                  1.0,
+  MASTERY_PRECISION:           0.80,  // precision ≥ 80% triggers IDM +0.5
+  MASTERY_CONSECUTIVE_WINS:    2,     // must hold for 2 consecutive exercises (window + current = 3 total)
+  OVERLOAD_PRECISION:          0.35,  // precision ≤ 35% triggers IDM -0.5 (was 0.50 — too hair-trigger on short seqs)
+  OVERLOAD_CONSECUTIVE_ERRORS: 3,     // 3 consecutive errors also trigger IDM -0.5
+  IDM_MIN:                     1.0,
+  IDM_MAX:                     12.0,
+  IDM_STEP:                    0.5,   // finer granularity; 2 overloads now needed to undo 1 mastery gain
 }
 
 // ── Fixed system constants (tempo and rhythm are fixed) ───────────────────────
