@@ -5,21 +5,61 @@ import { INTERVAL_INTRODUCTION_ORDER } from '../config/constants.js'
 import { Section } from './AdminDashboard.jsx'
 
 export default function AdminIntervals() {
-  const [srsItems, setSrsItems] = useState([])
-  const [loading,  setLoading]  = useState(true)
-  const [sortCol,  setSortCol]  = useState('error_rate')
-  const [sortDir,  setSortDir]  = useState('desc')
+  const [srsItems,        setSrsItems]        = useState([])
+  const [reviewAttempts,  setReviewAttempts]  = useState([])
+  const [exercises,       setExercises]       = useState([])
+  const [loading,         setLoading]         = useState(true)
+  const [sortCol,         setSortCol]         = useState('error_rate')
+  const [sortDir,         setSortDir]         = useState('desc')
 
   useEffect(() => { fetchData() }, [])
 
   async function fetchData() {
     setLoading(true)
-    const { data } = await supabase
-      .from('srs_items')
-      .select('interval_type, direction, correct_count, wrong_count, exposures, last_seen')
-    setSrsItems(data ?? [])
+    const [srsRes, raRes, exRes] = await Promise.all([
+      supabase
+        .from('srs_items')
+        .select('interval_type, direction, correct_count, wrong_count, exposures, last_seen'),
+      supabase
+        .from('review_attempts')
+        .select('id, exercise_id, attempt_number, precision, completed'),
+      supabase
+        .from('exercises')
+        .select('id, sequence'),
+    ])
+    setSrsItems(srsRes.data ?? [])
+    setReviewAttempts(raRes.data ?? [])
+    setExercises(exRes.data ?? [])
     setLoading(false)
   }
+
+  // Build a lookup: exercise_id → set of interval keys in that exercise's sequence
+  const exerciseIntervals = useMemo(() => {
+    const map = {}
+    exercises.forEach(ex => {
+      const keys = (ex.sequence ?? [])
+        .filter(s => s.interval && s.direction)
+        .map(s => `${s.interval}|${s.direction}`)
+      map[ex.id] = keys
+    })
+    return map
+  }, [exercises])
+
+  // Build review stats per interval key
+  const reviewStats = useMemo(() => {
+    const map = {}
+    reviewAttempts.forEach(ra => {
+      const keys = exerciseIntervals[ra.exercise_id] ?? []
+      keys.forEach(key => {
+        if (!map[key]) map[key] = { totalAttempts: 0, completedAttempts: 0, exSet: new Set() }
+        const s = map[key]
+        s.exSet.add(ra.exercise_id)
+        s.totalAttempts    += ra.attempt_number ?? 1
+        s.completedAttempts += ra.completed ? 1 : 0
+      })
+    })
+    return map
+  }, [reviewAttempts, exerciseIntervals])
 
   // Aggregate per interval + direction
   const rows = useMemo(() => {
@@ -49,24 +89,36 @@ export default function AdminIntervals() {
     })
 
     return Object.values(map).map(row => {
-      const total      = row.totalCorrect + row.totalWrong
-      const errorRate  = total > 0 ? row.totalWrong / total : 0
-      const meanHL     = row.halfLives.length
+      const key   = `${row.interval}|${row.direction}`
+      const total = row.totalCorrect + row.totalWrong
+      const errorRate = total > 0 ? row.totalWrong / total : 0
+      const meanHL    = row.halfLives.length
         ? row.halfLives.reduce((a, b) => a + b, 0) / row.halfLives.length
         : 0
-      const meanExp    = row.userCount > 0 ? row.totalExposures / row.userCount : 0
+      const meanExp   = row.userCount > 0 ? row.totalExposures / row.userCount : 0
+
+      const rs = reviewStats[key]
+      const reviewExCount    = rs ? rs.exSet.size : 0
+      const meanAttemptsToOk = rs && reviewExCount > 0
+        ? rs.totalAttempts / reviewExCount
+        : null
+      const reviewCompRate   = rs && reviewExCount > 0
+        ? rs.completedAttempts / reviewExCount
+        : null
 
       return {
-        interval:   row.interval,
-        direction:  row.direction,
-        error_rate: errorRate,
-        total_attempts: total,
-        mean_half_life: meanHL,
-        mean_exposures: meanExp,
-        user_count: row.userCount,
+        interval:             row.interval,
+        direction:            row.direction,
+        error_rate:           errorRate,
+        total_attempts:       total,
+        mean_half_life:       meanHL,
+        mean_exposures:       meanExp,
+        user_count:           row.userCount,
+        mean_attempts_to_ok:  meanAttemptsToOk,
+        review_comp_rate:     reviewCompRate,
       }
     })
-  }, [srsItems])
+  }, [srsItems, reviewStats])
 
   // Collect all (interval, direction) pairs from the introduction order
   // so we can show items not yet introduced across any user
@@ -92,13 +144,15 @@ export default function AdminIntervals() {
   }
 
   const COLS = [
-    { key: 'interval',       label: 'Interval'        },
-    { key: 'direction',      label: 'Direction'       },
-    { key: 'error_rate',     label: 'Error rate'      },
-    { key: 'total_attempts', label: 'Attempts'        },
-    { key: 'mean_half_life', label: 'Mean half-life'  },
-    { key: 'mean_exposures', label: 'Mean exposures'  },
-    { key: 'user_count',     label: 'Users'           },
+    { key: 'interval',            label: 'Interval'             },
+    { key: 'direction',           label: 'Direction'            },
+    { key: 'error_rate',          label: 'Error rate'           },
+    { key: 'total_attempts',      label: 'Attempts'             },
+    { key: 'mean_half_life',      label: 'Mean half-life'       },
+    { key: 'mean_exposures',      label: 'Mean exposures'       },
+    { key: 'user_count',          label: 'Users'                },
+    { key: 'mean_attempts_to_ok', label: 'Attempts to correct'  },
+    { key: 'review_comp_rate',    label: 'Review completion %'  },
   ]
 
   if (loading) {
@@ -153,11 +207,24 @@ export default function AdminIntervals() {
                     <td className="py-3 px-3 font-mono">{row.mean_half_life.toFixed(1)}d</td>
                     <td className="py-3 px-3 font-mono">{row.mean_exposures.toFixed(1)}</td>
                     <td className="py-3 px-3 text-zinc-500">{row.user_count}</td>
+                    <td className="py-3 px-3 font-mono text-zinc-400">
+                      {row.mean_attempts_to_ok != null ? row.mean_attempts_to_ok.toFixed(1) : '—'}
+                    </td>
+                    <td className="py-3 px-3 font-mono">
+                      {row.review_comp_rate != null ? (
+                        <span style={{
+                          color: row.review_comp_rate >= 0.7 ? '#10b981'
+                            : row.review_comp_rate >= 0.4 ? '#f97316' : '#ef4444',
+                        }}>
+                          {Math.round(row.review_comp_rate * 100)}%
+                        </span>
+                      ) : '—'}
+                    </td>
                   </tr>
                 )
               })}
               {!sorted.length && (
-                <tr><td colSpan={7} className="py-10 text-center text-zinc-500">No SRS data yet</td></tr>
+                <tr><td colSpan={9} className="py-10 text-center text-zinc-500">No SRS data yet</td></tr>
               )}
             </tbody>
           </table>

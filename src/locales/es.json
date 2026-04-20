@@ -21,7 +21,7 @@
   "nav": {
     "train": "Entrenar",
     "progress": "Progreso",
-    "intervals": "Intervalos",
+    "review": "Repaso",
     "profile": "Perfil"
   },
   "welcome": {
@@ -185,6 +185,20 @@
     "col_idm": "IDM",
     "col_precision": "Precisión",
     "col_response_time": "T. respuesta (s)"
+  },
+  "review": {
+    "title": "Repaso",
+    "recentErrors": "Errores recientes",
+    "upcomingReviews": "Próximas revisiones SRS",
+    "noErrors": "Sin errores recientes. ¡Buen trabajo!",
+    "confirm": "Confirmar",
+    "tryAgain": "Intentar de nuevo",
+    "markReviewed": "Marcar como revisado",
+    "clearLast": "Limpiar último",
+    "clearAll": "Limpiar todo",
+    "attemptsToCorrect": "Intentos hasta correcto",
+    "unlimitedListens": "Escuchas ilimitadas",
+    "completed": "Completado"
   },
   "intervals": {
     "m2": "Segunda menor",

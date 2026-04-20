@@ -16,27 +16,30 @@ export default function AdminUserDetail() {
   const { userId } = useParams()
   const navigate   = useNavigate()
 
-  const [user,      setUser]      = useState(null)
-  const [sessions,  setSessions]  = useState([])
-  const [exercises, setExercises] = useState([])
-  const [srsItems,  setSrsItems]  = useState([])
-  const [loading,   setLoading]   = useState(true)
-  const [exPage,    setExPage]    = useState(1)
+  const [user,           setUser]           = useState(null)
+  const [sessions,       setSessions]       = useState([])
+  const [exercises,      setExercises]      = useState([])
+  const [srsItems,       setSrsItems]       = useState([])
+  const [reviewAttempts, setReviewAttempts] = useState([])
+  const [loading,        setLoading]        = useState(true)
+  const [exPage,         setExPage]         = useState(1)
 
   useEffect(() => { fetchData() }, [userId])
 
   async function fetchData() {
     setLoading(true)
-    const [uRes, sRes, eRes, rRes] = await Promise.all([
+    const [uRes, sRes, eRes, rRes, raRes] = await Promise.all([
       supabase.from('users').select('*').eq('id', userId).single(),
       supabase.from('sessions').select('*').eq('user_id', userId).order('started_at'),
       supabase.from('exercises').select('*').eq('user_id', userId).order('created_at'),
       supabase.from('srs_items').select('*').eq('user_id', userId),
+      supabase.from('review_attempts').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(100),
     ])
     setUser(uRes.data)
     setSessions(sRes.data ?? [])
     setExercises(eRes.data ?? [])
     setSrsItems(rRes.data ?? [])
+    setReviewAttempts(raRes.data ?? [])
     setLoading(false)
   }
 
@@ -135,6 +138,17 @@ export default function AdminUserDetail() {
       response_time: ex.response_time,
     })))
     downloadCSV(`user_${user?.code}_exercises.csv`, csv)
+  }
+
+  function exportReviewAttempts() {
+    const csv = objectsToCSV(reviewAttempts.map(ra => ({
+      date:           ra.created_at,
+      exercise_id:    ra.exercise_id?.slice(0, 8),
+      attempt_number: ra.attempt_number,
+      precision:      ra.precision,
+      completed:      ra.completed,
+    })))
+    downloadCSV(`user_${user?.code}_review_attempts.csv`, csv)
   }
 
   function exportSRS() {
@@ -430,6 +444,61 @@ export default function AdminUserDetail() {
           </table>
         </div>
       </Section>
+      {/* ── Block 5: Review attempts ──────────────────────────────── */}
+      {reviewAttempts.length > 0 && (
+        <Section
+          title={`Review attempts — ${reviewAttempts.length} total`}
+          action={
+            <button
+              onClick={exportReviewAttempts}
+              className="px-3 py-1 bg-zinc-800 text-zinc-400 rounded text-xs hover:bg-zinc-800 transition-colors"
+            >
+              Export CSV
+            </button>
+          }
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-zinc-500 border-b border-zinc-800 text-xs uppercase tracking-wide">
+                  {['Date', 'Exercise', 'Attempt #', 'Precision', 'Completed'].map(col => (
+                    <th key={col} className="text-left py-2 px-3 font-medium whitespace-nowrap">{col}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {reviewAttempts.map(ra => (
+                  <tr key={ra.id} className="border-b border-zinc-900/60 text-zinc-300 hover:bg-zinc-800/20">
+                    <td className="py-2 px-3 whitespace-nowrap text-zinc-500">
+                      {ra.created_at ? new Date(ra.created_at).toLocaleString() : '—'}
+                    </td>
+                    <td className="py-2 px-3 text-zinc-500 font-mono text-xs">
+                      {ra.exercise_id?.slice(0, 8)}
+                    </td>
+                    <td className="py-2 px-3">{ra.attempt_number}</td>
+                    <td className="py-2 px-3 font-mono">
+                      {ra.precision != null ? (
+                        <span style={{
+                          color: ra.precision >= 0.8 ? '#10b981'
+                            : ra.precision >= 0.5 ? '#f97316' : '#ef4444',
+                        }}>
+                          {Math.round(ra.precision * 100)}%
+                        </span>
+                      ) : '—'}
+                    </td>
+                    <td className="py-2 px-3">
+                      {ra.completed
+                        ? <span className="text-emerald-400">✓</span>
+                        : <span className="text-zinc-600">—</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Section>
+      )}
+
     </div>
     </div>
     </div>

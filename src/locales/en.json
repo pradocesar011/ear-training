@@ -21,7 +21,7 @@
   "nav": {
     "train": "Train",
     "progress": "Progress",
-    "intervals": "Intervals",
+    "review": "Review",
     "profile": "Profile"
   },
   "welcome": {
@@ -185,6 +185,20 @@
     "col_idm": "IDM",
     "col_precision": "Precision",
     "col_response_time": "Response time (s)"
+  },
+  "review": {
+    "title": "Review",
+    "recentErrors": "Recent errors",
+    "upcomingReviews": "Upcoming SRS reviews",
+    "noErrors": "No recent errors. Great work!",
+    "confirm": "Confirm",
+    "tryAgain": "Try again",
+    "markReviewed": "Mark as reviewed",
+    "clearLast": "Clear last",
+    "clearAll": "Clear all",
+    "attemptsToCorrect": "Attempts to correct",
+    "unlimitedListens": "Unlimited listens",
+    "completed": "Completed"
   },
   "intervals": {
     "m2": "Minor second",
