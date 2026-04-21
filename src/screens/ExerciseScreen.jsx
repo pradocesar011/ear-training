@@ -41,6 +41,11 @@ export default function ExerciseScreen({
   const canPlay       = hearingsLeft > 0 && audio.ready && !keyboardLocked
   const tonic         = exercise?.tonic ?? 'C'
 
+  const chunkRule     = exercise?.sequence
+    ? CHUNK_RULES.find(r => exercise.sequence.length <= r.maxNotes) ?? CHUNK_RULES[CHUNK_RULES.length - 1]
+    : null
+  const chunkSize     = chunkRule?.silenceEnabled ? chunkRule.notesPerChunk : 0
+
   const tonicHighlight = exercise?.sequence?.[0]?.note ? [exercise.sequence[0].note] : []
 
   // ── Mode helpers ──────────────────────────────────────────────────────────
@@ -280,7 +285,7 @@ export default function ExerciseScreen({
 
       {/* ── Progress + feedback — vertically centered in remaining space ─── */}
       <div className="flex-1 flex flex-col items-center justify-center gap-3">
-        <ProgressIndicator current={noteIndex} total={totalNotes} />
+        <ProgressIndicator current={noteIndex} total={totalNotes} chunkSize={chunkSize} />
         <div className="h-7 flex items-center">
           {keyboardLocked && !feedbackLabel ? (
             <span className="text-cyan-300 text-sm animate-pulse">

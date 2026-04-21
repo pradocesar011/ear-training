@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import { useAppContext } from '../context/AppContext.jsx'
 import LanguageSelector from '../components/LanguageSelector.jsx'
@@ -10,6 +11,7 @@ const INITIAL_IDM = 2.0
 export default function ProfileScreen() {
   const { t } = useTranslation()
   const { user } = useAppContext()
+  const navigate = useNavigate()
 
   const [stats,         setStats]         = useState(null)
   const [loading,       setLoading]       = useState(true)
@@ -128,7 +130,7 @@ export default function ProfileScreen() {
           </div>
         </div>
         <button
-          onClick={user.logout}
+          onClick={() => { user.logout(); navigate('/') }}
           className="mt-4 w-full py-3.5 bg-zinc-800 text-zinc-300 rounded-xl text-sm font-medium
             hover:bg-zinc-800 transition-colors" style={{ paddingTop: '10px', paddingBottom: '10px' }}
         >

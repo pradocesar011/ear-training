@@ -11,7 +11,7 @@ import {
 import { selectSessionIntervals } from '../engines/srs.js'
 
 const SESSION_LENGTHS = [10, 20, 40]
-const HEARINGS_OPTIONS = [null, 1, 2, 3, 5, 8]
+const HEARINGS_OPTIONS = [1, 2, 3, 5, 8, 10]
 
 export default function TrainScreen() {
   const { t } = useTranslation()
@@ -23,7 +23,7 @@ export default function TrainScreen() {
   const [loadingStats, setLoadingStats] = useState(true)
   const [targetLength, setTargetLength] = useState(null)
   const [tonalMode,    setTonalMode]    = useState(getStoredTonalMode)
-  const [hearingsOvr,  setHearingsOvr]  = useState(null)
+  const [hearingsOvr,  setHearingsOvr]  = useState(10)
   const [activeOctaves, setActiveOctaves] = useState(getStoredActiveOctaves)
 
   useEffect(() => {
@@ -118,9 +118,9 @@ export default function TrainScreen() {
   }
 
   const MODE_LABELS = {
+    [TONAL_MODES.CHORDS_ONLY]:      t('tonal_context.mode_chords_only'),
     [TONAL_MODES.SCALE_AND_CHORDS]: t('tonal_context.mode_scale_and_chords'),
     [TONAL_MODES.SCALE_ONLY]:       t('tonal_context.mode_scale_only'),
-    [TONAL_MODES.CHORDS_ONLY]:      t('tonal_context.mode_chords_only'),
   }
 
   function handleStart() {
@@ -141,6 +141,17 @@ export default function TrainScreen() {
           </p>
         )}
       </div>
+
+      {/* Start button */}
+      <button
+        onClick={handleStart}
+        disabled={!user.userCode}
+        className="w-full max-w-sm py-5 bg-cyan-600 text-white text-xl font-bold rounded-2xl
+          hover:bg-cyan-500 active:scale-95 disabled:opacity-40 transition-all duration-150
+          shadow-xl shadow-indigo-900/40 mt-2" style={{ padding: '20px' }}
+      >
+        {t('common.start_session')}
+      </button>
 
       {/* ── Session length ─────────────────────────────────────────────────── */}
       <SectionCard label={t('train.session_length')}>
@@ -182,8 +193,8 @@ export default function TrainScreen() {
         <div className="grid grid-cols-3 gap-2">
           {HEARINGS_OPTIONS.map(h => (
             <OptionButton
-              key={h ?? 'auto'}
-              label={h === null ? t('train.hearings_auto') : String(h)}
+              key={h}
+              label={String(h)}
               active={hearingsOvr === h}
               onClick={() => setHearingsOvr(h)}
             />
@@ -212,17 +223,6 @@ export default function TrainScreen() {
           <MiniPiano activeOctaves={activeOctaves} />
         </div>
       </SectionCard>
-
-      {/* Start button */}
-      <button
-        onClick={handleStart}
-        disabled={!user.userCode}
-        className="w-full max-w-sm py-5 bg-cyan-600 text-white text-xl font-bold rounded-2xl
-          hover:bg-cyan-500 active:scale-95 disabled:opacity-40 transition-all duration-150
-          shadow-xl shadow-indigo-900/40 mt-2"style={{ padding: '20px' }}
-      >
-        {t('common.start_session')}
-      </button>
 
       {/* ── Last session stats ──────────────────────────────────────────────── */}
       {!loadingStats && (

@@ -26,7 +26,7 @@ export const TONAL_MODES = {
 }
 
 export function getStoredTonalMode() {
-  try { return localStorage.getItem(LS_TONAL_MODE_KEY) ?? TONAL_MODES.SCALE_AND_CHORDS } catch { return TONAL_MODES.SCALE_AND_CHORDS }
+  try { return localStorage.getItem(LS_TONAL_MODE_KEY) ?? TONAL_MODES.CHORDS_ONLY } catch { return TONAL_MODES.CHORDS_ONLY }
 }
 export function storeTonalMode(mode) {
   try { localStorage.setItem(LS_TONAL_MODE_KEY, mode) } catch {}

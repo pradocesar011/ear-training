@@ -65,8 +65,9 @@ export default function PianoKeyboard({
   disabled         = false,
   language         = 'es',
 }) {
-  const pressedRef   = useRef(new Set())
-  const containerRef = useRef(null)
+  const pressedRef      = useRef(new Set())
+  const containerRef    = useRef(null)
+  const lastTouchTimeRef = useRef(0)
 
   // Scroll to center the active octaves on mount / when activeOctaves changes
   useEffect(() => {
@@ -105,15 +106,53 @@ export default function PianoKeyboard({
   const handlePress = useCallback((note, octave, e) => {
     e?.preventDefault()
     e?.stopPropagation()
+    if (e?.type === 'touchstart') {
+      lastTouchTimeRef.current = Date.now()
+    } else if (e?.type === 'mousedown') {
+      // Suppress the synthetic mousedown that fires ~300ms after touchstart on mobile
+      if (Date.now() - lastTouchTimeRef.current < 500) return
+    }
     if (!disabled && activeOctaves.includes(octave)) onNote?.(note)
   }, [disabled, onNote, activeOctaves])
 
+  function scrollKeyboard(dir) {
+    if (!containerRef.current) return
+    containerRef.current.scrollLeft += dir * OCTAVE_W
+  }
+
   return (
-    <div
-      ref={containerRef}
-      className="overflow-x-auto w-full"
-      style={{ scrollBehavior: 'smooth' }}
-    >
+    <div className="relative w-full">
+      {/* Left scroll arrow */}
+      <button
+        onMouseDown={() => scrollKeyboard(-1)}
+        onTouchStart={e => { e.preventDefault(); scrollKeyboard(-1) }}
+        style={{
+          position:       'absolute',
+          left:           0,
+          top:            0,
+          bottom:         0,
+          zIndex:         10,
+          display:        'flex',
+          alignItems:     'center',
+          paddingLeft:    4,
+          paddingRight:   4,
+          background:     'linear-gradient(to right, #18181b, transparent)',
+          border:         'none',
+          cursor:         'pointer',
+          touchAction:    'none',
+        }}
+        aria-label="Scroll keyboard left"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+
+      <div
+        ref={containerRef}
+        className="overflow-x-auto w-full"
+        style={{ scrollBehavior: 'smooth' }}
+      >
       <div
         className="flex"
         style={{ width: ALL_OCTAVES.length * OCTAVE_W, height: WHITE_KEY_H }}
@@ -234,6 +273,33 @@ export default function PianoKeyboard({
           )
         })}
       </div>
+      </div>
+
+      {/* Right scroll arrow */}
+      <button
+        onMouseDown={() => scrollKeyboard(1)}
+        onTouchStart={e => { e.preventDefault(); scrollKeyboard(1) }}
+        style={{
+          position:       'absolute',
+          right:          0,
+          top:            0,
+          bottom:         0,
+          zIndex:         10,
+          display:        'flex',
+          alignItems:     'center',
+          paddingLeft:    4,
+          paddingRight:   4,
+          background:     'linear-gradient(to left, #18181b, transparent)',
+          border:         'none',
+          cursor:         'pointer',
+          touchAction:    'none',
+        }}
+        aria-label="Scroll keyboard right"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </button>
     </div>
   )
 }
