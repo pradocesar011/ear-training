@@ -344,6 +344,7 @@ async function main() {
         X_chrom:          idmComponents.X.toFixed(2),
         n_chunks:         idmComponents.nChunks,
         intervals_used:   intervals.map(i => `${i.interval}${i.direction[0]}`).join('|'),
+        sequence_notes:   sequence.map(s => s.note).join(' '),
       })
     }
 

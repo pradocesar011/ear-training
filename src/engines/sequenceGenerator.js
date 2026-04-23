@@ -85,13 +85,15 @@ const STEP_INTERVALS = new Set(['m2', 'M2'])
 const PERFECT_LEAPS  = new Set(['P4', 'P5'])
 
 /**
- * Weight for a given pool item based on IDM and the previous interval type.
+ * Weight for a given pool item based on IDM and recent history.
  *
  * At low IDM (≤ 2.5):  steps are heavily favored, perfect leaps are rare.
  * By IDM 5+:           all intervals are equally weighted.
  * Consecutive P4/P5:   strongly penalized at any IDM.
+ * Same item repeat:    penalized to force variety (interval + direction pair).
+ * Same direction:      lightly penalized to encourage alternation.
  */
-function intervalWeight(intervalType, prevIntervalType, targetIDM) {
+function intervalWeight(intervalType, direction, prevIntervalType, prevDirection, targetIDM) {
   // biasFactor: 1 at IDM=1, 0 at IDM=5
   const biasFactor = Math.max(0, (5 - targetIDM) / 4)
 
@@ -107,6 +109,16 @@ function intervalWeight(intervalType, prevIntervalType, targetIDM) {
     weight *= 0.1
   }
 
+  // Penalize repeating the exact same interval+direction pair — forces variety
+  if (intervalType === prevIntervalType && direction === prevDirection) {
+    weight *= 0.1
+  }
+
+  // Light penalty for repeating the same direction — encourages alternation
+  if (direction === prevDirection && prevDirection !== null) {
+    weight *= 0.5
+  }
+
   return Math.max(weight, 0.01) // never zero
 }
 
@@ -114,11 +126,11 @@ function intervalWeight(intervalType, prevIntervalType, targetIDM) {
  * Return pool items sorted by weighted-random priority (Gumbel-max trick).
  * Higher weight → more likely to appear first.
  */
-function weightedPickOrder(pool, prevIntervalType, targetIDM) {
+function weightedPickOrder(pool, prevIntervalType, prevDirection, targetIDM) {
   return [...pool]
     .map(item => ({
       item,
-      key: -Math.log(Math.random()) / intervalWeight(item.interval_type, prevIntervalType, targetIDM),
+      key: -Math.log(Math.random()) / intervalWeight(item.interval_type, item.direction, prevIntervalType, prevDirection, targetIDM),
     }))
     .sort((a, b) => a.key - b.key)
     .map(x => x.item)
@@ -134,9 +146,10 @@ function buildSequence(totalNotes, pool, effectiveLow, effectiveHigh, targetIDM 
   const tonicMidi = pickTonic(effectiveLow, effectiveHigh)
   const tonicNote = midiToNote(tonicMidi)
   const sequence  = [{ note: tonicNote }]
-  let currentMidi = tonicMidi
+  let currentMidi      = tonicMidi
   let prevIntervalType = null
-  let leapCount = 0
+  let prevDirection    = null
+  let leapCount        = 0
 
   for (let i = 1; i < totalNotes; i++) {
     // Once maxS leaps are used, restrict to steps only
@@ -146,7 +159,7 @@ function buildSequence(totalNotes, pool, effectiveLow, effectiveHigh, targetIDM 
       : pool
     const activePool = eligible.length > 0 ? eligible : pool
 
-    const ordered = weightedPickOrder(activePool, prevIntervalType, targetIDM)
+    const ordered = weightedPickOrder(activePool, prevIntervalType, prevDirection, targetIDM)
     let placed = false
     for (const item of ordered) {
       const nextMidi = applyInterval(
@@ -159,8 +172,9 @@ function buildSequence(totalNotes, pool, effectiveLow, effectiveHigh, targetIDM 
           interval:  item.interval_type,
           direction: item.direction,
         })
-        currentMidi = nextMidi
+        currentMidi      = nextMidi
         prevIntervalType = item.interval_type
+        prevDirection    = item.direction
         if (!STEP_INTERVALS.has(item.interval_type)) leapCount++
         placed = true
         break
@@ -208,6 +222,31 @@ export function generateSequence({ targetIDM, availableItems, lowMidi, highMidi 
     pool = [{ interval_type: allowedIntervals[0], direction: allowedDirections[0] }]
   }
 
+  // Variety fix: if pool only has ascending items but the tier allows descending,
+  // add descending mirrors so the generator can produce descending exercises from
+  // session 1, without waiting for SRS to unlock descending intervals.
+  const poolHasDescending = pool.some(item => item.direction === 'descending')
+  if (!poolHasDescending && allowedDirections.includes('descending')) {
+    pool = [
+      ...pool,
+      ...pool
+        .filter(item => item.direction === 'ascending')
+        .map(item => ({ ...item, direction: 'descending' })),
+    ]
+  }
+
+  // P4/P5 company fix: if SRS only gave us perfect leaps but the tier allows steps,
+  // inject M2 ascending + descending so leaps always appear alongside a step interval.
+  const poolHasSteps = pool.some(item => STEP_INTERVALS.has(item.interval_type))
+  const poolHasLeaps = pool.some(item => PERFECT_LEAPS.has(item.interval_type))
+  if (poolHasLeaps && !poolHasSteps && allowedIntervals.some(i => STEP_INTERVALS.has(i))) {
+    pool = [
+      ...pool,
+      { interval_type: 'M2', direction: 'ascending'  },
+      { interval_type: 'M2', direction: 'descending' },
+    ]
+  }
+
   let bestResult   = null
   let bestIDMDist  = Infinity
 
@@ -217,6 +256,14 @@ export function generateSequence({ targetIDM, availableItems, lowMidi, highMidi 
 
     const sequence = buildSequence(totalNotes, pool, effectiveLow, effectiveHigh, targetIDM, maxS)
     if (!sequence) continue
+
+    // If the sequence contains any P4/P5, it must also contain at least one step.
+    // This prevents consecutive-leap-only sequences that are very hard to parse.
+    const seqIntervals  = sequence.slice(1).map(s => s.interval)
+    const hasPerfectLeap = seqIntervals.some(i => PERFECT_LEAPS.has(i))
+    const hasStep        = seqIntervals.some(i => STEP_INTERVALS.has(i))
+    const poolHasSteps   = pool.some(item => STEP_INTERVALS.has(item.interval_type))
+    if (hasPerfectLeap && !hasStep && poolHasSteps) continue
 
     const tonicName = sequence[0].note.slice(0, -1)
     const idmComponents = computeIDM({ sequence, tonic: tonicName, currentIDM: targetIDM })
