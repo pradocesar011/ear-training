@@ -87,7 +87,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <div className="screen-enter flex flex-col items-center min-h-full px-4 py-8 gap-5">
+    <div className="screen-enter flex flex-col items-center min-h-full px-4 pt-8 pb-24 gap-5">
       <h1 className="text-2xl font-bold text-white text-center w-full max-w-sm" style={{ paddingTop: '20px' }}>{t('profile.heading')}</h1>
       <div className="w-full max-w-sm flex flex-col gap-5" >
 

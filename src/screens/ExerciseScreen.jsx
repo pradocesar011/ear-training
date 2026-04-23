@@ -24,16 +24,21 @@ export default function ExerciseScreen({
   const { t, i18n } = useTranslation()
   const lang = i18n.language?.slice(0, 2) ?? 'es'
 
-  const [keyboardLocked,  setKeyboardLocked]  = useState(false)
-  const [contextPlaying,  setContextPlaying]  = useState(false)
-  const [tonalMode,       setTonalMode]        = useState(getStoredTonalMode)
-  const [showModeMenu,    setShowModeMenu]     = useState(false)
-  const [endConfirm,      setEndConfirm]       = useState(false)
+  const [keyboardLocked,   setKeyboardLocked]   = useState(false)
+  const [contextPlaying,   setContextPlaying]   = useState(false)
+  const [seqPlaying,       setSeqPlaying]       = useState(false)
+  const [tonalMode,        setTonalMode]        = useState(getStoredTonalMode)
+  const [showModeMenu,     setShowModeMenu]     = useState(false)
+  const [endConfirm,       setEndConfirm]       = useState(false)
+  const [wrongNote,        setWrongNote]        = useState([])
+  const [wrongFadeNote,    setWrongFadeNote]    = useState([])
   const cheatMode = getStoredCheatMode()
 
   // Ref used to interrupt the async playTonalContext loop on stop
-  const contextActiveRef = useRef(false)
+  const contextActiveRef  = useRef(false)
   const endConfirmTimerRef = useRef(null)
+  const wrongTimerRef     = useRef(null)
+  const pressedNoteRef    = useRef(null)
 
   const totalNotes    = exercise?.sequence?.length ?? 0
   const hearingsTotal = exercise?.idmComponents?.H ?? 3
@@ -47,6 +52,24 @@ export default function ExerciseScreen({
   const chunkSize     = chunkRule?.silenceEnabled ? chunkRule.notesPerChunk : 0
 
   const tonicHighlight = exercise?.sequence?.[0]?.note ? [exercise.sequence[0].note] : []
+
+  // ── Wrong note 2-second fade ─────────────────────────────────────────────
+  useEffect(() => {
+    clearTimeout(wrongTimerRef.current)
+    if (lastNoteResult === 'wrong' && pressedNoteRef.current) {
+      const note = pressedNoteRef.current
+      setWrongNote([note])
+      setWrongFadeNote([])
+      wrongTimerRef.current = setTimeout(() => {
+        setWrongNote([])
+        setWrongFadeNote([note])
+        wrongTimerRef.current = setTimeout(() => setWrongFadeNote([]), 1800)
+      }, 200)
+    } else {
+      setWrongNote([])
+      setWrongFadeNote([])
+    }
+  }, [lastNoteResult])
 
   // ── Mode helpers ──────────────────────────────────────────────────────────
   function handleModeChange(mode) {
@@ -110,17 +133,24 @@ export default function ExerciseScreen({
 
   // ── Play exercise sequence ────────────────────────────────────────────────
   async function handlePlaySequence() {
+    if (seqPlaying) {
+      audio.stopAll()
+      setSeqPlaying(false)
+      return
+    }
     if (!canPlay) return
     onPlay()
     audio.stopAll()
+    setSeqPlaying(true)
     const notes = exercise.sequence.map(s => s.note)
     const rule = CHUNK_RULES.find(r => notes.length <= r.maxNotes) ?? CHUNK_RULES[CHUNK_RULES.length - 1]
-    await audio.playSequence(
+    const dur = await audio.playSequence(
       notes,
       exercise.tempo,
       rule.silenceEnabled ? rule.notesPerChunk : 0,
       rule.silenceEnabled ? rule.silenceBeats  : 0,
     )
+    setTimeout(() => setSeqPlaying(false), (dur ?? 3) * 1000 + 200)
   }
 
   // ── End session (with confirm) ────────────────────────────────────────────
@@ -307,22 +337,38 @@ export default function ExerciseScreen({
         <div className="w-full max-w-2xl px-4">
           <button
             onClick={handlePlaySequence}
-            disabled={!canPlay}
-            className="w-full flex items-center justify-center gap-3 py-5 bg-cyan-600 text-white
-              rounded-2xl text-lg font-bold hover:bg-cyan-500 active:scale-[0.98]
+            disabled={!seqPlaying && !canPlay}
+            className={`w-full flex items-center justify-center gap-3 py-5 text-white
+              rounded-2xl text-lg font-bold active:scale-[0.98]
               disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150
-              shadow-lg shadow-indigo-900/40" style={{ padding: '20px' }}
+              shadow-lg ${seqPlaying
+                ? 'bg-amber-600 hover:bg-amber-500 shadow-amber-900/40'
+                : 'bg-cyan-600 hover:bg-cyan-500 shadow-indigo-900/40'
+              }`} style={{ padding: '20px' }}
           >
-            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-            </svg>
-            {t('common.play')}
+            {seqPlaying ? (
+              <>
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                {t('tonal_context.stop')}
+              </>
+            ) : (
+              <>
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                </svg>
+                {t('common.play')}
+              </>
+            )}
           </button>
         </div>
         <div className="w-full">
           <PianoKeyboard
-            onNote={onNote}
+            onNote={(note) => { pressedNoteRef.current = note; onNote(note) }}
             highlightTonic={tonicHighlight}
+            highlightWrong={wrongNote}
+            highlightWrongFade={wrongFadeNote}
             activeOctaves={activeOctaves ?? [3, 4]}
             disabled={keyboardLocked || noteIndex >= totalNotes}
             language={lang}

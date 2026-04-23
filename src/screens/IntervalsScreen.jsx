@@ -77,7 +77,7 @@ export default function IntervalsScreen() {
   )
 
   return (
-    <div className="screen-enter flex flex-col items-center min-h-full px-4 py-8 gap-8">
+    <div className="screen-enter flex flex-col items-center min-h-full px-4 pt-8 pb-24 gap-8">
       <h1 className="text-2xl font-bold text-white text-center w-full max-w-2xl"style={{ paddingTop: '20px' }}>{t('intervals_screen.heading')}</h1>
       <div className="w-full max-w-2xl flex flex-col gap-8">
 

@@ -51,9 +51,10 @@ export default function ReviewScreen() {
   const [userSequence,    setUserSequence]    = useState([])
   const [exerciseResult,  setExerciseResult]  = useState(null)  // null | result object
   const [attemptNumber,   setAttemptNumber]   = useState(1)
-  const [highlightOk,     setHighlightOk]     = useState([])
-  const [highlightBad,    setHighlightBad]    = useState([])
-  const [isPlaying,       setIsPlaying]       = useState(false)
+  const [highlightOk,      setHighlightOk]      = useState([])
+  const [highlightBad,     setHighlightBad]     = useState([])
+  const [highlightBadFade, setHighlightBadFade] = useState([])
+  const [isPlaying,        setIsPlaying]        = useState(false)
 
   const highlightTimerRef = useRef(null)
 
@@ -109,6 +110,7 @@ export default function ReviewScreen() {
     setAttemptNumber(1)
     setHighlightOk([])
     setHighlightBad([])
+    setHighlightBadFade([])
     setIsPlaying(false)
     setView('exercise')
   }
@@ -124,7 +126,12 @@ export default function ReviewScreen() {
   // ── playback ──────────────────────────────────────────────────────────────
 
   async function handlePlay() {
-    if (!selectedEx || !audio.ready || isPlaying) return
+    if (!selectedEx || !audio.ready) return
+    if (isPlaying) {
+      audio.stopAll()
+      setIsPlaying(false)
+      return
+    }
     audio.stopAll()
     setIsPlaying(true)
     const notes = selectedEx.sequence.map(s => s.note)
@@ -149,12 +156,20 @@ export default function ReviewScreen() {
     const correct  = note === expected
 
     clearTimeout(highlightTimerRef.current)
-    if (correct) setHighlightOk([note])
-    else         setHighlightBad([note])
-    highlightTimerRef.current = setTimeout(() => {
-      setHighlightOk([])
+    if (correct) {
+      setHighlightOk([note])
       setHighlightBad([])
-    }, 350)
+      setHighlightBadFade([])
+      highlightTimerRef.current = setTimeout(() => setHighlightOk([]), 350)
+    } else {
+      setHighlightBad([note])
+      setHighlightBadFade([])
+      highlightTimerRef.current = setTimeout(() => {
+        setHighlightBad([])
+        setHighlightBadFade([note])
+        highlightTimerRef.current = setTimeout(() => setHighlightBadFade([]), 1800)
+      }, 200)
+    }
 
     const newSeq  = [...userSequence, note]
     setUserSequence(newSeq)
@@ -173,6 +188,7 @@ export default function ReviewScreen() {
     setNoteIndex(0)
     setHighlightOk([])
     setHighlightBad([])
+    setHighlightBadFade([])
   }
 
   // ── confirm ───────────────────────────────────────────────────────────────
@@ -385,16 +401,30 @@ export default function ReviewScreen() {
           <div className="w-full max-w-2xl px-4">
             <button
               onClick={handlePlay}
-              disabled={!audio.ready || isPlaying}
-              className="w-full flex items-center justify-center gap-3 py-4 bg-cyan-600 text-white
-                rounded-2xl text-base font-bold hover:bg-cyan-500 active:scale-[0.98]
+              disabled={!audio.ready}
+              className={`w-full flex items-center justify-center gap-3 py-4 text-white
+                rounded-2xl text-base font-bold active:scale-[0.98]
                 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150
-                shadow-lg shadow-cyan-900/30" style={{ padding: '16px' }}
+                shadow-lg ${isPlaying
+                  ? 'bg-amber-600 hover:bg-amber-500 shadow-amber-900/30'
+                  : 'bg-cyan-600 hover:bg-cyan-500 shadow-cyan-900/30'
+                }`} style={{ padding: '16px' }}
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-              </svg>
-              {t('common.play')}
+              {isPlaying ? (
+                <>
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  {t('tonal_context.stop')}
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                  </svg>
+                  {t('common.play')}
+                </>
+              )}
             </button>
           </div>
 
@@ -435,8 +465,9 @@ export default function ReviewScreen() {
           <div className="w-full">
             <PianoKeyboard
               onNote={handleNote}
-              highlightCorrect={exerciseResult ? resultOk  : highlightOk}
-              highlightWrong={  exerciseResult ? resultBad : highlightBad}
+              highlightCorrect={  exerciseResult ? resultOk  : highlightOk}
+              highlightWrong={    exerciseResult ? resultBad : highlightBad}
+              highlightWrongFade={exerciseResult ? []        : highlightBadFade}
               highlightTonic={tonicHighlight}
               activeOctaves={activeOctaves}
               disabled={!!exerciseResult || allFilled}
@@ -472,7 +503,7 @@ export default function ReviewScreen() {
     .sort((a, b) => (a.nextRev - b.nextRev))
 
   return (
-    <div className="screen-enter flex flex-col items-center min-h-full px-4 py-8 gap-8">
+    <div className="screen-enter flex flex-col items-center min-h-full px-4 pt-8 pb-24 gap-8">
       <h1 className="text-2xl font-bold text-white text-center w-full max-w-2xl"
           style={{ paddingTop: '20px' }}>
         {t('review.title')}

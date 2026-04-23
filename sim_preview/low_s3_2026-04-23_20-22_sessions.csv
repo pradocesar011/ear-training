@@ -1,0 +1,4 @@
+session,date,target_precision,idm_start,idm_end,idm_change,mean_precision,triggers_mastery,triggers_overload,triggers_none,new_intervals,total_srs_items
+1,2025-01-01,0.40,2.00,1.00,-1.00,0.473,0,5,3,2,2
+2,2025-01-02,0.40,1.00,1.00,0.00,0.427,0,4,4,0,2
+3,2025-01-03,0.40,1.00,1.00,0.00,0.394,0,5,3,0,2

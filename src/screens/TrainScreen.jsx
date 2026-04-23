@@ -128,7 +128,7 @@ export default function TrainScreen() {
   }
 
   return (
-    <div className="screen-enter flex flex-col items-center justify-start min-h-full px-4 pt-8 pb-8 gap-4">
+    <div className="screen-enter flex flex-col items-center justify-start min-h-full px-4 pt-8 pb-24 gap-4">
 
       {/* Heading */}
       <div className="text-center mb-2" style={{ paddingTop: '20px' }}>

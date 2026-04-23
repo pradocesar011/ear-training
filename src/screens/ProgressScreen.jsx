@@ -118,7 +118,7 @@ export default function ProgressScreen() {
   }
 
   return (
-    <div className="screen-enter flex flex-col items-center min-h-full px-4 py-8 gap-7">
+    <div className="screen-enter flex flex-col items-center min-h-full px-4 pt-8 pb-24 gap-7">
       <h1 className="text-2xl font-bold text-white text-center w-full max-w-2xl" style={{ paddingTop: '20px' }}>{t('progress.heading')}</h1>
 
       <div className="w-full max-w-2xl flex flex-col gap-6">

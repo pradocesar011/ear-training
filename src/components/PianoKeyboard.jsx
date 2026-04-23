@@ -9,7 +9,8 @@
  * Props:
  *   onNote(note: string)          — called when an active key is pressed
  *   highlightCorrect: string[]    — highlight green
- *   highlightWrong: string[]      — highlight red
+ *   highlightWrong: string[]      — highlight red (instant)
+ *   highlightWrongFade: string[]  — highlight red then slow-fade back to normal (2s)
  *   highlightTonic: string[]      — highlight indigo (tonic reference)
  *   activeOctaves: number[]       — which octaves respond to input (default [3,4])
  *   disabled: boolean             — lock all keys
@@ -49,22 +50,24 @@ const KEY_MAP = {
   'k': 'C4',  'o': 'C#4', 'l': 'D4',  'p': 'D#4', ';': 'E4',
 }
 
-function keyColor(noteStr, highlightCorrect, highlightWrong, highlightTonic, active) {
+function keyColor(noteStr, highlightCorrect, highlightWrong, highlightWrongFade, highlightTonic, active) {
   if (!active) return null
-  if (highlightCorrect?.includes(noteStr)) return COLORS.CORRECT
-  if (highlightWrong?.includes(noteStr))   return COLORS.WRONG
-  if (highlightTonic?.includes(noteStr))   return '#6366f1'
+  if (highlightCorrect?.includes(noteStr))   return COLORS.CORRECT
+  if (highlightWrong?.includes(noteStr))     return COLORS.WRONG
+  // highlightWrongFade: return null (normal color) — CSS transitions from red to normal
+  if (highlightTonic?.includes(noteStr))     return '#6366f1'
   return null
 }
 
 export default function PianoKeyboard({
   onNote,
-  highlightCorrect = [],
-  highlightWrong   = [],
-  highlightTonic   = [],
-  activeOctaves    = [3, 4],
-  disabled         = false,
-  language         = 'es',
+  highlightCorrect    = [],
+  highlightWrong      = [],
+  highlightWrongFade  = [],
+  highlightTonic      = [],
+  activeOctaves       = [3, 4],
+  disabled            = false,
+  language            = 'es',
 }) {
   const pressedRef       = useRef(new Set())
   const containerRef     = useRef(null)
@@ -231,9 +234,10 @@ export default function PianoKeyboard({
               >
                 {/* White keys */}
                 {WHITE_NOTES.map((name, i) => {
-                  const noteStr = `${name}${octave}`
-                  const color   = keyColor(noteStr, highlightCorrect, highlightWrong, highlightTonic, isActive)
-                  const bgColor = color ?? (isActive ? '#e2e8f0' : '#94a3b8')
+                  const noteStr  = `${name}${octave}`
+                  const isFading = highlightWrongFade?.includes(noteStr)
+                  const color    = keyColor(noteStr, highlightCorrect, highlightWrong, highlightWrongFade, highlightTonic, isActive)
+                  const bgColor  = color ?? (isActive ? '#e2e8f0' : '#94a3b8')
                   const txtColor = color ? '#fff' : (isActive ? '#27272a' : '#71717a')
                   const canPress = isActive && !disabled
 
@@ -261,7 +265,7 @@ export default function PianoKeyboard({
                         touchAction:     'none',
                         zIndex:          1,
                         boxSizing:       'border-box',
-                        transition:      'background 0.08s ease',
+                        transition:      isFading ? 'background 1.5s ease' : 'background 0.08s ease',
                       }}
                     >
                       <span style={{ fontSize: 9, fontWeight: 600, color: txtColor, pointerEvents: 'none' }}>
@@ -273,10 +277,11 @@ export default function PianoKeyboard({
 
                 {/* Black keys */}
                 {BLACK_NOTES.map(name => {
-                  const noteStr = `${name}${octave}`
-                  const leftPx  = BLACK_OFFSETS[name]
-                  const color   = keyColor(noteStr, highlightCorrect, highlightWrong, highlightTonic, isActive)
-                  const bgColor = color ?? (isActive ? '#27272a' : '#3f3f46')
+                  const noteStr  = `${name}${octave}`
+                  const leftPx   = BLACK_OFFSETS[name]
+                  const isFading = highlightWrongFade?.includes(noteStr)
+                  const color    = keyColor(noteStr, highlightCorrect, highlightWrong, highlightWrongFade, highlightTonic, isActive)
+                  const bgColor  = color ?? (isActive ? '#27272a' : '#3f3f46')
                   const txtColor = color ? '#fff' : (isActive ? '#94a3b8' : '#71717a')
                   const canPress = isActive && !disabled
 
@@ -302,7 +307,7 @@ export default function PianoKeyboard({
                         touchAction:    'none',
                         zIndex:         2,
                         boxSizing:      'border-box',
-                        transition:     'background 0.08s ease',
+                        transition:     isFading ? 'background 1.5s ease' : 'background 0.08s ease',
                       }}
                     >
                       <span style={{ fontSize: 7, color: txtColor, pointerEvents: 'none' }}>
