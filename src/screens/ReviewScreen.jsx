@@ -21,10 +21,8 @@ import PianoKeyboard from '../components/PianoKeyboard.jsx'
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
-function urgencyBorder(precision) {
-  if (precision < 0.5)  return { border: 'border-l-rose-600',   bg: 'rgba(69,10,10,0.10)' }
-  if (precision < 0.8)  return { border: 'border-l-orange-500', bg: 'rgba(92,55,5,0.10)'  }
-  return                       { border: 'border-l-zinc-700',   bg: 'transparent'          }
+function urgencyBorder() {
+  return { border: 'border-l-zinc-700', bg: 'transparent' }
 }
 
 function precisionColor(p) {
@@ -345,7 +343,7 @@ export default function ReviewScreen() {
         </div>
 
         {/* note slots + clear buttons — vertically centered */}
-        <div className="flex-1 w-full flex flex-col items-center justify-center gap-4">
+        <div className="flex-1 w-full flex flex-col items-center justify-center gap-8">
           {/* note slots */}
           <div className="w-full max-w-2xl mx-auto">
             <div className="flex flex-wrap gap-1.5 justify-center">
@@ -378,7 +376,7 @@ export default function ReviewScreen() {
                 return (
                   <div
                     key={i}
-                    className={`${bg} rounded-lg text-center font-mono text-xs font-medium min-w-[48px] px-2 py-1.5 ${text}`}
+                    className={`${bg} rounded-lg text-center font-mono text-xs font-medium min-w-[48px] px-2 py-3 ${text}`}
                   >
                     {label}
                     {exerciseResult && !exerciseResult.correct[i] && exerciseResult.expected[i] && (
@@ -396,7 +394,7 @@ export default function ReviewScreen() {
               <button
                 onClick={clearLast}
                 disabled={!userSequence.length || !!exerciseResult}
-                className="px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-lg text-xs
+                className="px-4 py-2.5 bg-zinc-800 text-zinc-400 rounded-lg text-sm
                   hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 {t('review.clearLast')}
@@ -404,7 +402,7 @@ export default function ReviewScreen() {
               <button
                 onClick={clearAll}
                 disabled={!userSequence.length || !!exerciseResult}
-                className="px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-lg text-xs
+                className="px-4 py-2.5 bg-zinc-800 text-zinc-400 rounded-lg text-sm
                   hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 {t('review.clearAll')}
@@ -594,7 +592,7 @@ export default function ReviewScreen() {
           ) : (
             <div className="flex flex-col gap-2">
               {recentErrors.map(ex => {
-                const { border, bg } = urgencyBorder(ex.precision ?? 0)
+                const { border, bg } = urgencyBorder()
                 const pct = Math.round((ex.precision ?? 0) * 100)
                 const date = ex.created_at
                   ? new Date(ex.created_at).toLocaleDateString()

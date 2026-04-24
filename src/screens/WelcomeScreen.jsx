@@ -75,9 +75,15 @@ export default function WelcomeScreen({
               {suggestedCode ?? '……'}
             </div>
 
-            <p className="text-zinc-400 text-sm leading-relaxed">
+            <p className="text-zinc-400 text-sm leading-relaxed mb-5">
               {t('welcome_new.new_code_instruction')}
             </p>
+
+            {/* Language switcher */}
+            <div className="flex items-center justify-center gap-2 pt-4 border-t border-zinc-800">
+              <span className="text-zinc-500 text-xs">{t('profile.language_label')}:</span>
+              <LanguageSelector onChange={onChangeLanguage} />
+            </div>
           </div>
 
           {/* Primary CTA */}
