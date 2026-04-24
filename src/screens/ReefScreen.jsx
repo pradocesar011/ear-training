@@ -164,12 +164,15 @@ function FishSprite({ fish, pos, onTap, feedingMode, releaseMode }) {
           {/* Pearl badge in normal mode */}
           {showPearlBadge && (
             <div
-              className="absolute -top-2 -right-2 flex items-center gap-0.5
-                         bg-zinc-900/90 rounded-full px-1.5 py-0.5
-                         text-[10px] font-bold text-white border border-yellow-500/60"
-              style={{ transform: `scaleX(${facingRight ? -1 : 1})` }}
+              className="absolute -top-3 -right-3 flex items-center gap-1
+                         bg-zinc-900/95 rounded-full px-2 py-1
+                         text-xs font-black text-yellow-300 border-2 border-yellow-400/80"
+              style={{
+                transform:  `scaleX(${facingRight ? -1 : 1})`,
+                boxShadow:  '0 0 8px rgba(250,204,21,0.5)',
+              }}
             >
-              <img src={ICONS.pearl} alt="" style={{ width: 10, height: 10 }} />
+              <img src={ICONS.pearl} alt="" style={{ width: 14, height: 14 }} />
               {pending}
             </div>
           )}
@@ -416,7 +419,7 @@ export default function ReefScreen() {
         className="sticky top-0 z-10 flex items-center justify-between gap-2"
         style={{ background: 'rgba(7,21,40,0.88)', backdropFilter: 'blur(8px)', padding: '8px 16px' }}
       >
-        {/* Fish count + release toggle */}
+        {/* Fish count */}
         <div
           className="flex items-center gap-1.5 bg-white/10 rounded-xl text-white text-sm font-semibold"
           style={{ padding: '10px 12px' }}
@@ -427,20 +430,21 @@ export default function ReefScreen() {
             <circle cx="18" cy="11" r="1" fill="#0c1e3c" />
           </svg>
           {fish.length}/{MAX_FISH}
-          {/* Release mode toggle */}
-          <button
-            onClick={toggleReleaseMode}
-            className={`ml-1.5 p-1 rounded-lg transition-colors ${
-              releaseMode ? 'bg-rose-600 text-white' : 'text-zinc-400 hover:text-zinc-200'
-            }`}
-            title="Release a fish"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-          </button>
         </div>
+
+        {/* Release mode toggle — separated */}
+        <button
+          onClick={toggleReleaseMode}
+          className={`p-2 rounded-xl transition-colors ${
+            releaseMode ? 'bg-rose-600 text-white' : 'bg-white/10 text-zinc-400 hover:text-zinc-200'
+          }`}
+          title="Release a fish"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+        </button>
 
         {/* Pearls */}
         <div
@@ -474,21 +478,23 @@ export default function ReefScreen() {
             ⚠ {hungryCount}
           </div>
         )}
-
-        {/* Feeding mode label */}
-        {feedingMode && (
-          <div className="text-emerald-300 text-xs font-bold animate-pulse">
-            Feeding
-          </div>
-        )}
-
-        {/* Release mode label */}
-        {releaseMode && (
-          <div className="text-rose-300 text-xs font-bold animate-pulse">
-            Release
-          </div>
-        )}
       </div>
+
+      {/* Mode banner — centered below HUD */}
+      {(feedingMode || releaseMode) && (
+        <div className="flex justify-center py-1.5" style={{ zIndex: 9 }}>
+          {feedingMode && (
+            <div className="bg-emerald-700/80 text-emerald-200 text-xs font-bold px-4 py-1 rounded-full animate-pulse">
+              🌿 Feeding Mode — tap hungry fish
+            </div>
+          )}
+          {releaseMode && (
+            <div className="bg-rose-700/80 text-rose-200 text-xs font-bold px-4 py-1 rounded-full animate-pulse">
+              ✕ Release Mode — tap a fish to release
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── Tank ─────────────────────────────────────────────────────────── */}
       <div
@@ -516,42 +522,45 @@ export default function ReefScreen() {
         {floatLabels.map(fl => (
           <div
             key={fl.id}
-            className="absolute pointer-events-none flex items-center gap-1
-                       text-white text-sm font-bold drop-shadow-lg"
+            className="absolute pointer-events-none flex items-center gap-1.5
+                       text-white text-xl font-black drop-shadow-xl"
             style={{
-              left:      `${fl.x}%`,
-              top:       `${fl.y}%`,
-              transform: 'translate(-50%, -50%)',
-              animation: 'floatUp 1.3s ease-out forwards',
-              zIndex:    10,
+              left:       `${fl.x}%`,
+              top:        `${fl.y}%`,
+              transform:  'translate(-50%, -50%)',
+              animation:  'floatUp 1.3s ease-out forwards',
+              zIndex:     10,
+              textShadow: '0 0 12px rgba(250,204,21,0.8), 0 2px 4px rgba(0,0,0,0.8)',
             }}
           >
-            <img src={ICONS.pearl} alt="" style={{ width: 14, height: 14 }} />
+            <img src={ICONS.pearl} alt="" style={{ width: 22, height: 22 }} />
             {fl.label}
           </div>
         ))}
       </div>
 
-      {/* ── Eggs strip ───────────────────────────────────────────────────── */}
-      {eggs.length > 0 && (
-        <div className="flex gap-2 px-4 py-2 overflow-x-auto" style={{ zIndex: 2 }}>
-          {eggs.map(egg => (
-            <EggItem key={egg.id} egg={egg} onClaim={handleClaim} t={t} />
-          ))}
-        </div>
-      )}
+      {/* ── Buy egg + eggs above it ──────────────────────────────────────── */}
+      <div className="flex flex-col items-center gap-2 px-4" style={{ paddingBottom: 88, paddingTop: 8, zIndex: 2 }}>
+        {/* Hatching eggs — centered above buy button */}
+        {eggs.length > 0 && (
+          <div className="flex gap-2 justify-center flex-wrap">
+            {eggs.map(egg => (
+              <EggItem key={egg.id} egg={egg} onClaim={handleClaim} t={t} />
+            ))}
+          </div>
+        )}
 
-      {/* ── Buy egg ──────────────────────────────────────────────────────── */}
-      <div className="flex justify-center px-4" style={{ paddingBottom: 88, paddingTop: 8, zIndex: 2 }}>
+        {/* Buy egg button */}
         <button
           onClick={handleBuyEgg}
           disabled={tankFull}
-          className="flex items-center gap-3 rounded-2xl px-5 py-3 transition-all active:scale-95
+          className="flex items-center gap-3 rounded-2xl transition-all active:scale-95
                      disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
             background: 'linear-gradient(135deg, #6d28d9, #9333ea)',
             border:     '1px solid rgba(167,139,250,0.4)',
             boxShadow:  '0 4px 20px rgba(109,40,217,0.4)',
+            padding:    '20px',
           }}
         >
           <img src={ICONS.mysteryEgg} alt="egg" style={{ width: 40, height: 40, objectFit: 'contain' }} />
