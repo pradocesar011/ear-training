@@ -252,6 +252,7 @@ export default function TrainScreen() {
           )}
         </div>
       )}
+      <div style={{ height: 100 }} />
     </div>
   )
 }

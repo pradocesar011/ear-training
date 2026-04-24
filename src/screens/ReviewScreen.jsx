@@ -703,6 +703,7 @@ export default function ReviewScreen() {
         )}
 
       </div>
+      <div style={{ height: 100 }} />
     </div>
   )
 }

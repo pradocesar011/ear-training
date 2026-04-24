@@ -329,8 +329,7 @@ export default function ProfileScreen() {
 
       </div>{/* /max-w-sm */}
 
-      {/* Test section */}
-      <div className="w-full" style={{ height: 100, background: 'orange' }} />
+      <div className="w-full" style={{ height: 100 }} />
     </div>
   )
 }

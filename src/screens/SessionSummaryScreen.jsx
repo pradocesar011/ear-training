@@ -64,6 +64,7 @@ export default function SessionSummaryScreen({ summary, userCode, onNewSession }
       >
         {t('common.new_session')}
       </button>
+      <div style={{ height: 100 }} />
     </div>
   )
 }

@@ -112,6 +112,7 @@ export default function ResultScreen({ result, isLastExercise, onNext, onEnd }) 
           {isLastExercise ? t('session.summary_heading') : t('common.end_session')}
         </button>
       </div>
+      <div style={{ height: 100 }} />
     </div>
   )
 }

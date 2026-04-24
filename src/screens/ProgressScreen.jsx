@@ -231,6 +231,7 @@ export default function ProgressScreen() {
       )}
 
       </div>{/* /max-w-2xl */}
+      <div style={{ height: 100 }} />
     </div>
   )
 }
