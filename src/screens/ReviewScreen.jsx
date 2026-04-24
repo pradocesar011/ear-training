@@ -37,20 +37,22 @@ function precisionColor(p) {
 
 export default function ReviewScreen() {
   const { t, i18n } = useTranslation()
-  const { user, audio, session } = useAppContext()
+  const { user, audio, session, setReviewInExercise } = useAppContext()
   const lang = i18n.language?.slice(0, 2) ?? 'es'
 
   const [loading,       setLoading]       = useState(true)
   const [recentErrors,  setRecentErrors]  = useState([])
   const [srsItems,      setSrsItems]      = useState([])
+  const [completedIds,  setCompletedIds]  = useState(new Set())
   const [view,          setView]          = useState('list')      // 'list' | 'exercise'
   const [selectedEx,    setSelectedEx]    = useState(null)
 
   // ── exercise review state ─────────────────────────────────────────────────
-  const [noteIndex,       setNoteIndex]       = useState(0)
-  const [userSequence,    setUserSequence]    = useState([])
-  const [exerciseResult,  setExerciseResult]  = useState(null)  // null | result object
-  const [attemptNumber,   setAttemptNumber]   = useState(1)
+  const [noteIndex,        setNoteIndex]        = useState(0)
+  const [userSequence,     setUserSequence]     = useState([])
+  const [exerciseResult,   setExerciseResult]   = useState(null)
+  const [attemptNumber,    setAttemptNumber]    = useState(1)
+  const [showHearingBonus, setShowHearingBonus] = useState(false)
   const [highlightOk,      setHighlightOk]      = useState([])
   const [highlightBad,     setHighlightBad]     = useState([])
   const [highlightBadFade, setHighlightBadFade] = useState([])
@@ -58,6 +60,9 @@ export default function ReviewScreen() {
 
   const highlightTimerRef = useRef(null)
   const bonusGivenRef     = useRef(false)
+
+  // Cleanup: restore nav when component unmounts
+  useEffect(() => () => setReviewInExercise(false), [])
 
   // ── data fetching ─────────────────────────────────────────────────────────
 
@@ -67,7 +72,7 @@ export default function ReviewScreen() {
 
   async function fetchData() {
     setLoading(true)
-    const [sessRes, srsRes] = await Promise.all([
+    const [sessRes, srsRes, completedRes] = await Promise.all([
       supabase
         .from('sessions')
         .select('id')
@@ -79,9 +84,16 @@ export default function ReviewScreen() {
         .from('srs_items')
         .select('*')
         .eq('user_id', user.userId),
+      supabase
+        .from('review_attempts')
+        .select('exercise_id')
+        .eq('user_id', user.userId)
+        .gte('precision', 0.999)
+        .eq('completed', true),
     ])
 
     setSrsItems(srsRes.data ?? [])
+    setCompletedIds(new Set((completedRes.data ?? []).map(r => r.exercise_id)))
 
     const sessions = sessRes.data ?? []
     if (sessions.length > 0) {
@@ -109,20 +121,24 @@ export default function ReviewScreen() {
     setUserSequence([])
     setExerciseResult(null)
     setAttemptNumber(1)
+    setShowHearingBonus(false)
     setHighlightOk([])
     setHighlightBad([])
     setHighlightBadFade([])
     setIsPlaying(false)
     bonusGivenRef.current = false
+    setReviewInExercise(true)
     setView('exercise')
   }
 
   function closeExercise() {
     audio.stopAll()
     clearTimeout(highlightTimerRef.current)
+    setReviewInExercise(false)
     setView('list')
     setSelectedEx(null)
     setExerciseResult(null)
+    setShowHearingBonus(false)
   }
 
   // ── playback ──────────────────────────────────────────────────────────────
@@ -227,6 +243,7 @@ export default function ReviewScreen() {
     if (precision >= 1.0 && !bonusGivenRef.current) {
       bonusGivenRef.current = true
       session.addExtraHearing()
+      setShowHearingBonus(true)
     }
   }
 
@@ -247,6 +264,9 @@ export default function ReviewScreen() {
           .update({ completed: true })
           .eq('id', exerciseResult.attemptId)
       } catch {}
+    }
+    if (selectedEx && (exerciseResult?.precision ?? 0) >= 0.999) {
+      setCompletedIds(prev => new Set([...prev, selectedEx.id]))
     }
     closeExercise()
   }
@@ -324,82 +344,82 @@ export default function ReviewScreen() {
           </span>
         </div>
 
-        {/* note slots */}
-        <div className="w-full max-w-2xl mx-auto">
-          <div className="flex flex-wrap gap-1.5 justify-center">
-            {selectedEx.sequence.map((slot, i) => {
-              const answered = i < filled
-              const userNote = userSequence[i]
-              const correct  = exerciseResult ? exerciseResult.correct[i] : null
+        {/* note slots + clear buttons — vertically centered */}
+        <div className="flex-1 w-full flex flex-col items-center justify-center gap-4">
+          {/* note slots */}
+          <div className="w-full max-w-2xl mx-auto">
+            <div className="flex flex-wrap gap-1.5 justify-center">
+              {selectedEx.sequence.map((slot, i) => {
+                const answered = i < filled
+                const userNote = userSequence[i]
+                const correct  = exerciseResult ? exerciseResult.correct[i] : null
 
-              let bg   = 'bg-zinc-800'
-              let text = 'text-zinc-500'
-              let label = '—'
+                let bg   = 'bg-zinc-800'
+                let text = 'text-zinc-500'
+                let label = '—'
 
-              if (answered && !exerciseResult) {
-                bg    = 'bg-zinc-700'
-                text  = 'text-zinc-100'
-                label = userNote
-              } else if (exerciseResult && correct === true) {
-                bg    = 'bg-emerald-900/50'
-                text  = 'text-emerald-300'
-                label = userNote ?? '—'
-              } else if (exerciseResult && correct === false) {
-                bg    = 'bg-rose-900/50'
-                text  = 'text-rose-300'
-                label = userNote ?? '—'
-              } else if (!answered && i === filled && !exerciseResult) {
-                bg   = 'bg-zinc-800 ring-1 ring-cyan-500/50'
-                text = 'text-zinc-600'
-              }
+                if (answered && !exerciseResult) {
+                  bg    = 'bg-zinc-700'
+                  text  = 'text-zinc-100'
+                  label = userNote
+                } else if (exerciseResult && correct === true) {
+                  bg    = 'bg-emerald-900/50'
+                  text  = 'text-emerald-300'
+                  label = userNote ?? '—'
+                } else if (exerciseResult && correct === false) {
+                  bg    = 'bg-rose-900/50'
+                  text  = 'text-rose-300'
+                  label = userNote ?? '—'
+                } else if (!answered && i === filled && !exerciseResult) {
+                  bg   = 'bg-zinc-800 ring-1 ring-cyan-500/50'
+                  text = 'text-zinc-600'
+                }
 
-              return (
-                <div
-                  key={i}
-                  className={`${bg} rounded-lg text-center font-mono text-xs font-medium min-w-[48px] px-2 py-1.5 ${text}`}
-                >
-                  {label}
-                  {exerciseResult && !exerciseResult.correct[i] && exerciseResult.expected[i] && (
-                    <div className="text-emerald-500 text-[10px] mt-0.5">→{exerciseResult.expected[i]}</div>
-                  )}
-                </div>
-              )
-            })}
+                return (
+                  <div
+                    key={i}
+                    className={`${bg} rounded-lg text-center font-mono text-xs font-medium min-w-[48px] px-2 py-1.5 ${text}`}
+                  >
+                    {label}
+                    {exerciseResult && !exerciseResult.correct[i] && exerciseResult.expected[i] && (
+                      <div className="text-emerald-500 text-[10px] mt-0.5">→{exerciseResult.expected[i]}</div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* clear buttons + result info */}
+          <div className="w-full max-w-2xl mx-auto flex items-center justify-between gap-3">
+            <div className="flex gap-2">
+              <button
+                onClick={clearLast}
+                disabled={!userSequence.length || !!exerciseResult}
+                className="px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-lg text-xs
+                  hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                {t('review.clearLast')}
+              </button>
+              <button
+                onClick={clearAll}
+                disabled={!userSequence.length || !!exerciseResult}
+                className="px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-lg text-xs
+                  hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                {t('review.clearAll')}
+              </button>
+            </div>
+            {exerciseResult && (
+              <span
+                className="text-sm font-bold font-mono"
+                style={{ color: precisionColor(exerciseResult.precision) }}
+              >
+                {Math.round(exerciseResult.precision * 100)}%
+              </span>
+            )}
           </div>
         </div>
-
-        {/* clear buttons + result info */}
-        <div className="w-full max-w-2xl mx-auto flex items-center justify-between gap-3">
-          <div className="flex gap-2">
-            <button
-              onClick={clearLast}
-              disabled={!userSequence.length || !!exerciseResult}
-              className="px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-lg text-xs
-                hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-              {t('review.clearLast')}
-            </button>
-            <button
-              onClick={clearAll}
-              disabled={!userSequence.length || !!exerciseResult}
-              className="px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-lg text-xs
-                hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-              {t('review.clearAll')}
-            </button>
-          </div>
-          {exerciseResult && (
-            <span
-              className="text-sm font-bold font-mono"
-              style={{ color: precisionColor(exerciseResult.precision) }}
-            >
-              {Math.round(exerciseResult.precision * 100)}%
-            </span>
-          )}
-        </div>
-
-        {/* flex spacer to push piano down */}
-        <div className="flex-1" />
 
         {/* play + action buttons + keyboard pinned to bottom */}
         <div className="w-full flex flex-col items-center gap-3 pb-0">
@@ -482,6 +502,42 @@ export default function ReviewScreen() {
             />
           </div>
         </div>
+
+        {/* Extra hearing earned announcement */}
+        {showHearingBonus && (
+          <div
+            className="absolute inset-0 flex items-center justify-center z-40"
+            style={{ background: 'rgba(0,0,0,0.78)' }}
+            onClick={() => setShowHearingBonus(false)}
+          >
+            <div
+              className="bg-zinc-900 border border-cyan-500/60 rounded-2xl p-7 mx-6 text-center max-w-xs w-full"
+              style={{ boxShadow: '0 0 40px rgba(34,211,238,0.18)' }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="text-5xl mb-3">🎵</div>
+              <h3 className="text-white text-xl font-bold mb-1">Extra Hearing Earned!</h3>
+              <p className="text-cyan-300 text-sm font-semibold mb-3">+1 extra hearing</p>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                During training, once you've used your 2 regular hearings, tap{' '}
+                <span className="text-cyan-300 font-semibold">"Use one"</span> to spend an
+                extra hearing and listen again.
+              </p>
+              <div className="mt-2 text-zinc-500 text-xs">
+                You now have{' '}
+                <span className="text-cyan-300 font-bold">{session.extraHearings}</span>{' '}
+                extra hearing{session.extraHearings !== 1 ? 's' : ''}.
+              </div>
+              <button
+                onClick={() => setShowHearingBonus(false)}
+                className="mt-5 px-6 py-2.5 bg-cyan-600 text-white font-semibold rounded-xl
+                           hover:bg-cyan-500 active:scale-95 transition-all"
+              >
+                Got it!
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     )
   }
@@ -511,10 +567,20 @@ export default function ReviewScreen() {
 
   return (
     <div className="screen-enter flex flex-col items-center min-h-full px-4 pt-8 pb-24 gap-8">
-      <h1 className="text-2xl font-bold text-white text-center w-full max-w-2xl"
-          style={{ paddingTop: '20px' }}>
-        {t('review.title')}
-      </h1>
+      <div className="w-full max-w-2xl flex flex-col items-center gap-2" style={{ paddingTop: '20px' }}>
+        <h1 className="text-2xl font-bold text-white text-center">{t('review.title')}</h1>
+        {session.extraHearings > 0 && (
+          <div className="flex items-center gap-1.5 bg-cyan-900/40 border border-cyan-800/60 rounded-full px-3 py-1.5">
+            <svg className="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M15.536 8.464a5 5 0 010 7.072M12 6a7 7 0 010 12m-3.536-9.536a5 5 0 000 7.072" />
+            </svg>
+            <span className="text-cyan-300 text-xs font-semibold">
+              {session.extraHearings} extra hearing{session.extraHearings !== 1 ? 's' : ''} saved
+            </span>
+          </div>
+        )}
+      </div>
 
       <div className="w-full max-w-2xl flex flex-col gap-8">
 
@@ -540,17 +606,33 @@ export default function ReviewScreen() {
                     key={ex.id}
                     onClick={() => openExercise(ex)}
                     className={`w-full text-left border border-l-4 ${border} border-zinc-800
-                      rounded-xl p-4 hover:border-zinc-700 transition-colors`}
+                      rounded-xl hover:border-zinc-700 transition-colors`}
                     style={{ backgroundColor: bg, padding: '14px 14px 14px 16px' }}
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-zinc-500 text-xs">{date}</span>
-                      <span
-                        className="text-sm font-bold font-mono"
-                        style={{ color: precisionColor(ex.precision ?? 0) }}
-                      >
-                        {pct}%
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="text-sm font-bold font-mono"
+                          style={{ color: precisionColor(ex.precision ?? 0) }}
+                        >
+                          {pct}%
+                        </span>
+                        {/* Completion checkbox */}
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                            completedIds.has(ex.id)
+                              ? 'bg-emerald-500 border-emerald-400'
+                              : 'border-zinc-600 bg-transparent'
+                          }`}
+                        >
+                          {completedIds.has(ex.id) && (
+                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       <span className="text-xs px-1.5 py-0.5 bg-zinc-800 text-zinc-400 rounded font-mono">

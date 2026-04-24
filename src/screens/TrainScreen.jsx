@@ -151,6 +151,19 @@ export default function TrainScreen() {
         {t('common.start_session')}
       </button>
 
+      {/* Extra hearings indicator */}
+      {session.extraHearings > 0 && (
+        <div className="flex items-center gap-2 bg-cyan-900/40 border border-cyan-800/60 rounded-xl px-4 py-2">
+          <svg className="w-4 h-4 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M15.536 8.464a5 5 0 010 7.072M12 6a7 7 0 010 12m-3.536-9.536a5 5 0 000 7.072" />
+          </svg>
+          <span className="text-cyan-300 text-sm">
+            <span className="font-bold">{session.extraHearings}</span> extra hearing{session.extraHearings !== 1 ? 's' : ''} saved
+          </span>
+        </div>
+      )}
+
       {/* ── Session length ─────────────────────────────────────────────────── */}
       <SectionCard label={t('train.session_length')}>
         <div className="grid grid-cols-4 gap-2">

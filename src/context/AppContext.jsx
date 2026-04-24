@@ -3,7 +3,7 @@
  * Avoids prop-drilling across the 5-tab shell.
  */
 
-import { createContext, useContext, useEffect, useRef } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { useUser }    from '../hooks/useUser.js'
 import { useSession } from '../hooks/useSession.js'
 import { useAudio }   from '../hooks/useAudio.js'
@@ -16,6 +16,7 @@ export function AppProvider({ children }) {
   const session = useSession(user.userId)
   const audio   = useAudio()
   const reef    = useReef(user.userId)
+  const [reviewInExercise, setReviewInExercise] = useState(false)
 
   // Pending algae accumulates while reef is still loading
   const pendingAlgaeRef = useRef(0)
@@ -59,7 +60,7 @@ export function AppProvider({ children }) {
   }, [session.phase])
 
   return (
-    <AppContext.Provider value={{ user, session, audio, reef }}>
+    <AppContext.Provider value={{ user, session, audio, reef, reviewInExercise, setReviewInExercise }}>
       {children}
     </AppContext.Provider>
   )

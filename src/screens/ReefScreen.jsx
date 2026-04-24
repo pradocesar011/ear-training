@@ -393,7 +393,7 @@ export default function ReefScreen() {
       className="relative flex flex-col"
       style={{
         minHeight: '100%',
-        backgroundImage: 'url("/Reef/Backgrounds/Reef%20Background.jpg")',
+        backgroundImage: 'url("/Reef/Backgrounds/Reef%20Background.webp")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

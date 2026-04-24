@@ -313,7 +313,7 @@ export function useSession(userId) {
     idmEnd:      idmCurrent,
     history:     exerciseHistory,
     algaeEarned: exerciseHistory.reduce((s, e) => s + (e.algae ?? 0), 0),
-    algaeBonus:  Math.floor(idmCurrent),
+    algaeBonus:  exerciseHistory.some(e => (e.precision ?? 0) >= 0.8) ? Math.floor(idmCurrent) : 0,
   }
 
   const resetSession = useCallback(() => {
