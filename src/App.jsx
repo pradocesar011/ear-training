@@ -53,7 +53,9 @@ function TrainTab() {
     phase, isFirstExercise, isLastExercise,
     currentExercise, hearingsLeft, noteIndex, lastNoteResult,
     exerciseResult, summaryData, activeOctaves,
-    startSession, submitNote, useHearing, nextExercise, endSession, resetSession,
+    startSession, submitNote, useHearing,
+    extraHearings, useExtraHearing,
+    nextExercise, endSession, resetSession,
   } = session
 
   // 20-minute soft reminder (only during active exercise)
@@ -99,8 +101,10 @@ function TrainTab() {
           lastNoteResult={lastNoteResult}
           isFirstExercise={isFirstExercise}
           activeOctaves={activeOctaves}
+          extraHearings={extraHearings}
           onNote={handleNote}
           onPlay={useHearing}
+          onUseExtraHearing={useExtraHearing}
           onEnd={endSession}
           audio={audio}
         />

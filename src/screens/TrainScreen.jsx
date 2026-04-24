@@ -11,7 +11,6 @@ import {
 import { selectSessionIntervals } from '../engines/srs.js'
 
 const SESSION_LENGTHS = [10, 20, 40]
-const HEARINGS_OPTIONS = [1, 2, 3, 5, 8, 10]
 
 export default function TrainScreen() {
   const { t } = useTranslation()
@@ -23,7 +22,6 @@ export default function TrainScreen() {
   const [loadingStats, setLoadingStats] = useState(true)
   const [targetLength, setTargetLength] = useState(null)
   const [tonalMode,    setTonalMode]    = useState(getStoredTonalMode)
-  const [hearingsOvr,  setHearingsOvr]  = useState(10)
   const [activeOctaves, setActiveOctaves] = useState(getStoredActiveOctaves)
 
   useEffect(() => {
@@ -124,7 +122,7 @@ export default function TrainScreen() {
   }
 
   function handleStart() {
-    startSession(targetLength, { hearingsOverride: hearingsOvr, activeOctaves })
+    startSession(targetLength, { activeOctaves })
   }
 
   return (
@@ -183,20 +181,6 @@ export default function TrainScreen() {
               label={label}
               active={tonalMode === mode}
               onClick={() => handleTonalModeChange(mode)}
-            />
-          ))}
-        </div>
-      </SectionCard>
-
-      {/* ── Hearings per exercise ───────────────────────────────────────────── */}
-      <SectionCard label={t('train.hearings_label')}>
-        <div className="grid grid-cols-3 gap-2">
-          {HEARINGS_OPTIONS.map(h => (
-            <OptionButton
-              key={h}
-              label={String(h)}
-              active={hearingsOvr === h}
-              onClick={() => setHearingsOvr(h)}
             />
           ))}
         </div>

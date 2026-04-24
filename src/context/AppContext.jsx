@@ -35,13 +35,13 @@ export function AppProvider({ children }) {
     }
   }
 
-  // Award algae for each completed exercise
+  // Award algae for each completed exercise — only at ≥80% precision
   const lastResultRef = useRef(null)
   useEffect(() => {
     const r = session.exerciseResult
     if (r && r !== lastResultRef.current) {
       lastResultRef.current = r
-      safeAddAlgae(r.algaeEarned ?? 0)
+      if ((r.precision ?? 0) >= 0.8) safeAddAlgae(r.algaeEarned ?? 0)
     }
   }, [session.exerciseResult])
 

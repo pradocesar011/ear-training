@@ -37,7 +37,7 @@ function precisionColor(p) {
 
 export default function ReviewScreen() {
   const { t, i18n } = useTranslation()
-  const { user, audio } = useAppContext()
+  const { user, audio, session } = useAppContext()
   const lang = i18n.language?.slice(0, 2) ?? 'es'
 
   const [loading,       setLoading]       = useState(true)
@@ -57,6 +57,7 @@ export default function ReviewScreen() {
   const [isPlaying,        setIsPlaying]        = useState(false)
 
   const highlightTimerRef = useRef(null)
+  const bonusGivenRef     = useRef(false)
 
   // ── data fetching ─────────────────────────────────────────────────────────
 
@@ -112,6 +113,7 @@ export default function ReviewScreen() {
     setHighlightBad([])
     setHighlightBadFade([])
     setIsPlaying(false)
+    bonusGivenRef.current = false
     setView('exercise')
   }
 
@@ -221,6 +223,11 @@ export default function ReviewScreen() {
     } catch {}
 
     setExerciseResult({ precision, correct, attemptId, padded, expected })
+
+    if (precision >= 1.0 && !bonusGivenRef.current) {
+      bonusGivenRef.current = true
+      session.addExtraHearing()
+    }
   }
 
   function handleTryAgain() {

@@ -393,9 +393,15 @@ export default function ReefScreen() {
       className="relative flex flex-col"
       style={{
         minHeight: '100%',
-        background: 'linear-gradient(180deg, #0c1e3c 0%, #0e2a50 40%, #0a1f3d 70%, #071528 100%)',
+        backgroundImage: 'url("/Reef/Backgrounds/Reef%20Background.jpg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(5,15,30,0.52)', zIndex: 0 }} />
+
       {/* ── Decorative bubbles ───────────────────────────────────────────── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
         {[...Array(8)].map((_, i) => (
@@ -419,65 +425,69 @@ export default function ReefScreen() {
         className="sticky top-0 z-10 flex items-center justify-between gap-2"
         style={{ background: 'rgba(7,21,40,0.88)', backdropFilter: 'blur(8px)', padding: '8px 16px' }}
       >
-        {/* Fish count */}
-        <div
-          className="flex items-center gap-1.5 bg-white/10 rounded-xl text-white text-sm font-semibold"
-          style={{ padding: '10px 12px' }}
-        >
-          <svg className="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="currentColor">
-            <ellipse cx="14" cy="12" rx="7" ry="4.5" />
-            <polygon points="4,8 4,16 9,12" />
-            <circle cx="18" cy="11" r="1" fill="#0c1e3c" />
-          </svg>
-          {fish.length}/{MAX_FISH}
-        </div>
-
-        {/* Release mode toggle — separated */}
-        <button
-          onClick={toggleReleaseMode}
-          className={`p-2 rounded-xl transition-colors ${
-            releaseMode ? 'bg-rose-600 text-white' : 'bg-white/10 text-zinc-400 hover:text-zinc-200'
-          }`}
-          title="Release a fish"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
-        </button>
-
-        {/* Pearls */}
-        <div
-          className="flex items-center gap-1.5 bg-white/10 rounded-xl text-white text-sm font-semibold"
-          style={{ padding: '10px 16px' }}
-        >
-          <PearlIcon size={18} />
-          {pearls}
-        </div>
-
-        {/* Algae — tap to toggle feeding mode */}
-        <button
-          onClick={toggleFeedingMode}
-          className={`flex items-center gap-1.5 rounded-xl text-white text-sm font-semibold transition-colors ${
-            feedingMode
-              ? 'bg-emerald-600 ring-2 ring-emerald-400'
-              : 'bg-white/10 hover:bg-white/15'
-          }`}
-          style={{ padding: '10px 16px' }}
-        >
-          <AlgaeIcon size={18} />
-          {algae}
-        </button>
-
-        {/* Hungry alert */}
-        {hungryCount > 0 && !feedingMode && (
+        {/* Left: fish count + release button */}
+        <div className="flex items-center gap-1.5">
           <div
-            className="flex items-center gap-1 bg-orange-500 rounded-xl text-white text-xs font-bold"
-            style={{ padding: '10px 10px' }}
+            className="flex items-center gap-1.5 bg-white/10 rounded-xl text-white text-sm font-semibold"
+            style={{ padding: '8px 12px' }}
           >
-            ⚠ {hungryCount}
+            <svg className="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="currentColor">
+              <ellipse cx="14" cy="12" rx="7" ry="4.5" />
+              <polygon points="4,8 4,16 9,12" />
+              <circle cx="18" cy="11" r="1" fill="#0c1e3c" />
+            </svg>
+            {fish.length}/{MAX_FISH}
           </div>
-        )}
+          <button
+            onClick={toggleReleaseMode}
+            className={`p-2 rounded-xl transition-colors ${
+              releaseMode ? 'bg-rose-600 text-white' : 'bg-white/10 text-zinc-400 hover:text-zinc-200'
+            }`}
+            title="Release a fish"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Center: pearls + algae */}
+        <div className="flex items-center gap-1.5">
+          <div
+            className="flex items-center gap-1.5 bg-white/10 rounded-xl text-white text-sm font-semibold"
+            style={{ padding: '8px 14px' }}
+          >
+            <PearlIcon size={18} />
+            {pearls}
+          </div>
+          <button
+            onClick={toggleFeedingMode}
+            className={`flex items-center gap-1.5 rounded-xl text-white text-sm font-semibold transition-colors ${
+              feedingMode
+                ? 'bg-emerald-600 ring-2 ring-emerald-400'
+                : 'bg-white/10 hover:bg-white/15'
+            }`}
+            style={{ padding: '8px 14px' }}
+          >
+            <AlgaeIcon size={18} />
+            {algae}
+          </button>
+        </div>
+
+        {/* Right: hungry count */}
+        <div className="flex items-center justify-end" style={{ minWidth: 44 }}>
+          {hungryCount > 0 && (
+            <div
+              className={`flex items-center gap-1 rounded-xl text-white text-xs font-bold transition-colors ${
+                feedingMode ? 'bg-emerald-600' : 'bg-orange-500'
+              }`}
+              style={{ padding: '8px 10px' }}
+            >
+              ⚠ {hungryCount}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Mode banner — centered below HUD */}
@@ -539,22 +549,16 @@ export default function ReefScreen() {
         ))}
       </div>
 
-      {/* ── Buy egg + eggs above it ──────────────────────────────────────── */}
-      <div className="flex flex-col items-center gap-2 px-4" style={{ paddingBottom: 88, paddingTop: 8, zIndex: 2 }}>
-        {/* Hatching eggs — centered above buy button */}
-        {eggs.length > 0 && (
-          <div className="flex gap-2 justify-center flex-wrap">
-            {eggs.map(egg => (
-              <EggItem key={egg.id} egg={egg} onClaim={handleClaim} t={t} />
-            ))}
-          </div>
-        )}
-
-        {/* Buy egg button */}
+      {/* ── Bottom row: buy egg (left) + hatching eggs (right) ──────────── */}
+      <div
+        className="flex items-end gap-2 px-4 overflow-x-auto"
+        style={{ paddingBottom: 88, paddingTop: 8, zIndex: 2 }}
+      >
+        {/* Buy egg button — always on left */}
         <button
           onClick={handleBuyEgg}
           disabled={tankFull}
-          className="flex items-center gap-3 rounded-2xl transition-all active:scale-95
+          className="flex-shrink-0 flex items-center gap-3 rounded-2xl transition-all active:scale-95
                      disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
             background: 'linear-gradient(135deg, #6d28d9, #9333ea)',
@@ -572,6 +576,11 @@ export default function ReefScreen() {
             </div>
           </div>
         </button>
+
+        {/* Hatching eggs extending to the right */}
+        {eggs.map(egg => (
+          <EggItem key={egg.id} egg={egg} onClaim={handleClaim} t={t} />
+        ))}
       </div>
 
       {/* ── Release confirmation ─────────────────────────────────────────── */}

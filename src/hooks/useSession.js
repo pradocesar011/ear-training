@@ -10,7 +10,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { supabase } from '../lib/supabase.js'
-import { storeIDM, getStoredIDM } from '../lib/utils.js'
+import { storeIDM, getStoredIDM, getStoredExtraHearings, storeExtraHearings } from '../lib/utils.js'
 import { evaluateDDA, updateConsecutiveErrors, getIDMTrend } from '../engines/dda.js'
 import { computeIDM, computeWeightedPrecision } from '../engines/idm.js'
 import { selectSessionIntervals, updateSRSItem, buildInitialSRSItem } from '../engines/srs.js'
@@ -43,6 +43,7 @@ export function useSession(userId) {
   const [srsItems, setSrsItems]       = useState([])
   const [activeOctaves, setActiveOctaves] = useState([3, 4])
   const [hearingsOverride, setHearingsOverride] = useState(null)
+  const [extraHearings, setExtraHearings] = useState(getStoredExtraHearings)
 
   // ── Exercise-level state ──────────────────────────────────────────────────
   const [currentExercise, setCurrentExercise] = useState(null)
@@ -123,11 +124,8 @@ export function useSession(userId) {
       highMidi,
     })
 
-    const computedH = idmComponents.H
-    const hearings  = (ho != null) ? ho : computedH
-    const finalIdmComponents = (ho != null)
-      ? { ...idmComponents, H: ho }
-      : idmComponents
+    const hearings = 2
+    const finalIdmComponents = { ...idmComponents, H: 2 }
 
     setCurrentExercise({ sequence, tonic, tempo, idmComponents: finalIdmComponents })
     setHearingsLeft(hearings)
@@ -167,6 +165,22 @@ export function useSession(userId) {
   const useHearing = useCallback(() => {
     setHearingsLeft(h => Math.max(0, h - 1))
   }, [])
+
+  // ── Extra hearings (earned from review, spent in exercise) ────────────────
+  const addExtraHearing = useCallback(() => {
+    setExtraHearings(prev => {
+      const next = prev + 1
+      storeExtraHearings(next)
+      return next
+    })
+  }, [])
+
+  const useExtraHearing = useCallback(() => {
+    if (hearingsLeft >= 2 || extraHearings <= 0) return false
+    setExtraHearings(prev => { storeExtraHearings(prev - 1); return prev - 1 })
+    setHearingsLeft(h => h + 1)
+    return true
+  }, [hearingsLeft, extraHearings])
 
   // ── Finish exercise ───────────────────────────────────────────────────────
   async function finishExercise(userSeq, consec) {
@@ -331,6 +345,9 @@ export function useSession(userId) {
     startSession,
     submitNote,
     useHearing,
+    extraHearings,
+    addExtraHearing,
+    useExtraHearing,
     nextExercise,
     endSession,
     resetSession,

@@ -32,6 +32,14 @@ export function storeTonalMode(mode) {
   try { localStorage.setItem(LS_TONAL_MODE_KEY, mode) } catch {}
 }
 
+const LS_EXTRA_HEARINGS_KEY = 'ear_extra_hearings'
+export function getStoredExtraHearings() {
+  try { return Math.max(0, parseInt(localStorage.getItem(LS_EXTRA_HEARINGS_KEY) ?? '0')) } catch { return 0 }
+}
+export function storeExtraHearings(n) {
+  try { localStorage.setItem(LS_EXTRA_HEARINGS_KEY, String(Math.max(0, n))) } catch {}
+}
+
 const LS_CHEAT_MODE_KEY     = 'ear_cheat_mode'
 export function getStoredCheatMode() {
   try { return localStorage.getItem(LS_CHEAT_MODE_KEY) === 'true' } catch { return false }
