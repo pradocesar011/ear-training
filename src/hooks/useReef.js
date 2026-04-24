@@ -85,7 +85,6 @@ export function useReef(userId) {
 
   async function addAlgae(amount) {
     if (!userId || !loaded || amount <= 0) return
-    // Fetch fresh value to prevent race conditions
     const { data } = await supabase
       .from('reef_state')
       .select('algae')
@@ -95,6 +94,19 @@ export function useReef(userId) {
     const next = current + amount
     setAlgae(next)
     await supabase.from('reef_state').update({ algae: next }).eq('user_id', userId)
+  }
+
+  async function addPearls(amount) {
+    if (!userId || !loaded || amount <= 0) return
+    const { data } = await supabase
+      .from('reef_state')
+      .select('pearls')
+      .eq('user_id', userId)
+      .single()
+    const current = data?.pearls ?? pearls
+    const next = current + amount
+    setPearls(next)
+    await supabase.from('reef_state').update({ pearls: next }).eq('user_id', userId)
   }
 
   // ── Fish actions ──────────────────────────────────────────────────────────
@@ -244,6 +256,7 @@ export function useReef(userId) {
     fish,
     eggs,
     addAlgae,
+    addPearls,
     feedFish,
     collectFromFish,
     releaseFish,

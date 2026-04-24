@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext.jsx'
 import {
   fishDisplayName, calcPendingPearls, calcAlgaeFeedCost, calcLevel,
-  isHungry, formatCountdown, calcEggCost, calcReleaseReward,
+  isHungry, hungerRemainingMs, formatCountdown, calcEggCost, calcReleaseReward, calcPearlRate,
 } from '../lib/reefUtils.js'
 import {
   FISH_SIZE_PX, RARITY_COLORS, ICONS, fishImagePath, MAX_FISH,
@@ -103,21 +103,29 @@ function FloatLabel({ label, onDone }) {
 // ── Single fish sprite ────────────────────────────────────────────────────────
 
 function FishSprite({ fish, pos, onTap, isSelected, t }) {
-  const [floats, setFloats] = useState([])
-  const hungry   = isHungry(fish)
-  const pending  = calcPendingPearls(fish)
-  const level    = fish.level ?? calcLevel(fish.feedings_count ?? 0)
-  const size     = FISH_SIZE_PX[fish.rarity] ?? 72
+  const [floats,  setFloats]  = useState([])
+  const [hovered, setHovered] = useState(false)
+  const [shaking, setShaking] = useState(false)
+
+  const hungry      = isHungry(fish)
+  const pending     = calcPendingPearls(fish)
+  const level       = fish.level ?? calcLevel(fish.feedings_count ?? 0)
+  const size        = FISH_SIZE_PX[fish.rarity] ?? 72
   const facingRight = pos?.vx > 0
-  const rarityColor = RARITY_COLORS[fish.rarity]
+  const rate        = calcPearlRate(fish.rarity, level)
+  const remainingMs = hungerRemainingMs(fish)
 
   function handleTap() {
+    setShaking(true)
+    setTimeout(() => setShaking(false), 500)
     onTap(fish)
   }
 
   return (
     <div
       onClick={handleTap}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
         position:   'absolute',
         left:       `${pos?.x ?? 50}%`,
@@ -130,52 +138,73 @@ function FishSprite({ fish, pos, onTap, isSelected, t }) {
         zIndex:     5,
       }}
     >
-      <div className="relative">
-        {/* Fish image */}
-        <img
-          src={fishImagePath(fish.rarity, fish.name)}
-          alt={fishDisplayName(fish.name)}
-          draggable={false}
-          style={{
-            width:  size,
-            height: size,
-            objectFit: 'contain',
-            filter: hungry
-              ? 'grayscale(80%) brightness(0.55)'
-              : isSelected ? 'brightness(1.25) drop-shadow(0 0 8px rgba(255,255,255,0.6))' : 'none',
-            transition: 'filter 0.4s ease',
-          }}
-        />
-
-        {/* Pending pearls badge */}
-        {pending > 0 && !hungry && (
-          <div
-            className="absolute -top-2 -right-2 flex items-center gap-0.5
-                       bg-zinc-900/90 rounded-full px-1.5 py-0.5 text-[10px] font-bold text-white border border-yellow-500/60"
-            style={{ transform: `scaleX(${facingRight ? -1 : 1})` }}
-          >
-            <img src={ICONS.pearl} alt="" style={{ width: 10, height: 10 }} />
-            {pending}
+      {/* Hover tooltip */}
+      {hovered && (
+        <div
+          className="absolute bottom-full mb-2 left-1/2 whitespace-nowrap
+                     bg-zinc-900/95 border border-zinc-700 rounded-lg px-2.5 py-1.5
+                     text-[11px] text-white leading-tight pointer-events-none"
+          style={{ transform: `translateX(-50%) scaleX(${facingRight ? -1 : 1})`, zIndex: 20 }}
+        >
+          <div className="flex items-center gap-1 text-yellow-300">
+            <img src={ICONS.pearl} alt="" style={{ width: 11, height: 11 }} />
+            {rate.toFixed(1)}/hr
           </div>
-        )}
-
-        {/* Feed button when hungry */}
-        {hungry && (
-          <div
-            className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap
-                       bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"
-            style={{ transform: `translateX(-50%) scaleX(${facingRight ? -1 : 1})` }}
-          >
-            {t('reef.feed')}
+          <div className={`mt-0.5 ${hungry ? 'text-orange-400' : 'text-zinc-400'}`}>
+            {hungry ? 'Hungry!' : `Full: ${formatCountdown(remainingMs)}`}
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Floating collect labels */}
-        {floats.map(f => (
-          <FloatLabel key={f.id} label={f.label} onDone={() =>
-            setFloats(prev => prev.filter(x => x.id !== f.id))
-          } />
-        ))}
+      {/* Shake wrapper */}
+      <div style={{ animation: shaking ? 'fishShake 0.5s ease' : 'none' }}>
+        <div className="relative">
+          {/* Fish image */}
+          <img
+            src={fishImagePath(fish.rarity, fish.name)}
+            alt={fishDisplayName(fish.name)}
+            draggable={false}
+            style={{
+              width:  size,
+              height: size,
+              objectFit: 'contain',
+              filter: hungry
+                ? 'grayscale(80%) brightness(0.55)'
+                : isSelected ? 'brightness(1.25) drop-shadow(0 0 8px rgba(255,255,255,0.6))' : 'none',
+              transition: 'filter 0.4s ease',
+            }}
+          />
+
+          {/* Pending pearls badge */}
+          {pending > 0 && !hungry && (
+            <div
+              className="absolute -top-2 -right-2 flex items-center gap-0.5
+                         bg-zinc-900/90 rounded-full px-1.5 py-0.5 text-[10px] font-bold text-white border border-yellow-500/60"
+              style={{ transform: `scaleX(${facingRight ? -1 : 1})` }}
+            >
+              <img src={ICONS.pearl} alt="" style={{ width: 10, height: 10 }} />
+              {pending}
+            </div>
+          )}
+
+          {/* Feed label when hungry */}
+          {hungry && (
+            <div
+              className="absolute -bottom-7 left-1/2 whitespace-nowrap
+                         bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"
+              style={{ transform: `translateX(-50%) scaleX(${facingRight ? -1 : 1})` }}
+            >
+              {t('reef.feed')}
+            </div>
+          )}
+
+          {/* Floating collect labels */}
+          {floats.map(f => (
+            <FloatLabel key={f.id} label={f.label} onDone={() =>
+              setFloats(prev => prev.filter(x => x.id !== f.id))
+            } />
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -439,12 +468,12 @@ export default function ReefScreen() {
 
       {/* ── HUD ──────────────────────────────────────────────────────────── */}
       <div
-        className="sticky top-0 z-10 flex items-center justify-between px-3 py-2.5 gap-2"
-        style={{ background: 'rgba(7,21,40,0.85)', backdropFilter: 'blur(8px)' }}
+        className="sticky top-0 z-10 flex items-center justify-between gap-2"
+        style={{ background: 'rgba(7,21,40,0.85)', backdropFilter: 'blur(8px)', padding: '8px 16px' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Fish count */}
-        <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5 text-white text-sm font-semibold">
+        <div className="flex items-center gap-1.5 bg-white/10 rounded-xl text-white text-sm font-semibold" style={{ padding: '10px 16px' }}>
           <svg className="w-4 h-4 opacity-80" viewBox="0 0 24 24" fill="currentColor">
             <ellipse cx="14" cy="12" rx="7" ry="4.5" />
             <polygon points="4,8 4,16 9,12" />
@@ -454,20 +483,20 @@ export default function ReefScreen() {
         </div>
 
         {/* Pearls */}
-        <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5 text-white text-sm font-semibold">
+        <div className="flex items-center gap-1.5 bg-white/10 rounded-xl text-white text-sm font-semibold" style={{ padding: '10px 16px' }}>
           <PearlIcon size={18} />
           {pearls}
         </div>
 
         {/* Algae */}
-        <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5 text-white text-sm font-semibold">
+        <div className="flex items-center gap-1.5 bg-white/10 rounded-xl text-white text-sm font-semibold" style={{ padding: '10px 16px' }}>
           <AlgaeIcon size={18} />
           {algae}
         </div>
 
         {/* Hungry alert */}
         {hungryCount > 0 && (
-          <div className="flex items-center gap-1 bg-orange-500 rounded-full px-3 py-1.5 text-white text-xs font-bold">
+          <div className="flex items-center gap-1 bg-orange-500 rounded-xl text-white text-xs font-bold" style={{ padding: '10px 12px' }}>
             ⚠ {t('reef.hungry_alert', { count: hungryCount })}
           </div>
         )}
@@ -512,8 +541,8 @@ export default function ReefScreen() {
 
       {/* ── Bottom controls ───────────────────────────────────────────────── */}
       <div
-        className="flex items-end justify-between px-4 pb-4 pt-2 gap-3"
-        style={{ zIndex: 2 }}
+        className="flex items-end justify-between px-4 pt-2 gap-3"
+        style={{ zIndex: 2, paddingBottom: '80px' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Buy egg card */}
@@ -604,6 +633,15 @@ export default function ReefScreen() {
           15%  { opacity: 1; transform: translateX(-50%) translateY(0); }
           75%  { opacity: 1; }
           100% { opacity: 0; }
+        }
+        @keyframes fishShake {
+          0%   { transform: translateX(0) rotate(0deg); }
+          15%  { transform: translateX(-5px) rotate(-6deg); }
+          30%  { transform: translateX(5px) rotate(6deg); }
+          45%  { transform: translateX(-4px) rotate(-4deg); }
+          60%  { transform: translateX(4px) rotate(4deg); }
+          75%  { transform: translateX(-2px) rotate(-2deg); }
+          100% { transform: translateX(0) rotate(0deg); }
         }
       `}</style>
     </div>

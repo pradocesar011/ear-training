@@ -10,7 +10,7 @@ const INITIAL_IDM = 2.0
 
 export default function ProfileScreen() {
   const { t } = useTranslation()
-  const { user } = useAppContext()
+  const { user, reef } = useAppContext()
   const navigate = useNavigate()
 
   const [stats,         setStats]         = useState(null)
@@ -228,9 +228,41 @@ export default function ProfileScreen() {
           </button>
         </div>
         {cheatMode && (
-          <p className="text-orange-400 text-xs font-mono border-t border-zinc-800" style={{ paddingTop: '10px', marginTop: '10px' }}>
-            Cheat mode ON — answers visible during training.
-          </p>
+          <div className="border-t border-zinc-800" style={{ paddingTop: '10px', marginTop: '10px' }}>
+            <p className="text-orange-400 text-xs font-mono mb-3">
+              Cheat mode ON — answers visible during training.
+            </p>
+            {/* Algae cheat row */}
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-zinc-400 text-xs w-20 flex-shrink-0">Add algae</span>
+              {[5, 50, 500].map(n => (
+                <button
+                  key={n}
+                  onClick={() => reef.addAlgae(n)}
+                  className="flex-1 py-1.5 bg-emerald-900/60 border border-emerald-700/50
+                             text-emerald-300 text-xs font-bold rounded-lg
+                             hover:bg-emerald-800/60 transition-colors"
+                >
+                  +{n}
+                </button>
+              ))}
+            </div>
+            {/* Pearls cheat row */}
+            <div className="flex items-center gap-2">
+              <span className="text-zinc-400 text-xs w-20 flex-shrink-0">Add pearls</span>
+              {[5, 50, 500].map(n => (
+                <button
+                  key={n}
+                  onClick={() => reef.addPearls(n)}
+                  className="flex-1 py-1.5 bg-yellow-900/60 border border-yellow-700/50
+                             text-yellow-300 text-xs font-bold rounded-lg
+                             hover:bg-yellow-800/60 transition-colors"
+                >
+                  +{n}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </Card>
 
