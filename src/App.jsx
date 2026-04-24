@@ -13,6 +13,7 @@ import SessionSummaryScreen from './screens/SessionSummaryScreen.jsx'
 import ProgressScreen       from './screens/ProgressScreen.jsx'
 import ReviewScreen         from './screens/ReviewScreen.jsx'
 import ProfileScreen        from './screens/ProfileScreen.jsx'
+import ReefScreen           from './screens/ReefScreen.jsx'
 
 import AdminLogin       from './admin/AdminLogin.jsx'
 import AdminShell       from './admin/AdminShell.jsx'
@@ -164,6 +165,7 @@ export default function App() {
           <Route path="/progress"   element={<ProgressScreen />} />
           <Route path="/review"     element={<ReviewScreen />} />
           <Route path="/profile"    element={<ProfileScreen />} />
+          <Route path="/reef"       element={<ReefScreen />} />
           <Route path="*"           element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

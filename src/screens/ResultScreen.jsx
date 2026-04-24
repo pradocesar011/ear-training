@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import IDMTrendBadge from '../components/IDMTrendBadge.jsx'
 import PianoKeyboard from '../components/PianoKeyboard.jsx'
+import { AlgaeAmount } from '../components/reef/ReefIcons.jsx'
 import { formatPrecision } from '../lib/utils.js'
 import { COLORS } from '../config/constants.js'
 
@@ -8,7 +9,7 @@ export default function ResultScreen({ result, isLastExercise, onNext, onEnd }) 
   const { t, i18n } = useTranslation()
   const lang = i18n.language?.slice(0, 2) ?? 'es'
 
-  const { precision, correct, userSequence, expectedSequence, trend } = result
+  const { precision, correct, userSequence, expectedSequence, trend, algaeEarned } = result
 
   // Build highlight arrays
   const correctHighlight = []
@@ -50,6 +51,13 @@ export default function ResultScreen({ result, isLastExercise, onNext, onEnd }) 
 
       {/* Trend badge */}
       <IDMTrendBadge trend={trend} />
+
+      {/* Algae reward */}
+      {algaeEarned > 0 && (
+        <div className="flex items-center gap-2 px-4 py-2 bg-green-950/60 border border-green-800/50 rounded-xl">
+          <AlgaeAmount amount={`+${algaeEarned}`} size={20} className="text-green-300 font-semibold text-base" />
+        </div>
+      )}
 
       {/* Keyboard visualization */}
       <div className="w-full max-w-2xl">

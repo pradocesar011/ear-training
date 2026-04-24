@@ -50,6 +50,22 @@ const TABS = [
       </svg>
     ),
   },
+  {
+    to: '/reef',
+    end: false,
+    labelKey: 'nav.reef',
+    icon: (active) => (
+      <svg viewBox="0 0 24 24" fill="none" strokeWidth={active ? 2.2 : 1.8}
+        stroke="currentColor" className="w-6 h-6">
+        <path strokeLinecap="round" strokeLinejoin="round"
+          d="M12 3c-1.5 3-4 4.5-4 7a4 4 0 008 0c0-2.5-2.5-4-4-7z" />
+        <path strokeLinecap="round" strokeLinejoin="round"
+          d="M8 17c-2 .5-3.5 1.5-3.5 2.5S6 21 12 21s7.5-.5 7.5-1.5S19 18 17 17.5" />
+        <path strokeLinecap="round" strokeLinejoin="round"
+          d="M6 13c-1.5.5-2.5 1-2.5 1.5M18 13c1.5.5 2.5 1 2.5 1.5" />
+      </svg>
+    ),
+  },
 ]
 
 export default function BottomNav() {

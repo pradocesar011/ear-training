@@ -189,6 +189,8 @@ export function useSession(userId) {
 
     const trend = getIDMTrend(idmCurrent, newIDM)
 
+    const algaeEarned = Math.max(1, Math.floor(idmCurrent))
+
     const result = {
       precision,
       correct: correctArr,
@@ -198,6 +200,7 @@ export function useSession(userId) {
       trend,
       idmBefore: idmCurrent,
       idmAfter:  newIDM,
+      algaeEarned,
     }
     setExerciseResult(result)
 
@@ -229,7 +232,7 @@ export function useSession(userId) {
       await updateSRSForExercise(correctArr)
     }
 
-    const newHistory = [...exerciseHistory, { precision, idm: newIDM }]
+    const newHistory = [...exerciseHistory, { precision, idm: newIDM, algae: algaeEarned }]
     setExerciseHistory(newHistory)
     setPhase('result')
   }
@@ -292,9 +295,11 @@ export function useSession(userId) {
     meanPrecision: exerciseHistory.length
       ? exerciseHistory.reduce((a, b) => a + b.precision, 0) / exerciseHistory.length
       : 0,
-    idmStart: idmAtStart,
-    idmEnd:   idmCurrent,
-    history:  exerciseHistory,
+    idmStart:    idmAtStart,
+    idmEnd:      idmCurrent,
+    history:     exerciseHistory,
+    algaeEarned: exerciseHistory.reduce((s, e) => s + (e.algae ?? 0), 0),
+    algaeBonus:  Math.floor(idmCurrent),
   }
 
   const resetSession = useCallback(() => {

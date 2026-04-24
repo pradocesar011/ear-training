@@ -1,10 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import PrecisionChart from '../components/PrecisionChart.jsx'
+import { AlgaeAmount } from '../components/reef/ReefIcons.jsx'
 import { formatDuration, formatPrecision } from '../lib/utils.js'
 
 export default function SessionSummaryScreen({ summary, userCode, onNewSession }) {
   const { t } = useTranslation()
-  const { duration, exercises, meanPrecision, idmStart, idmEnd, history } = summary
+  const { duration, exercises, meanPrecision, idmStart, idmEnd, history, algaeEarned, algaeBonus } = summary
+  const totalAlgae = (algaeEarned ?? 0) + (algaeBonus ?? 0)
 
   const statItems = [
     { label: t('session.duration'),            value: formatDuration(duration) },
@@ -25,6 +27,15 @@ export default function SessionSummaryScreen({ summary, userCode, onNewSession }
           </div>
         ))}
       </div>
+
+      {/* Algae earned this session */}
+      {totalAlgae > 0 && (
+        <div className="flex items-center justify-center gap-3 w-full max-w-xl
+                        bg-green-950/60 border border-green-800/50 rounded-xl py-3 px-5">
+          <AlgaeAmount amount={`+${totalAlgae}`} size={22} className="text-green-300 font-semibold text-lg" />
+          <span className="text-green-400/70 text-sm">{t('reef.algae_earned_session')}</span>
+        </div>
+      )}
 
       {/* Precision chart */}
       {history.length > 1 && (
