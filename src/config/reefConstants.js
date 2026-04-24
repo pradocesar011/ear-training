@@ -61,14 +61,14 @@ export const RARITY_COLORS = {
 
 // Static asset paths (files in public/reef/)
 export const ICONS = {
-  algae:              '/reef/Icons/Algae.png',
-  pearl:              '/reef/Icons/Pearl.png',
-  egg:                '/reef/Icons/Egg.png',
-  eggHatching:        '/reef/Icons/Egg%20Hatching.png',
-  mysteryEgg:         '/reef/Icons/Mystery%20Egg.png',
-  mysteryEggHatching: '/reef/Icons/Mystery%20Egg%20Hatching.png',
+  algae:              '/Reef/Icons/Algae.png',
+  pearl:              '/Reef/Icons/Pearl.png',
+  egg:                '/Reef/Icons/Egg.png',
+  eggHatching:        '/Reef/Icons/Egg%20Hatching.png',
+  mysteryEgg:         '/Reef/Icons/Mystery%20Egg.png',
+  mysteryEggHatching: '/Reef/Icons/Mystery%20Egg%20Hatching.png',
 }
 
 export function fishImagePath(rarity, name) {
-  return `/reef/Fish/${rarity}/${name}.png`
+  return `/Reef/Fish/${rarity}/${name}.png`
 }
