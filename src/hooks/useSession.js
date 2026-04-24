@@ -203,7 +203,7 @@ export function useSession(userId) {
 
     const trend = getIDMTrend(idmCurrent, newIDM)
 
-    const algaeEarned = Math.max(1, Math.floor(idmCurrent))
+    const algaeEarned = precision >= 0.8 ? Math.max(1, Math.floor(idmCurrent)) : 0
 
     const result = {
       precision,
