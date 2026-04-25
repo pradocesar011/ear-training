@@ -617,10 +617,11 @@ export default function ReviewScreen() {
         <div className="flex border-b border-zinc-800">
           <button
             onClick={() => setActiveTab('errors')}
-            className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors
+            className={`flex items-center gap-2 text-sm font-semibold transition-colors
               border-b-2 -mb-px ${activeTab === 'errors'
                 ? 'text-white border-cyan-500'
                 : 'text-zinc-500 border-transparent hover:text-zinc-300'}`}
+            style={{ padding: '20px' }}
           >
             {t('review.recentErrors')}
             {session.extraHearings > 0 && (
@@ -632,11 +633,12 @@ export default function ReviewScreen() {
           </button>
           <button
             onClick={() => setActiveTab('practice')}
-            className={`px-4 py-3 text-sm font-semibold transition-colors border-b-2 -mb-px ${
+            className={`text-sm font-semibold transition-colors border-b-2 -mb-px ${
               activeTab === 'practice'
                 ? 'text-white border-cyan-500'
                 : 'text-zinc-500 border-transparent hover:text-zinc-300'
             }`}
+            style={{ padding: '20px' }}
           >
             Practice
           </button>
@@ -672,7 +674,7 @@ export default function ReviewScreen() {
                       <div className="flex items-center gap-2">
                         <span
                           className="text-sm font-bold font-mono"
-                          style={{ color: precisionColor(ex.precision ?? 0) }}
+                          style={{ color: precisionColor(ex.precision ?? 0), padding: '10px' }}
                         >
                           {pct}%
                         </span>
@@ -726,7 +728,7 @@ export default function ReviewScreen() {
           >
             Start Practice
           </button>
-          <p className="text-zinc-500 text-sm text-center mb-5">
+          <p className="text-zinc-500 text-sm text-center mb-8">
             Select the intervals you would like to practice
           </p>
           <div className="flex flex-col gap-2">
@@ -746,7 +748,7 @@ export default function ReviewScreen() {
 
               return (
                 <div key={interval} className="bg-zinc-900 border border-zinc-800 rounded-xl" style={{ padding: '20px' }}>
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3">
                     <PracticeCheckbox
                       checked={allSel}
                       indeterminate={!allSel && !noneSel}
@@ -756,7 +758,7 @@ export default function ReviewScreen() {
                       {t(`intervals.${interval}`)}
                     </span>
                   </div>
-                  <div className="flex flex-col gap-2.5 pl-8">
+                  <div className="flex flex-col gap-2 pl-8" style={{ marginTop: '16px' }}>
                     {hasAsc && (
                       <div className="flex items-center gap-2">
                         <PracticeCheckbox checked={ascSel} onChange={() => toggleDirection(interval, 'ascending')} />

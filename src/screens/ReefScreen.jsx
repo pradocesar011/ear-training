@@ -116,9 +116,9 @@ function FishSprite({ fish, pos, onTap, feedingMode, releaseMode }) {
       {hovered && !feedingMode && !releaseMode && (
         <div
           className="absolute bottom-full mb-2 left-1/2 whitespace-nowrap
-                     bg-zinc-900/95 border border-zinc-700 rounded-lg px-2.5 py-1.5
+                     bg-zinc-900/95 border border-zinc-700 rounded-lg
                      text-[11px] text-white leading-tight pointer-events-none"
-          style={{ transform: `translateX(-50%) scaleX(${facingRight ? -1 : 1})`, zIndex: 20 }}
+          style={{ transform: `translateX(-50%) scaleX(${facingRight ? -1 : 1})`, zIndex: 20, padding: '10px' }}
         >
           <div className="flex items-center gap-1 text-yellow-300">
             <img src={ICONS.pearl} alt="" style={{ width: 11, height: 11 }} />
@@ -165,11 +165,12 @@ function FishSprite({ fish, pos, onTap, feedingMode, releaseMode }) {
           {showPearlBadge && (
             <div
               className="absolute -top-3 -right-3 flex items-center gap-1
-                         bg-zinc-900/95 rounded-full px-2 py-1
+                         bg-zinc-900/95 rounded-full
                          text-xs font-black text-yellow-300 border-2 border-yellow-400/80"
               style={{
                 transform:  `scaleX(${facingRight ? -1 : 1})`,
                 boxShadow:  '0 0 8px rgba(250,204,21,0.5)',
+                padding:    '10px',
               }}
             >
               <img src={ICONS.pearl} alt="" style={{ width: 14, height: 14 }} />
@@ -239,8 +240,8 @@ function ReleaseConfirm({ fish, onConfirm, onCancel }) {
       onClick={onCancel}
     >
       <div
-        className="bg-zinc-900 border rounded-2xl p-6 mx-6 text-center w-full max-w-xs"
-        style={{ borderColor: col.border }}
+        className="bg-zinc-900 border rounded-2xl mx-6 text-center w-full max-w-xs"
+        style={{ borderColor: col.border, padding: '20px' }}
         onClick={e => e.stopPropagation()}
       >
         <img
@@ -259,15 +260,17 @@ function ReleaseConfirm({ fish, onConfirm, onCancel }) {
         <div className="flex gap-3 mt-5">
           <button
             onClick={onCancel}
-            className="flex-1 py-2.5 bg-zinc-800 text-zinc-300 rounded-xl
+            className="flex-1 bg-zinc-800 text-zinc-300 rounded-xl
                        font-semibold text-sm hover:bg-zinc-700 transition-colors"
+            style={{ padding: '10px' }}
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 py-2.5 bg-rose-700 text-white rounded-xl
+            className="flex-1 bg-rose-700 text-white rounded-xl
                        font-semibold text-sm hover:bg-rose-600 transition-colors"
+            style={{ padding: '10px' }}
           >
             Release
           </button>
@@ -440,9 +443,10 @@ export default function ReefScreen() {
           </div>
           <button
             onClick={toggleReleaseMode}
-            className={`p-2 rounded-xl transition-colors ${
+            className={`rounded-xl transition-colors ${
               releaseMode ? 'bg-rose-600 text-white' : 'bg-white/10 text-zinc-400 hover:text-zinc-200'
             }`}
+            style={{ padding: '20px' }}
             title="Release a fish"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -494,12 +498,12 @@ export default function ReefScreen() {
       {(feedingMode || releaseMode) && (
         <div className="flex justify-center py-1.5" style={{ zIndex: 9 }}>
           {feedingMode && (
-            <div className="bg-emerald-700/80 text-emerald-200 text-xs font-bold px-4 py-1 rounded-full animate-pulse">
+            <div className="bg-emerald-700/80 text-emerald-200 text-xs font-bold rounded-full animate-pulse" style={{ padding: '10px' }}>
               🌿 Feeding Mode — tap hungry fish
             </div>
           )}
           {releaseMode && (
-            <div className="bg-rose-700/80 text-rose-200 text-xs font-bold px-4 py-1 rounded-full animate-pulse">
+            <div className="bg-rose-700/80 text-rose-200 text-xs font-bold rounded-full animate-pulse" style={{ padding: '10px' }}>
               ✕ Release Mode — tap a fish to release
             </div>
           )}
@@ -598,9 +602,9 @@ export default function ReefScreen() {
           key={toast.key}
           className="fixed top-20 left-1/2 -translate-x-1/2 z-50
                      bg-zinc-900/95 text-white text-sm font-semibold
-                     px-4 py-2 rounded-full border border-zinc-700/60
+                     rounded-full border border-zinc-700/60
                      pointer-events-none"
-          style={{ animation: 'fadeInOut 2.2s ease-out forwards' }}
+          style={{ animation: 'fadeInOut 2.2s ease-out forwards', padding: '10px' }}
         >
           {toast.msg}
         </div>
