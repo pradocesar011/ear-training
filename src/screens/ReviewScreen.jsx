@@ -626,7 +626,7 @@ export default function ReviewScreen() {
             {t('review.recentErrors')}
             {session.extraHearings > 0 && (
               <span className="bg-cyan-900/50 border border-cyan-800/60 text-cyan-300 text-xs
-                font-bold px-1.5 py-0.5 rounded-full leading-none">
+                font-bold rounded-full leading-none" style={{ padding: '10px' }}>
                 {session.extraHearings}
               </span>
             )}
@@ -728,7 +728,7 @@ export default function ReviewScreen() {
           >
             Start Practice
           </button>
-          <p className="text-zinc-500 text-sm text-center mb-8">
+          <p className="text-zinc-500 text-sm text-center mb-8" style={{ padding: '5px' }}>
             Select the intervals you would like to practice
           </p>
           <div className="flex flex-col gap-2">

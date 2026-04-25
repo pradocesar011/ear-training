@@ -170,7 +170,7 @@ function FishSprite({ fish, pos, onTap, feedingMode, releaseMode }) {
               style={{
                 transform:  `scaleX(${facingRight ? -1 : 1})`,
                 boxShadow:  '0 0 8px rgba(250,204,21,0.5)',
-                padding:    '10px',
+                padding:    '5px',
               }}
             >
               <img src={ICONS.pearl} alt="" style={{ width: 14, height: 14 }} />
@@ -251,7 +251,7 @@ function ReleaseConfirm({ fish, onConfirm, onCancel }) {
         />
         <p className="text-white font-bold mt-3 text-base">{fishDisplayName(fish.name)}</p>
         <p className="text-xs mt-0.5 font-medium" style={{ color: col.label }}>{fish.rarity} · Lv {level}</p>
-        <div className="flex items-center justify-center gap-1.5 mt-3 text-zinc-300 text-sm">
+        <div className="flex items-center justify-center gap-1.5 mt-3 text-zinc-300 text-sm" style={{ padding: '5px' }}>
           Release for
           <img src={ICONS.pearl} alt="" style={{ width: 14, height: 14 }} />
           <span className="font-bold text-yellow-300">{reward}</span>
@@ -446,7 +446,7 @@ export default function ReefScreen() {
             className={`rounded-xl transition-colors ${
               releaseMode ? 'bg-rose-600 text-white' : 'bg-white/10 text-zinc-400 hover:text-zinc-200'
             }`}
-            style={{ padding: '20px' }}
+            style={{ padding: '10px' }}
             title="Release a fish"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
