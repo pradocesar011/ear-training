@@ -203,7 +203,7 @@ export function useSession(userId) {
 
     const trend = getIDMTrend(idmCurrent, newIDM)
 
-    const algaeEarned = precision >= 0.8 ? Math.max(1, Math.floor(idmCurrent)) : 0
+    const algaeEarned = Math.floor(idmCurrent * precision)
 
     const result = {
       precision,
@@ -303,17 +303,19 @@ export function useSession(userId) {
   }, [userId, sessionId, exerciseHistory, idmCurrent])
 
   // ── Session summary data ──────────────────────────────────────────────────
+  const _meanPrec = exerciseHistory.length
+    ? exerciseHistory.reduce((a, b) => a + b.precision, 0) / exerciseHistory.length
+    : 0
+
   const summaryData = {
     duration: sessionStart ? Math.floor((Date.now() - sessionStart.getTime()) / 1000) : 0,
     exercises: exerciseHistory.length,
-    meanPrecision: exerciseHistory.length
-      ? exerciseHistory.reduce((a, b) => a + b.precision, 0) / exerciseHistory.length
-      : 0,
+    meanPrecision: _meanPrec,
     idmStart:    idmAtStart,
     idmEnd:      idmCurrent,
     history:     exerciseHistory,
     algaeEarned: exerciseHistory.reduce((s, e) => s + (e.algae ?? 0), 0),
-    algaeBonus:  exerciseHistory.some(e => (e.precision ?? 0) >= 0.8) ? Math.floor(idmCurrent) : 0,
+    algaeBonus:  exerciseHistory.length > 0 ? Math.floor(idmCurrent * _meanPrec) : 0,
   }
 
   const resetSession = useCallback(() => {

@@ -38,7 +38,13 @@ export const HATCH_MS = {
 export const PEARL_RATE_PER_HOUR = { Common: 2, Rare: 6, Legendary: 18 }
 
 export const MAX_FISH       = 10
-export const HUNGER_MS      = 24 * 60 * 60 * 1000   // 24 hours
+// Base hunger duration at Lv 1; increases +12% per level above 1
+export const HUNGER_MS = {
+  Common:    8  * 60 * 60 * 1000,   //  8 h at Lv 1
+  Rare:      16 * 60 * 60 * 1000,   // 16 h at Lv 1
+  Legendary: 32 * 60 * 60 * 1000,   // 32 h at Lv 1
+}
+export const HUNGER_LEVEL_FACTOR = 0.12  // +12 % per level above 1
 export const MAX_LEVEL      = 10
 export const FEEDINGS_PER_LEVEL = 7
 export const STARTER_ALGAE  = 5

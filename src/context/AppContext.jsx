@@ -36,13 +36,13 @@ export function AppProvider({ children }) {
     }
   }
 
-  // Award algae for each completed exercise — only at ≥80% precision
+  // Award algae for each completed exercise — proportional to IDM × precision
   const lastResultRef = useRef(null)
   useEffect(() => {
     const r = session.exerciseResult
     if (r && r !== lastResultRef.current) {
       lastResultRef.current = r
-      if ((r.precision ?? 0) >= 0.8) safeAddAlgae(r.algaeEarned ?? 0)
+      safeAddAlgae(r.algaeEarned ?? 0)
     }
   }, [session.exerciseResult])
 

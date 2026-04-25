@@ -115,8 +115,7 @@ export function useReef(userId) {
     const f = fish.find(f => f.id === fishId)
     if (!f) return false
 
-    const level = f.level ?? calcLevel(f.feedings_count ?? 0)
-    const cost  = calcAlgaeFeedCost(f.rarity, level)
+    const cost  = calcAlgaeFeedCost(f.rarity)
     if (algae < cost) return false
 
     const now             = new Date().toISOString()
