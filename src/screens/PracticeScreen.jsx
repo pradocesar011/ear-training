@@ -84,9 +84,9 @@ function PracticeSummary({ pairs, history, onBack, onRestart, t }) {
       </div>
 
       {/* Perfect count */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-8 py-4 text-center">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl text-center" style={{ padding: '20px' }}>
         <div className="text-3xl font-bold text-white font-mono">{perfectCount} / {PRACTICE_COUNT}</div>
-        <div className="text-zinc-400 text-sm mt-1">perfect exercises</div>
+        <div className="text-zinc-400 text-sm mt-2">perfect exercises</div>
       </div>
 
       {/* Per-exercise result dots */}
@@ -109,15 +109,17 @@ function PracticeSummary({ pairs, history, onBack, onRestart, t }) {
       <div className="flex gap-3 w-full max-w-sm">
         <button
           onClick={onBack}
-          className="flex-1 py-4 bg-zinc-800 text-zinc-300 rounded-xl font-semibold
+          className="flex-1 bg-zinc-800 text-zinc-300 rounded-xl font-semibold
             hover:bg-zinc-700 active:scale-95 transition-all"
+          style={{ padding: '20px' }}
         >
           Done
         </button>
         <button
           onClick={onRestart}
-          className="flex-1 py-4 bg-cyan-600 text-white rounded-xl font-semibold
+          className="flex-1 bg-cyan-600 text-white rounded-xl font-semibold
             hover:bg-cyan-500 active:scale-95 transition-all"
+          style={{ padding: '20px' }}
         >
           Practice Again
         </button>
@@ -365,8 +367,9 @@ export default function PracticeScreen() {
             </div>
             <button
               onClick={handleNext}
-              className="px-10 py-3 bg-cyan-600 text-white rounded-xl font-semibold
+              className="bg-cyan-600 text-white rounded-xl font-semibold
                 hover:bg-cyan-500 active:scale-95 transition-all shadow-lg shadow-cyan-900/30"
+              style={{ padding: '20px' }}
             >
               {exerciseNum >= PRACTICE_COUNT ? 'See Results' : 'Next →'}
             </button>

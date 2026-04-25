@@ -54,6 +54,7 @@ export default function ReviewScreen() {
   const [attemptNumber,    setAttemptNumber]    = useState(1)
   const [showHearingBonus, setShowHearingBonus] = useState(false)
   const [selectedPairs,    setSelectedPairs]    = useState(new Set())
+  const [activeTab,        setActiveTab]        = useState('errors')
   const [highlightOk,      setHighlightOk]      = useState([])
   const [highlightBad,     setHighlightBad]     = useState([])
   const [highlightBadFade, setHighlightBadFade] = useState([])
@@ -609,29 +610,43 @@ export default function ReviewScreen() {
     .map(({ interval }) => interval)
 
   return (
-    <div className="screen-enter flex flex-col items-center min-h-full px-4 pt-8 pb-24 gap-8">
-      <div className="w-full max-w-2xl flex flex-col items-center gap-2" style={{ paddingTop: '20px' }}>
-        <h1 className="text-2xl font-bold text-white text-center">{t('review.title')}</h1>
-        {session.extraHearings > 0 && (
-          <div className="flex items-center gap-1.5 bg-cyan-900/40 border border-cyan-800/60 rounded-full px-3 py-1.5">
-            <svg className="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M15.536 8.464a5 5 0 010 7.072M12 6a7 7 0 010 12m-3.536-9.536a5 5 0 000 7.072" />
-            </svg>
-            <span className="text-cyan-300 text-xs font-semibold">
-              {session.extraHearings} extra hearing{session.extraHearings !== 1 ? 's' : ''} saved
-            </span>
-          </div>
-        )}
+    <div className="screen-enter flex flex-col items-center min-h-full px-4 pt-8 pb-24 gap-6">
+      <div className="w-full max-w-2xl" style={{ paddingTop: '20px' }}>
+        <h1 className="text-2xl font-bold text-white text-center mb-6">{t('review.title')}</h1>
+        {/* ── Tabs ───────────────────────────────────────────────────── */}
+        <div className="flex border-b border-zinc-800">
+          <button
+            onClick={() => setActiveTab('errors')}
+            className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors
+              border-b-2 -mb-px ${activeTab === 'errors'
+                ? 'text-white border-cyan-500'
+                : 'text-zinc-500 border-transparent hover:text-zinc-300'}`}
+          >
+            {t('review.recentErrors')}
+            {session.extraHearings > 0 && (
+              <span className="bg-cyan-900/50 border border-cyan-800/60 text-cyan-300 text-xs
+                font-bold px-1.5 py-0.5 rounded-full leading-none">
+                {session.extraHearings}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('practice')}
+            className={`px-4 py-3 text-sm font-semibold transition-colors border-b-2 -mb-px ${
+              activeTab === 'practice'
+                ? 'text-white border-cyan-500'
+                : 'text-zinc-500 border-transparent hover:text-zinc-300'
+            }`}
+          >
+            Practice
+          </button>
+        </div>
       </div>
 
-      <div className="w-full max-w-2xl flex flex-col gap-8">
+      <div className="w-full max-w-2xl flex flex-col gap-6">
 
-        {/* ── Section 1: Recent errors ───────────────────────────────────── */}
-        <div>
-          <p className="text-zinc-400 text-sm font-semibold mb-3 uppercase tracking-wide">
-            {t('review.recentErrors')}
-          </p>
+        {activeTab === 'errors' && (
+        <div className="mt-2">
           {recentErrors.length === 0 ? (
             <p className="text-zinc-500 text-sm">{t('review.noErrors')}</p>
           ) : (
@@ -697,15 +712,17 @@ export default function ReviewScreen() {
             </div>
           )}
         </div>
+        )}
 
-        {/* ── Section 3: Practice ───────────────────────────────────── */}
-        <div>
+        {activeTab === 'practice' && (
+        <div className="mt-2">
           <button
             onClick={handleStartPractice}
             disabled={selectedPairs.size === 0}
-            className="w-full py-4 bg-cyan-600 text-white rounded-2xl font-bold text-base
+            className="w-full bg-cyan-600 text-white rounded-2xl font-bold text-base
               hover:bg-cyan-500 active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed
               transition-all shadow-lg shadow-cyan-900/30 mb-3"
+            style={{ padding: '20px' }}
           >
             Start Practice
           </button>
@@ -728,8 +745,8 @@ export default function ReviewScreen() {
               const descPct  = descItem != null ? Math.round(descItem.recall * 100) : null
 
               return (
-                <div key={interval} className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3">
-                  <div className="flex items-center gap-3 mb-2">
+                <div key={interval} className="bg-zinc-900 border border-zinc-800 rounded-xl" style={{ padding: '20px' }}>
+                  <div className="flex items-center gap-3 mb-4">
                     <PracticeCheckbox
                       checked={allSel}
                       indeterminate={!allSel && !noneSel}
@@ -739,7 +756,7 @@ export default function ReviewScreen() {
                       {t(`intervals.${interval}`)}
                     </span>
                   </div>
-                  <div className="flex flex-col gap-1.5 pl-8">
+                  <div className="flex flex-col gap-2.5 pl-8">
                     {hasAsc && (
                       <div className="flex items-center gap-2">
                         <PracticeCheckbox checked={ascSel} onChange={() => toggleDirection(interval, 'ascending')} />
@@ -764,6 +781,7 @@ export default function ReviewScreen() {
             })}
           </div>
         </div>
+        )}
 
       </div>
       <div style={{ height: 100 }} />
