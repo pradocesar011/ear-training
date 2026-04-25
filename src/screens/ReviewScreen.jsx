@@ -53,6 +53,7 @@ export default function ReviewScreen() {
   const [exerciseResult,   setExerciseResult]   = useState(null)
   const [attemptNumber,    setAttemptNumber]    = useState(1)
   const [showHearingBonus, setShowHearingBonus] = useState(false)
+  const [selectedPairs,    setSelectedPairs]    = useState(new Set())
   const [highlightOk,      setHighlightOk]      = useState([])
   const [highlightBad,     setHighlightBad]     = useState([])
   const [highlightBadFade, setHighlightBadFade] = useState([])
@@ -139,6 +140,47 @@ export default function ReviewScreen() {
     setSelectedEx(null)
     setExerciseResult(null)
     setShowHearingBonus(false)
+  }
+
+  // ── practice selection ────────────────────────────────────────────────────
+
+  const pairKey = (interval, direction) => `${interval}-${direction}`
+
+  function toggleDirection(interval, direction) {
+    const key = pairKey(interval, direction)
+    setSelectedPairs(prev => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+  }
+
+  function toggleInterval(interval) {
+    const hasAsc  = INTERVAL_INTRODUCTION_ORDER.some(p => p.interval === interval && p.direction === 'ascending')
+    const hasDesc = INTERVAL_INTRODUCTION_ORDER.some(p => p.interval === interval && p.direction === 'descending')
+    const allSelected = (!hasAsc || selectedPairs.has(pairKey(interval, 'ascending'))) &&
+                        (!hasDesc || selectedPairs.has(pairKey(interval, 'descending')))
+    setSelectedPairs(prev => {
+      const next = new Set(prev)
+      if (allSelected) {
+        if (hasAsc)  next.delete(pairKey(interval, 'ascending'))
+        if (hasDesc) next.delete(pairKey(interval, 'descending'))
+      } else {
+        if (hasAsc)  next.add(pairKey(interval, 'ascending'))
+        if (hasDesc) next.add(pairKey(interval, 'descending'))
+      }
+      return next
+    })
+  }
+
+  function handleStartPractice() {
+    if (selectedPairs.size === 0) return
+    const pairs = [...selectedPairs].map(key => {
+      const idx = key.indexOf('-')
+      return { interval: key.slice(0, idx), direction: key.slice(idx + 1) }
+    })
+    navigate('/practice', { state: { pairs } })
   }
 
   // ── playback ──────────────────────────────────────────────────────────────
@@ -556,14 +598,15 @@ export default function ReviewScreen() {
     return { ...item, recall, nextRev, overdue, dueToday }
   })
 
-  // Upcoming: overdue + due today + next 7 days, sorted by urgency
-  const upcoming = enrichedSRS
-    .filter(item => {
-      if (!item.nextRev) return false
-      const daysAway = (item.nextRev - now) / 86400000
-      return daysAway <= 7
+  // Unique interval types in introduction order, for practice checkboxes
+  const seenIntervals = new Set()
+  const uniqueIntervals = INTERVAL_INTRODUCTION_ORDER
+    .filter(({ interval }) => {
+      if (seenIntervals.has(interval)) return false
+      seenIntervals.add(interval)
+      return true
     })
-    .sort((a, b) => (a.nextRev - b.nextRev))
+    .map(({ interval }) => interval)
 
   return (
     <div className="screen-enter flex flex-col items-center min-h-full px-4 pt-8 pb-24 gap-8">
@@ -655,106 +698,68 @@ export default function ReviewScreen() {
           )}
         </div>
 
-        {/* ── Section 2: Upcoming SRS reviews ───────────────────────────── */}
-        {upcoming.length > 0 && (
-          <div>
-            <p className="text-zinc-400 text-sm font-semibold mb-3 uppercase tracking-wide">
-              {t('review.upcomingReviews')}
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {upcoming.map(item => {
-                const pct = Math.round(item.recall * 100)
-                const recallColor = pct >= 70 ? '#10b981' : pct >= 40 ? '#f97316' : '#ef4444'
-                let reviewLabel = '—'
-                if (item.nextRev) {
-                  if (item.overdue)      reviewLabel = t('intervals_screen.overdue')
-                  else if (item.dueToday) reviewLabel = t('intervals_screen.today')
-                  else                   reviewLabel = item.nextRev.toLocaleDateString()
-                }
-                const reviewColor = item.overdue ? 'text-rose-500' : item.dueToday ? 'text-orange-400' : 'text-zinc-500'
-
-                return (
-                  <div
-                    key={`${item.interval_type}-${item.direction}`}
-                    className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex flex-col gap-2"
-                    style={{ padding: '12px' }}
-                  >
-                    <div>
-                      <p className="text-zinc-100 text-sm font-semibold leading-tight">
-                        {t(`intervals.${item.interval_type}`)}
-                      </p>
-                      <p className="text-zinc-500 text-xs mt-0.5">{t(`intervals.${item.direction}`)}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-                        <div
-                          className="h-full rounded-full"
-                          style={{ width: `${pct}%`, backgroundColor: recallColor }}
-                        />
-                      </div>
-                      <span className="text-xs font-mono font-bold" style={{ color: recallColor }}>
-                        {pct}%
-                      </span>
-                    </div>
-                    <p className={`text-xs ${reviewColor}`}>{reviewLabel}</p>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        )}
-
         {/* ── Section 3: Practice ───────────────────────────────────── */}
         <div>
-          <p className="text-zinc-400 text-sm font-semibold mb-3 uppercase tracking-wide">
-            Practice
+          <button
+            onClick={handleStartPractice}
+            disabled={selectedPairs.size === 0}
+            className="w-full py-4 bg-cyan-600 text-white rounded-2xl font-bold text-base
+              hover:bg-cyan-500 active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed
+              transition-all shadow-lg shadow-cyan-900/30 mb-3"
+          >
+            Start Practice
+          </button>
+          <p className="text-zinc-500 text-sm text-center mb-5">
+            Select the intervals you would like to practice
           </p>
-          <div className="flex flex-col gap-1.5">
-            {INTERVAL_INTRODUCTION_ORDER.map(({ interval, direction }) => {
-              const enriched = enrichedSRS.find(
-                e => e.interval_type === interval && e.direction === direction
-              )
-              const pct = enriched != null ? Math.round(enriched.recall * 100) : null
-              const recallColor = pct == null
-                ? '#52525b'
-                : pct >= 70 ? '#10b981'
-                : pct >= 40 ? '#f97316'
-                : '#ef4444'
+          <div className="flex flex-col gap-2">
+            {uniqueIntervals.map(interval => {
+              const ascKey  = pairKey(interval, 'ascending')
+              const descKey = pairKey(interval, 'descending')
+              const hasAsc  = INTERVAL_INTRODUCTION_ORDER.some(p => p.interval === interval && p.direction === 'ascending')
+              const hasDesc = INTERVAL_INTRODUCTION_ORDER.some(p => p.interval === interval && p.direction === 'descending')
+              const ascSel  = selectedPairs.has(ascKey)
+              const descSel = selectedPairs.has(descKey)
+              const allSel  = (!hasAsc || ascSel) && (!hasDesc || descSel)
+              const noneSel = !ascSel && !descSel
+              const ascItem  = enrichedSRS.find(e => e.interval_type === interval && e.direction === 'ascending')
+              const descItem = enrichedSRS.find(e => e.interval_type === interval && e.direction === 'descending')
+              const ascPct   = ascItem  != null ? Math.round(ascItem.recall  * 100) : null
+              const descPct  = descItem != null ? Math.round(descItem.recall * 100) : null
 
               return (
-                <button
-                  key={`${interval}-${direction}`}
-                  onClick={() => navigate('/practice', { state: { interval, direction } })}
-                  className="w-full flex items-center justify-between bg-zinc-900 border border-zinc-800
-                    rounded-xl px-4 py-3 hover:border-zinc-600 transition-colors text-left"
-                >
-                  <div>
-                    <span className="text-zinc-100 text-sm font-semibold">
+                <div key={interval} className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3">
+                  <div className="flex items-center gap-3 mb-2">
+                    <PracticeCheckbox
+                      checked={allSel}
+                      indeterminate={!allSel && !noneSel}
+                      onChange={() => toggleInterval(interval)}
+                    />
+                    <span className="text-zinc-100 text-sm font-semibold flex-1">
                       {t(`intervals.${interval}`)}
                     </span>
-                    <span className="text-zinc-500 text-xs ml-2">
-                      {direction === 'ascending' ? '↑' : '↓'} {t(`intervals.${direction}`)}
-                    </span>
                   </div>
-                  {pct != null ? (
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <div className="w-16 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-                        <div
-                          className="h-full rounded-full"
-                          style={{ width: `${pct}%`, backgroundColor: recallColor }}
-                        />
+                  <div className="flex flex-col gap-1.5 pl-8">
+                    {hasAsc && (
+                      <div className="flex items-center gap-2">
+                        <PracticeCheckbox checked={ascSel} onChange={() => toggleDirection(interval, 'ascending')} />
+                        <span className="text-zinc-400 text-xs flex-1">↑ {t('intervals.ascending')}</span>
+                        {ascPct != null
+                          ? <RecallBar pct={ascPct} />
+                          : <span className="text-zinc-600 text-xs font-mono">new</span>}
                       </div>
-                      <span
-                        className="text-xs font-mono font-bold w-8 text-right"
-                        style={{ color: recallColor }}
-                      >
-                        {pct}%
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="text-zinc-600 text-xs font-mono">new</span>
-                  )}
-                </button>
+                    )}
+                    {hasDesc && (
+                      <div className="flex items-center gap-2">
+                        <PracticeCheckbox checked={descSel} onChange={() => toggleDirection(interval, 'descending')} />
+                        <span className="text-zinc-400 text-xs flex-1">↓ {t('intervals.descending')}</span>
+                        {descPct != null
+                          ? <RecallBar pct={descPct} />
+                          : <span className="text-zinc-600 text-xs font-mono">new</span>}
+                      </div>
+                    )}
+                  </div>
+                </div>
               )
             })}
           </div>
@@ -762,6 +767,43 @@ export default function ReviewScreen() {
 
       </div>
       <div style={{ height: 100 }} />
+    </div>
+  )
+}
+
+// ── Practice sub-components ───────────────────────────────────────────────────
+
+function PracticeCheckbox({ checked, indeterminate, onChange }) {
+  return (
+    <button
+      onClick={onChange}
+      className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0
+        transition-colors border-2 ${
+        checked
+          ? 'bg-cyan-500 border-cyan-400'
+          : indeterminate
+          ? 'bg-cyan-900/40 border-cyan-600'
+          : 'border-zinc-600 bg-transparent hover:border-zinc-500'
+      }`}
+    >
+      {checked && (
+        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+        </svg>
+      )}
+      {indeterminate && <div className="w-2.5 h-0.5 bg-cyan-400 rounded" />}
+    </button>
+  )
+}
+
+function RecallBar({ pct }) {
+  const color = pct >= 70 ? '#10b981' : pct >= 40 ? '#f97316' : '#ef4444'
+  return (
+    <div className="flex items-center gap-1.5 flex-shrink-0">
+      <div className="w-14 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: color }} />
+      </div>
+      <span className="text-xs font-mono w-7 text-right" style={{ color }}>{pct}%</span>
     </div>
   )
 }

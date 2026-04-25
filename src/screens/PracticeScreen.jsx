@@ -36,7 +36,14 @@ function generateExercise(intervalType, direction) {
     ],
     tonic: midiToNote(tonicMidi),
     tempo: 60,
+    interval: intervalType,
+    direction,
   }
+}
+
+function pickAndGenerate(pairs) {
+  const pair = pairs[Math.floor(Math.random() * pairs.length)]
+  return generateExercise(pair.interval, pair.direction)
 }
 
 function precisionColor(p) {
@@ -45,10 +52,11 @@ function precisionColor(p) {
 
 // ── Summary screen ────────────────────────────────────────────────────────────
 
-function PracticeSummary({ intervalType, direction, history, onBack, onRestart, t }) {
+function PracticeSummary({ pairs, history, onBack, onRestart, t }) {
   const meanPrec     = history.reduce((a, r) => a + r.precision, 0) / history.length
   const perfectCount = history.filter(r => r.precision >= 1).length
   const col          = precisionColor(meanPrec)
+  const isMixed      = pairs.length > 1
 
   return (
     <div className="screen-enter flex flex-col items-center min-h-screen px-4 pt-8 pb-8 gap-6">
@@ -56,10 +64,14 @@ function PracticeSummary({ intervalType, direction, history, onBack, onRestart, 
       <div className="text-center" style={{ paddingTop: '20px' }}>
         <p className="text-zinc-400 text-sm uppercase tracking-widest mb-1">Practice Complete</p>
         <h2 className="text-white text-xl font-bold">
-          {t(`intervals.${intervalType}`)}
-          <span className="text-zinc-400 font-normal ml-2 text-base">
-            {direction === 'ascending' ? '↑' : '↓'} {t(`intervals.${direction}`)}
-          </span>
+          {isMixed ? 'Mixed Practice' : (
+            <>
+              {t(`intervals.${pairs[0].interval}`)}
+              <span className="text-zinc-400 font-normal ml-2 text-base">
+                {pairs[0].direction === 'ascending' ? '↑' : '↓'} {t(`intervals.${pairs[0].direction}`)}
+              </span>
+            </>
+          )}
         </h2>
       </div>
 
@@ -125,8 +137,7 @@ export default function PracticeScreen() {
   const { state }     = useLocation()
   const { audio, setReviewInExercise } = useAppContext()
 
-  const intervalType = state?.interval  ?? 'P5'
-  const direction    = state?.direction ?? 'ascending'
+  const pairs = state?.pairs ?? [{ interval: state?.interval ?? 'P5', direction: state?.direction ?? 'ascending' }]
 
   // Hide bottom nav for the duration of the practice session
   useEffect(() => {
@@ -137,7 +148,7 @@ export default function PracticeScreen() {
   // ── Session state ──────────────────────────────────────────────────────────
   const [phase,          setPhase]          = useState('exercise')
   const [exerciseNum,    setExerciseNum]    = useState(1)
-  const [currentEx,      setCurrentEx]      = useState(() => generateExercise(intervalType, direction))
+  const [currentEx,      setCurrentEx]      = useState(() => pickAndGenerate(pairs))
   const [hearingsLeft,   setHearingsLeft]   = useState(PRACTICE_HEARINGS)
   const [noteIndex,      setNoteIndex]      = useState(0)
   const [userSequence,   setUserSequence]   = useState([])
@@ -203,7 +214,7 @@ export default function PracticeScreen() {
     } else {
       setHistory(newHistory)
       setExerciseNum(n => n + 1)
-      setCurrentEx(generateExercise(intervalType, direction))
+      setCurrentEx(pickAndGenerate(pairs))
       setHearingsLeft(PRACTICE_HEARINGS)
       setNoteIndex(0)
       setUserSequence([])
@@ -221,7 +232,7 @@ export default function PracticeScreen() {
   function handleRestart() {
     setPhase('exercise')
     setExerciseNum(1)
-    setCurrentEx(generateExercise(intervalType, direction))
+    setCurrentEx(pickAndGenerate(pairs))
     setHearingsLeft(PRACTICE_HEARINGS)
     setNoteIndex(0)
     setUserSequence([])
@@ -235,8 +246,7 @@ export default function PracticeScreen() {
   if (phase === 'summary') {
     return (
       <PracticeSummary
-        intervalType={intervalType}
-        direction={direction}
+        pairs={pairs}
         history={history}
         onBack={handleBack}
         onRestart={handleRestart}
@@ -286,10 +296,10 @@ export default function PracticeScreen() {
 
         <div className="text-center">
           <span className="text-white text-sm font-semibold">
-            {t(`intervals.${intervalType}`)}
+            {t(`intervals.${currentEx.interval}`)}
           </span>
           <span className="text-zinc-400 text-xs ml-2">
-            {direction === 'ascending' ? '↑' : '↓'} {t(`intervals.${direction}`)}
+            {currentEx.direction === 'ascending' ? '↑' : '↓'} {t(`intervals.${currentEx.direction}`)}
           </span>
         </div>
 
