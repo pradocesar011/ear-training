@@ -12,11 +12,12 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import { useAppContext } from '../context/AppContext.jsx'
 import { estimateHalfLife, recallProbability } from '../engines/srs.js'
 import { computeWeightedPrecision } from '../engines/idm.js'
-import { CHUNK_RULES, COLORS } from '../config/constants.js'
+import { CHUNK_RULES, COLORS, INTERVAL_INTRODUCTION_ORDER } from '../config/constants.js'
 import PianoKeyboard from '../components/PianoKeyboard.jsx'
 
 // ── helpers ───────────────────────────────────────────────────────────────────
@@ -36,6 +37,7 @@ function precisionColor(p) {
 export default function ReviewScreen() {
   const { t, i18n } = useTranslation()
   const { user, audio, session, setReviewInExercise } = useAppContext()
+  const navigate = useNavigate()
   const lang = i18n.language?.slice(0, 2) ?? 'es'
 
   const [loading,       setLoading]       = useState(true)
@@ -701,6 +703,62 @@ export default function ReviewScreen() {
             </div>
           </div>
         )}
+
+        {/* ── Section 3: Practice ───────────────────────────────────── */}
+        <div>
+          <p className="text-zinc-400 text-sm font-semibold mb-3 uppercase tracking-wide">
+            Practice
+          </p>
+          <div className="flex flex-col gap-1.5">
+            {INTERVAL_INTRODUCTION_ORDER.map(({ interval, direction }) => {
+              const enriched = enrichedSRS.find(
+                e => e.interval_type === interval && e.direction === direction
+              )
+              const pct = enriched != null ? Math.round(enriched.recall * 100) : null
+              const recallColor = pct == null
+                ? '#52525b'
+                : pct >= 70 ? '#10b981'
+                : pct >= 40 ? '#f97316'
+                : '#ef4444'
+
+              return (
+                <button
+                  key={`${interval}-${direction}`}
+                  onClick={() => navigate('/practice', { state: { interval, direction } })}
+                  className="w-full flex items-center justify-between bg-zinc-900 border border-zinc-800
+                    rounded-xl px-4 py-3 hover:border-zinc-600 transition-colors text-left"
+                >
+                  <div>
+                    <span className="text-zinc-100 text-sm font-semibold">
+                      {t(`intervals.${interval}`)}
+                    </span>
+                    <span className="text-zinc-500 text-xs ml-2">
+                      {direction === 'ascending' ? '↑' : '↓'} {t(`intervals.${direction}`)}
+                    </span>
+                  </div>
+                  {pct != null ? (
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className="w-16 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full"
+                          style={{ width: `${pct}%`, backgroundColor: recallColor }}
+                        />
+                      </div>
+                      <span
+                        className="text-xs font-mono font-bold w-8 text-right"
+                        style={{ color: recallColor }}
+                      >
+                        {pct}%
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-zinc-600 text-xs font-mono">new</span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        </div>
 
       </div>
       <div style={{ height: 100 }} />
