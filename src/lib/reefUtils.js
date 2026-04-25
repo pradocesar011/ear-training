@@ -16,10 +16,10 @@ export function calcHungerMs(rarity, level) {
   return base * (1 + HUNGER_LEVEL_FACTOR * (level - 1))
 }
 
-// Fixed feed cost per rarity — level affects hunger duration, not cost
-export function calcAlgaeFeedCost(rarity) {
-  const costs = { Common: 1, Rare: 2, Legendary: 4 }
-  return costs[rarity] ?? 1
+// Feed cost scales with rarity (base) and level
+export function calcAlgaeFeedCost(rarity, level = 1) {
+  const base = { Common: 1, Rare: 4, Legendary: 12 }[rarity] ?? 1
+  return Math.ceil(base * (1 + (level - 1) / 9))
 }
 
 export function calcPearlRate(rarity, level) {
