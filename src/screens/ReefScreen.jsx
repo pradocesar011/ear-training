@@ -268,9 +268,10 @@ function ReleaseConfirm({ fish, onConfirm, onCancel }) {
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 bg-rose-700 text-white rounded-xl
-                       font-semibold text-sm hover:bg-rose-600 transition-colors"
-            style={{ padding: '10px' }}
+            className="flex-1 text-white rounded-xl font-semibold text-sm transition-colors"
+            style={{ padding: '10px', background: '#f26419' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#d4561a' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#f26419' }}
           >
             Release
           </button>
@@ -444,9 +445,9 @@ export default function ReefScreen() {
           <button
             onClick={toggleReleaseMode}
             className={`rounded-xl transition-colors ${
-              releaseMode ? 'bg-rose-600 text-white' : 'bg-white/10 text-zinc-400 hover:text-zinc-200'
+              releaseMode ? 'text-white' : 'bg-white/10 text-zinc-400 hover:text-zinc-200'
             }`}
-            style={{ padding: '10px' }}
+            style={{ padding: '10px', background: releaseMode ? '#f26419' : undefined }}
             title="Release a fish"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -503,7 +504,7 @@ export default function ReefScreen() {
             </div>
           )}
           {releaseMode && (
-            <div className="bg-rose-700/80 text-rose-200 text-xs font-bold rounded-full animate-pulse" style={{ padding: '10px' }}>
+            <div className="text-white text-xs font-bold rounded-full animate-pulse" style={{ padding: '10px', background: 'rgba(242,100,25,0.85)' }}>
               ✕ Release Mode — tap a fish to release
             </div>
           )}
@@ -565,15 +566,15 @@ export default function ReefScreen() {
           className="flex-shrink-0 flex items-center gap-3 rounded-2xl transition-all active:scale-95
                      disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
-            background: 'linear-gradient(135deg, #6d28d9, #9333ea)',
-            border:     '1px solid rgba(167,139,250,0.4)',
-            boxShadow:  '0 4px 20px rgba(109,40,217,0.4)',
+            background: 'linear-gradient(135deg, #33658a, #55dde0)',
+            border:     '1px solid rgba(85,221,224,0.4)',
+            boxShadow:  '0 4px 20px rgba(51,101,138,0.4)',
             padding:    '20px',
           }}
         >
           <img src={ICONS.mysteryEgg} alt="egg" style={{ width: 40, height: 40, objectFit: 'contain' }} />
           <div className="text-left">
-            <div className="text-purple-200 text-[10px]">{t('reef.mystery_egg')}</div>
+            <div className="text-zinc-100 text-[10px]">{t('reef.mystery_egg')}</div>
             <div className="flex items-center gap-1 mt-0.5">
               <PearlIcon size={13} />
               <span className="text-white text-sm font-bold">{nextEggCost}</span>

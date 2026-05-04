@@ -60,9 +60,9 @@ export const RELEASE_BASE = { Common: 8, Rare: 25, Legendary: 80 }
 export const FISH_SIZE_PX = { Common: 72, Rare: 88, Legendary: 108 }
 
 export const RARITY_COLORS = {
-  Common:    { label: '#94a3b8', bg: '#1e293b', border: '#334155' },
-  Rare:      { label: '#60a5fa', bg: '#1e3a5f', border: '#3b82f6' },
-  Legendary: { label: '#fbbf24', bg: '#451a03', border: '#d97706' },
+  Common:    { label: '#7db8bb', bg: '#1e3240', border: '#3d5f73' },
+  Rare:      { label: '#55dde0', bg: '#264d6a', border: '#33658a' },
+  Legendary: { label: '#f6ae2d', bg: '#4a3200', border: '#f6ae2d' },
 }
 
 // Static asset paths (files in public/reef/)

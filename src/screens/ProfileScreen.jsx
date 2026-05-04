@@ -284,8 +284,8 @@ export default function ProfileScreen() {
       </Card>
 
       {/* ── Reset Progress ────────────────────────────────────────────────── */}
-      <div className="bg-rose-950/30 border border-rose-900/40 rounded-2xl p-5" style={{ padding: '20px' }}>
-        <SectionLabel className="text-rose-500">{t('profile.reset_heading')}</SectionLabel>
+      <div className="rounded-2xl" style={{ padding: '20px', background: 'rgba(242,100,25,0.08)', border: '1px solid rgba(242,100,25,0.25)' }}>
+        <SectionLabel className="text-[#f26419]">{t('profile.reset_heading')}</SectionLabel>
 
         {resetPhase === 'idle' && (
           <>
@@ -294,8 +294,8 @@ export default function ProfileScreen() {
             </p>
             <button
               onClick={() => setResetPhase('confirm')}
-              className="px-6 py-3 bg-rose-950/40 border border-rose-800/50 text-rose-500 rounded-xl
-                text-sm hover:bg-rose-950/60 transition-colors"style={{ padding: '5px' }}
+              className="px-6 py-3 rounded-xl text-sm transition-colors text-[#f26419]"
+              style={{ padding: '5px', background: 'rgba(242,100,25,0.1)', border: '1px solid rgba(242,100,25,0.4)' }}
             >
               {t('profile.reset_button')}
             </button>
@@ -304,7 +304,7 @@ export default function ProfileScreen() {
 
         {resetPhase === 'confirm' && (
           <div className="flex flex-col gap-3 mt-3">
-            <p className="text-rose-400 text-sm font-medium">{t('profile.reset_warning')}</p>
+            <p className="text-sm font-medium" style={{ color: '#f26419' }}>{t('profile.reset_warning')}</p>
             <div className="flex gap-2">
               <button
                 onClick={() => setResetPhase('idle')}
@@ -314,7 +314,10 @@ export default function ProfileScreen() {
               </button>
               <button
                 onClick={handleReset}
-                className="flex-1 py-3 bg-rose-700 text-white rounded-xl text-sm hover:bg-rose-600 transition-colors"
+                className="flex-1 py-3 text-white rounded-xl text-sm transition-colors"
+                style={{ background: '#f26419' }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#d4561a' }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#f26419' }}
               >
                 {t('profile.reset_confirm')}
               </button>

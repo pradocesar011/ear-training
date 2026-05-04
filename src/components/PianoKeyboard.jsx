@@ -55,7 +55,7 @@ function keyColor(noteStr, highlightCorrect, highlightWrong, highlightWrongFade,
   if (highlightCorrect?.includes(noteStr))   return COLORS.CORRECT
   if (highlightWrong?.includes(noteStr))     return COLORS.WRONG
   // highlightWrongFade: return null (normal color) — CSS transitions from red to normal
-  if (highlightTonic?.includes(noteStr))     return '#6366f1'
+  if (highlightTonic?.includes(noteStr))     return '#33658a'
   return null
 }
 
@@ -184,7 +184,7 @@ export default function PianoKeyboard({
           position:     'relative',
           width:        '100%',
           height:       20,
-          background:   '#27272a',
+          background:   '#2f4858',
           borderRadius: 10,
           cursor:       'pointer',
           userSelect:   'none',
@@ -198,14 +198,14 @@ export default function PianoKeyboard({
             bottom:       2,
             left:         `${thumbLeftPct}%`,
             width:        `${thumbWidthPct}%`,
-            background:   '#52525b',
+            background:   '#33658a',
             borderRadius: 8,
             cursor:       'grab',
             touchAction:  'none',
             transition:   'background 0.1s',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#71717a' }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#52525b' }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#55dde0' }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#33658a' }}
         />
       </div>
 
@@ -238,7 +238,7 @@ export default function PianoKeyboard({
                   const isFading = highlightWrongFade?.includes(noteStr)
                   const color    = keyColor(noteStr, highlightCorrect, highlightWrong, highlightWrongFade, highlightTonic, isActive)
                   const bgColor  = color ?? (isActive ? '#e2e8f0' : '#94a3b8')
-                  const txtColor = color ? '#fff' : (isActive ? '#27272a' : '#71717a')
+                  const txtColor = color ? '#fff' : (isActive ? '#1a2a35' : '#6a9ab5')
                   const canPress = isActive && !disabled
 
                   return (
@@ -253,7 +253,7 @@ export default function PianoKeyboard({
                         width:           WHITE_KEY_W,
                         height:          WHITE_KEY_H,
                         background:      bgColor,
-                        border:          '1px solid #71717a',
+                        border:          '1px solid #2a3f4e',
                         borderTop:       'none',
                         borderRadius:    '0 0 5px 5px',
                         display:         'flex',
@@ -281,8 +281,8 @@ export default function PianoKeyboard({
                   const leftPx   = BLACK_OFFSETS[name]
                   const isFading = highlightWrongFade?.includes(noteStr)
                   const color    = keyColor(noteStr, highlightCorrect, highlightWrong, highlightWrongFade, highlightTonic, isActive)
-                  const bgColor  = color ?? (isActive ? '#27272a' : '#3f3f46')
-                  const txtColor = color ? '#fff' : (isActive ? '#94a3b8' : '#71717a')
+                  const bgColor  = color ?? (isActive ? '#1a2a35' : '#2a3f4e')
+                  const txtColor = color ? '#fff' : (isActive ? '#7db8bb' : '#6a9ab5')
                   const canPress = isActive && !disabled
 
                   return (
@@ -326,7 +326,7 @@ export default function PianoKeyboard({
                     right:          0,
                     textAlign:      'center',
                     fontSize:       9,
-                    color:          '#71717a',
+                    color:          '#6a9ab5',
                     pointerEvents:  'none',
                     zIndex:         3,
                   }}>

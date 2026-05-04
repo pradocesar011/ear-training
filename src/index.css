@@ -1,5 +1,44 @@
 @import "tailwindcss";
 
+@theme {
+  /* Zinc → underwater blue depth scale */
+  --color-zinc-950: #1a2a35;
+  --color-zinc-900: #2f4858;
+  --color-zinc-800: #3d5f73;
+  --color-zinc-700: #2a3f4e;
+  --color-zinc-600: #4a7a91;
+  --color-zinc-500: #6a9ab5;
+  --color-zinc-400: #7db8bb;
+  --color-zinc-300: #a8d8da;
+  --color-zinc-200: #c8eced;
+  --color-zinc-100: #e4f6f7;
+  --color-zinc-50:  #f0fbfb;
+
+  /* Cyan → Strong Cyan #55dde0 */
+  --color-cyan-300: #7de8ea;
+  --color-cyan-400: #55dde0;
+  --color-cyan-500: #55dde0;
+  --color-cyan-600: #3dc8cb;
+  --color-cyan-900: #0d3e40;
+
+  /* Amber → Honey Bronze #f6ae2d */
+  --color-amber-400: #f6ae2d;
+  --color-amber-500: #f9c85a;
+  --color-amber-600: #f6ae2d;
+  --color-amber-900: #3d2900;
+
+  /* Indigo shadows → match dark ocean floor */
+  --color-indigo-900: #1a2a35;
+
+  /* Orange → Blaze Orange #f26419 */
+  --color-orange-300: #f58250;
+  --color-orange-400: #f26419;
+  --color-orange-500: #d4561a;
+  --color-orange-800: #703010;
+  --color-orange-900: #3d1a08;
+  --color-orange-950: #1f1008;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -7,8 +46,8 @@
 }
 
 body {
-  background-color: #09090b;
-  color: #f4f4f5;
+  background-color: #1a2a35;
+  color: #e8f8f9;
   font-family: system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }

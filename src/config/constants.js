@@ -248,7 +248,7 @@ export const SRS_UNLOCK_THRESHOLDS = [
 export const COLORS = {
   CORRECT: '#10b981',
   WRONG:   '#ef4444',
-  NEUTRAL: '#6b7280',
+  NEUTRAL: '#6a9ab5',
 }
 
 // ── Session timing (spec section 11) ─────────────────────────────────────────
