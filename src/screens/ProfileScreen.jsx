@@ -21,6 +21,29 @@ export default function ProfileScreen() {
   const [codeInput,     setCodeInput]     = useState('')
   const [codeError,     setCodeError]     = useState(false)
   const [cheatMode,     setCheatMode]     = useState(getStoredCheatMode)
+  const [showCheatPwd,  setShowCheatPwd]  = useState(false)
+  const [cheatPwdInput, setCheatPwdInput] = useState('')
+  const [cheatPwdError, setCheatPwdError] = useState(false)
+
+  const CHEAT_PASSWORD = 'sonicidm'
+
+  function handleCheatToggle() {
+    if (cheatMode) {
+      setCheatMode(false); storeCheatMode(false)
+      setShowCheatPwd(false)
+    } else {
+      setShowCheatPwd(true); setCheatPwdInput(''); setCheatPwdError(false)
+    }
+  }
+
+  function submitCheatPassword() {
+    if (cheatPwdInput === CHEAT_PASSWORD) {
+      setCheatMode(true); storeCheatMode(true)
+      setShowCheatPwd(false); setCheatPwdInput('')
+    } else {
+      setCheatPwdError(true)
+    }
+  }
 
   useEffect(() => {
     if (user.userId) fetchStats()
@@ -213,7 +236,7 @@ export default function ProfileScreen() {
             </p>
           </div>
           <button
-            onClick={() => { const next = !cheatMode; setCheatMode(next); storeCheatMode(next) }}
+            onClick={handleCheatToggle}
             className={`relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2
               transition-colors duration-200 focus:outline-none ml-4
               ${cheatMode ? 'bg-cyan-600 border-cyan-600' : 'bg-zinc-700 border-zinc-700'}`}
@@ -227,6 +250,36 @@ export default function ProfileScreen() {
             />
           </button>
         </div>
+        {showCheatPwd && (
+          <div className="border-t border-zinc-700 mt-3 pt-3 flex flex-col gap-2">
+            <p className="text-zinc-400 text-xs">Enter developer password to enable Cheat Mode:</p>
+            <div className="flex gap-2">
+              <input
+                type="password"
+                value={cheatPwdInput}
+                onChange={e => { setCheatPwdInput(e.target.value); setCheatPwdError(false) }}
+                onKeyDown={e => e.key === 'Enter' && submitCheatPassword()}
+                placeholder="Password"
+                className={`flex-1 bg-zinc-900 rounded-lg px-3 py-2 text-sm text-white
+                  border focus:outline-none focus:ring-1 focus:ring-cyan-500
+                  ${cheatPwdError ? 'border-[#f26419]' : 'border-zinc-700'}`}
+              />
+              <button
+                onClick={submitCheatPassword}
+                className="px-4 py-2 bg-cyan-600 text-white rounded-lg text-sm font-medium hover:bg-cyan-500 transition-colors"
+              >
+                Unlock
+              </button>
+              <button
+                onClick={() => setShowCheatPwd(false)}
+                className="px-3 py-2 text-zinc-400 rounded-lg text-sm hover:text-zinc-200 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+            {cheatPwdError && <p className="text-[#f26419] text-xs">Wrong password.</p>}
+          </div>
+        )}
         {cheatMode && (
           <div className="border-t border-zinc-800" style={{ paddingTop: '10px', marginTop: '10px' }}>
             <p className="text-orange-400 text-xs font-mono mb-3">

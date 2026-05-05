@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next'
 import PianoKeyboard from '../components/PianoKeyboard.jsx'
 import HearingsIndicator from '../components/HearingsIndicator.jsx'
 import ProgressIndicator from '../components/ProgressIndicator.jsx'
+import InfoTip from '../components/InfoTip.jsx'
 import { getMajorScaleNotes, getTonicTriad } from '../engines/sequenceGenerator.js'
 import { TONAL_CONTEXT_TEMPO, COLORS, CHUNK_RULES, WORKING_MEMORY_CHUNK_LIMIT } from '../config/constants.js'
-import { TONAL_MODES, getStoredTonalMode, storeTonalMode, getStoredCheatMode } from '../lib/utils.js'
+import { TONAL_MODES, getStoredTonalMode, storeTonalMode, getStoredCheatMode, noteLabel, noteBase } from '../lib/utils.js'
 
 function delay(ms) { return new Promise(r => setTimeout(r, ms)) }
 
@@ -41,6 +42,7 @@ export default function ExerciseScreen({
   const endConfirmTimerRef = useRef(null)
   const wrongTimerRef     = useRef(null)
   const pressedNoteRef    = useRef(null)
+  const expectedNoteRef   = useRef(null)
 
   const totalNotes    = exercise?.sequence?.length ?? 0
   const hearingsTotal = exercise?.idmComponents?.H ?? 3
@@ -242,7 +244,10 @@ export default function ExerciseScreen({
       {/* ── Tonal context + hearings row ─────────────────────────────────── */}
       <div className="w-full max-w-2xl mx-auto flex flex-col gap-2">
         <div className="flex items-center justify-between gap-3">
-          <HearingsIndicator used={hearingsUsed} total={hearingsTotal} />
+          <div className="flex items-center gap-1.5">
+            <HearingsIndicator used={hearingsUsed} total={hearingsTotal} />
+            <InfoTip text="Each circle is one hearing. You can replay the melody once per hearing. Use them wisely — fewer hearings means a harder exercise." />
+          </div>
 
           {/* Play tonal context / Stop */}
           {contextPlaying ? (
@@ -271,6 +276,7 @@ export default function ExerciseScreen({
               {t('tonal_context.heading')}
             </button>
           )}
+          <InfoTip position="top" text="Tonal context plays the scale and/or chord to establish the key before you identify the interval. Uses one hearing." />
         </div>
 
         {/* Extra hearings row */}
@@ -352,6 +358,25 @@ export default function ExerciseScreen({
             </span>
           ) : null}
         </div>
+
+        {/* Note name display */}
+        <div className="flex flex-col items-center gap-1" style={{ minHeight: 44 }}>
+          {lastNoteResult === 'wrong' && pressedNoteRef.current && expectedNoteRef.current && (
+            <>
+              <span style={{ color: COLORS.WRONG, fontSize: 18, fontWeight: 700, letterSpacing: 1 }}>
+                {noteLabel(noteBase(pressedNoteRef.current), lang)}
+              </span>
+              <span style={{ color: COLORS.CORRECT, fontSize: 14, fontWeight: 600, opacity: 0.85 }}>
+                ↓ {noteLabel(noteBase(expectedNoteRef.current), lang)}
+              </span>
+            </>
+          )}
+          {lastNoteResult === 'correct' && pressedNoteRef.current && (
+            <span style={{ color: COLORS.CORRECT, fontSize: 18, fontWeight: 700, letterSpacing: 1 }}>
+              {noteLabel(noteBase(pressedNoteRef.current), lang)}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* ── Play button + keyboard pinned to bottom ──────────────────────── */}
@@ -387,7 +412,11 @@ export default function ExerciseScreen({
         </div>
         <div className="w-full">
           <PianoKeyboard
-            onNote={(note) => { pressedNoteRef.current = note; onNote(note) }}
+            onNote={(note) => {
+              pressedNoteRef.current = note
+              expectedNoteRef.current = exercise.sequence[noteIndex]?.note ?? null
+              onNote(note)
+            }}
             highlightTonic={tonicHighlight}
             highlightWrong={wrongNote}
             highlightWrongFade={wrongFadeNote}

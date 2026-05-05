@@ -10,6 +10,7 @@ import {
   FISH_SIZE_PX, RARITY_COLORS, ICONS, fishImagePath, MAX_FISH,
 } from '../config/reefConstants.js'
 import { AlgaeIcon, PearlIcon, PearlAmount } from '../components/reef/ReefIcons.jsx'
+import InfoTip from '../components/InfoTip.jsx'
 
 // ── Swimming animation ────────────────────────────────────────────────────────
 
@@ -404,7 +405,7 @@ export default function ReefScreen() {
       }}
     >
       {/* Dark overlay for readability */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(5,15,30,0.52)', zIndex: 0 }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(5,15,30,0.28)', zIndex: 0 }} />
 
       {/* ── Decorative bubbles ───────────────────────────────────────────── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
@@ -459,25 +460,31 @@ export default function ReefScreen() {
 
         {/* Center: pearls + algae */}
         <div className="flex items-center gap-1.5">
-          <div
-            className="flex items-center gap-1.5 bg-white/10 rounded-xl text-white text-sm font-semibold"
-            style={{ padding: '8px 14px' }}
-          >
-            <PearlIcon size={18} />
-            {pearls}
+          <div className="flex items-center gap-1">
+            <div
+              className="flex items-center gap-1.5 bg-white/10 rounded-xl text-white text-sm font-semibold"
+              style={{ padding: '8px 14px' }}
+            >
+              <PearlIcon size={18} />
+              {pearls}
+            </div>
+            <InfoTip position="bottom" text="Pearls are earned by collecting from fish and releasing them. Spend pearls to buy mystery eggs." />
           </div>
-          <button
-            onClick={toggleFeedingMode}
-            className={`flex items-center gap-1.5 rounded-xl text-white text-sm font-semibold transition-colors ${
-              feedingMode
-                ? 'bg-emerald-600 ring-2 ring-emerald-400'
-                : 'bg-white/10 hover:bg-white/15'
-            }`}
-            style={{ padding: '8px 14px' }}
-          >
-            <AlgaeIcon size={18} />
-            {algae}
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={toggleFeedingMode}
+              className={`flex items-center gap-1.5 rounded-xl text-white text-sm font-semibold transition-colors ${
+                feedingMode
+                  ? 'bg-emerald-600 ring-2 ring-emerald-400'
+                  : 'bg-white/10 hover:bg-white/15'
+              }`}
+              style={{ padding: '8px 14px' }}
+            >
+              <AlgaeIcon size={18} />
+              {algae}
+            </button>
+            <InfoTip position="bottom" text="Algae is earned by completing exercises. Feed your fish algae to keep them producing pearls." />
+          </div>
         </div>
 
         {/* Right: hungry count */}
