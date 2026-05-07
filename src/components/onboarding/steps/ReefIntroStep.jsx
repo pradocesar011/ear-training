@@ -203,6 +203,11 @@ export default function ReefIntroStep({ onStart, loading }) {
           })}
         </div>
 
+        {/* Feedback nudge */}
+        <p style={{ textAlign: 'center', fontSize: 12, color: '#7db8bb', marginTop: 16, lineHeight: 1.5 }}>
+          {t('onboarding.reef_intro.feedback_msg')}
+        </p>
+
         {/* CTA */}
         <button onClick={onStart} disabled={loading} style={{
           marginTop: 20, width: '100%', height: 54, borderRadius: 18, border: 'none',

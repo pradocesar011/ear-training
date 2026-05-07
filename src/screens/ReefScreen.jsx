@@ -461,7 +461,7 @@ export default function ReefScreen() {
               <PearlIcon size={18} />
               {pearls}
             </div>
-            <InfoTip position="bottom" text="Pearls are earned by collecting from fish and releasing them. Spend pearls to buy mystery eggs." />
+            <InfoTip position="bottom" text={t('reef.tip_pearls')} />
           </div>
           <div className="flex items-center gap-1">
             <button
@@ -476,7 +476,7 @@ export default function ReefScreen() {
               <AlgaeIcon size={18} />
               {algae}
             </button>
-            <InfoTip position="bottom" text="Algae is earned by completing exercises. Feed your fish algae to keep them producing pearls." />
+            <InfoTip position="bottom" text={t('reef.tip_algae')} />
           </div>
         </div>
 

@@ -48,7 +48,8 @@
     "hearings_auto": "Auto",
     "octave_range": "Keyboard range",
     "lower_octaves": "C1–B2",
-    "upper_octaves": "C5–B6"
+    "upper_octaves": "C5–B6",
+    "coming_soon": "Coming soon!"
   },
   "welcome_new": {
     "heading": "Ear Training",
@@ -80,7 +81,8 @@
     "correct_note": "Correct!",
     "wrong_note": "Incorrect",
     "end_session_title": "End session",
-    "end_confirm": "End?"
+    "end_confirm": "End?",
+    "tip_hearings": "Each circle is one hearing. You can replay the melody once per hearing. Use them wisely — fewer hearings means a harder exercise."
   },
   "result": {
     "heading": "Result",
@@ -153,7 +155,10 @@
     "change_code": "Change code",
     "enter_code_label": "Enter existing code",
     "enter_code_placeholder": "E.g. AX7K2M",
-    "logout": "Switch account"
+    "logout": "Switch account",
+    "contact_heading": "Contact",
+    "contact_body": "Found a bug or have a suggestion? We'd love to hear from you.",
+    "contact_button": "Send feedback"
   },
   "admin": {
     "login_heading": "Admin panel",
@@ -190,6 +195,7 @@
   "review": {
     "title": "Review",
     "recentErrors": "Recent errors",
+    "practice": "Practice",
     "upcomingReviews": "Upcoming SRS reviews",
     "noErrors": "No recent errors. Great work!",
     "confirm": "Confirm",
@@ -199,7 +205,9 @@
     "clearAll": "Clear all",
     "attemptsToCorrect": "Attempts to correct",
     "unlimitedListens": "Unlimited listens",
-    "completed": "Completed"
+    "completed": "Completed",
+    "tip_errors": "Shows your recent exercises with the lowest precision. Replay them to practice and mark as reviewed when done.",
+    "tip_practice": "Shows your intervals scheduled for spaced repetition review. Items due or overdue appear first."
   },
   "reef": {
     "heading": "The Sound Reef",
@@ -219,6 +227,8 @@
     "max_tank": "Tank full ({{max}} fish max)",
     "not_enough_pearls": "Not enough pearls",
     "not_enough_algae": "Not enough algae",
+    "tip_pearls": "Pearls are earned by collecting from fish and releasing them. Spend pearls to buy mystery eggs.",
+    "tip_algae": "Algae is earned by completing exercises. Feed your fish algae to keep them producing pearls.",
     "dive_to_train": "Dive to Train",
     "toast_fed": "Fed {{name}}!",
     "toast_collected": "+{{amount}} pearls from {{name}}",
@@ -320,7 +330,8 @@
       "rare": "Rare",
       "legendary": "Legendary",
       "fish_count": "{{count}} fish",
-      "start": "Start Training"
+      "start": "Start Training",
+      "feedback_msg": "Have a suggestion or found a bug? We'd love to hear from you."
     }
   }
 }

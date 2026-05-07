@@ -48,7 +48,8 @@
     "hearings_auto": "Auto",
     "octave_range": "Rango del teclado",
     "lower_octaves": "C1–B2",
-    "upper_octaves": "C5–B6"
+    "upper_octaves": "C5–B6",
+    "coming_soon": "¡Próximamente!"
   },
   "welcome_new": {
     "heading": "Entrenamiento Auditivo",
@@ -80,7 +81,8 @@
     "correct_note": "¡Correcto!",
     "wrong_note": "Incorrecto",
     "end_session_title": "Terminar sesión",
-    "end_confirm": "¿Terminar?"
+    "end_confirm": "¿Terminar?",
+    "tip_hearings": "Cada círculo es una escucha. Puedes reproducir la melodía una vez por escucha. Úsalas con cuidado: menos escuchas significa un ejercicio más difícil."
   },
   "result": {
     "heading": "Resultado",
@@ -153,7 +155,10 @@
     "change_code": "Cambiar código",
     "enter_code_label": "Ingresar código existente",
     "enter_code_placeholder": "Ej. AX7K2M",
-    "logout": "Cambiar cuenta"
+    "logout": "Cambiar cuenta",
+    "contact_heading": "Contacto",
+    "contact_body": "¿Encontraste un error o tienes una sugerencia? Escríbenos.",
+    "contact_button": "Enviar comentarios"
   },
   "admin": {
     "login_heading": "Panel de administración",
@@ -190,6 +195,7 @@
   "review": {
     "title": "Repaso",
     "recentErrors": "Errores recientes",
+    "practice": "Práctica",
     "upcomingReviews": "Próximas revisiones SRS",
     "noErrors": "Sin errores recientes. ¡Buen trabajo!",
     "confirm": "Confirmar",
@@ -199,7 +205,9 @@
     "clearAll": "Limpiar todo",
     "attemptsToCorrect": "Intentos hasta correcto",
     "unlimitedListens": "Escuchas ilimitadas",
-    "completed": "Completado"
+    "completed": "Completado",
+    "tip_errors": "Muestra tus ejercicios recientes con menor precisión. Reprodúcelos para practicar y márcalos como revisados.",
+    "tip_practice": "Muestra los intervalos programados para revisión de repetición espaciada. Los más urgentes aparecen primero."
   },
   "reef": {
     "heading": "El Arrecife Sonoro",
@@ -212,18 +220,20 @@
     "release_confirm": "Liberar por",
     "release_confirm2": "Confirmar liberación",
     "no_fish_yet": "Aún no hay peces",
-    "hatch": "¡Eclosionar!",
+    "hatch": "¡Abrir!",
     "hatching": "Incubando…",
     "buy_egg": "Comprar huevo",
     "buy_egg_cost": "cuesta",
     "max_tank": "Acuario lleno (máx {{max}} peces)",
     "not_enough_pearls": "No hay suficientes perlas",
     "not_enough_algae": "No hay suficientes algas",
+    "tip_pearls": "Las perlas se ganan recolectando de los peces o liberándolos. Gasta perlas para comprar huevos misteriosos.",
+    "tip_algae": "Las algas se ganan completando ejercicios. Alimenta a tus peces con algas para que sigan produciendo perlas.",
     "dive_to_train": "Ir a Entrenar",
     "toast_fed": "¡{{name}} alimentado!",
     "toast_collected": "+{{amount}} perlas de {{name}}",
     "toast_released": "{{name}} liberado por {{amount}} perlas",
-    "toast_hatched": "¡{{name}} eclosionó!",
+    "toast_hatched": "¡{{name}} abrió!",
     "toast_egg_bought": "¡Nuevo huevo en camino!",
     "level": "Nv {{n}}",
     "hungry": "Hambriento",
@@ -236,8 +246,8 @@
     "tank_full": "Acuario lleno",
     "loading": "Cargando arrecife…",
     "hungry_alert": "{{count}} hambrientos",
-    "empty_tank": "¡Entrena para ganar algas y eclosiona tu primer huevo!",
-    "egg_ready": "¡Eclosionar!",
+    "empty_tank": "¡Entrena para ganar algas y abre tu primer huevo!",
+    "egg_ready": "¡Abrir!",
     "mystery_egg": "Huevo Misterioso"
   },
   "intervals": {
@@ -320,7 +330,8 @@
       "rare": "Raro",
       "legendary": "Legendario",
       "fish_count": "{{count}} peces",
-      "start": "Empezar entrenamiento"
+      "start": "Empezar entrenamiento",
+      "feedback_msg": "¿Tienes una sugerencia o encontraste un error? Nos encantaría saber."
     }
   }
 }

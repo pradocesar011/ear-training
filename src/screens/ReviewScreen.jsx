@@ -20,6 +20,9 @@ import { estimateHalfLife, recallProbability } from '../engines/srs.js'
 import { computeWeightedPrecision } from '../engines/idm.js'
 import { CHUNK_RULES, COLORS, INTERVAL_INTRODUCTION_ORDER } from '../config/constants.js'
 import PianoKeyboard from '../components/PianoKeyboard.jsx'
+import InfoTip from '../components/InfoTip.jsx'
+
+const REVIEW_TIP_SEEN_KEY = 'review_infotip_seen'
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
@@ -61,8 +64,19 @@ export default function ReviewScreen() {
   const [highlightBadFade, setHighlightBadFade] = useState([])
   const [isPlaying,        setIsPlaying]        = useState(false)
 
+  const [tipsHighlighted, setTipsHighlighted] = useState(
+    () => !localStorage.getItem(REVIEW_TIP_SEEN_KEY)
+  )
+
   const highlightTimerRef = useRef(null)
   const bonusGivenRef     = useRef(false)
+
+  function handleTipInteract() {
+    if (tipsHighlighted) {
+      localStorage.setItem(REVIEW_TIP_SEEN_KEY, '1')
+      setTipsHighlighted(false)
+    }
+  }
 
   // Cleanup: restore nav when component unmounts
   useEffect(() => () => setReviewInExercise(false), [])
@@ -633,17 +647,29 @@ export default function ReviewScreen() {
               </span>
             )}
           </button>
+          <InfoTip
+            text={t('review.tip_errors')}
+            position="bottom"
+            highlighted={tipsHighlighted}
+            onFirstInteract={handleTipInteract}
+          />
           <button
             onClick={() => setActiveTab('practice')}
-            className={`text-sm font-semibold transition-colors border-b-2 -mb-px ${
+            className={`flex items-center gap-2 text-sm font-semibold transition-colors border-b-2 -mb-px ${
               activeTab === 'practice'
                 ? 'text-white border-cyan-500'
                 : 'text-zinc-500 border-transparent hover:text-zinc-300'
             }`}
             style={{ padding: '20px' }}
           >
-            Practice
+            {t('review.practice')}
           </button>
+          <InfoTip
+            text={t('review.tip_practice')}
+            position="bottom"
+            highlighted={tipsHighlighted}
+            onFirstInteract={handleTipInteract}
+          />
         </div>
       </div>
 

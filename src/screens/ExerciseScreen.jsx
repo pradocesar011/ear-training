@@ -246,7 +246,7 @@ export default function ExerciseScreen({
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-1.5">
             <HearingsIndicator used={hearingsUsed} total={hearingsTotal} />
-            <InfoTip text="Each circle is one hearing. You can replay the melody once per hearing. Use them wisely — fewer hearings means a harder exercise." />
+            <InfoTip text={t('exercise.tip_hearings')} />
           </div>
 
           {/* Play tonal context / Stop */}
@@ -276,7 +276,6 @@ export default function ExerciseScreen({
               {t('tonal_context.heading')}
             </button>
           )}
-          <InfoTip position="top" text="Tonal context plays the scale and/or chord to establish the key before you identify the interval. Uses one hearing." />
         </div>
 
         {/* Extra hearings row */}

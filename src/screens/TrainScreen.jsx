@@ -202,26 +202,41 @@ export default function TrainScreen() {
       </SectionCard>
 
       {/* ── Keyboard range ──────────────────────────────────────────────────── */}
-      <SectionCard label={t('train.octave_range')}>
-        <div className="grid grid-cols-6 gap-2 mb-4">
-          {[1, 2, 3, 4, 5, 6].map(oct => {
-            const isActive = activeOctaves.includes(oct)
-            const toggleable = canToggle(oct)
-            return (
-              <OctaveButton
-                key={oct}
-                label={String(oct)}
-                active={isActive}
-                muted={!toggleable}
-                onClick={() => toggleable && toggleOctave(oct)}
-              />
-            )
-          })}
+      <div style={{ position: 'relative', width: '100%', maxWidth: 512 }}>
+        <SectionCard label={t('train.octave_range')}>
+          <div className="grid grid-cols-6 gap-2 mb-4">
+            {[1, 2, 3, 4, 5, 6].map(oct => {
+              const isActive = activeOctaves.includes(oct)
+              const toggleable = canToggle(oct)
+              return (
+                <OctaveButton
+                  key={oct}
+                  label={String(oct)}
+                  active={isActive}
+                  muted={!toggleable}
+                  onClick={() => toggleable && toggleOctave(oct)}
+                />
+              )
+            })}
+          </div>
+          <div className="flex justify-center" style={{ paddingTop: '5px' }}>
+            <MiniPiano activeOctaves={activeOctaves} />
+          </div>
+        </SectionCard>
+        {/* Coming soon overlay */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'rgba(26,42,53,0.82)',
+          borderRadius: 16,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          backdropFilter: 'blur(2px)',
+          zIndex: 10,
+        }}>
+          <span style={{ color: '#7db8bb', fontSize: 14, fontWeight: 600, letterSpacing: '0.05em' }}>
+            {t('train.coming_soon')}
+          </span>
         </div>
-        <div className="flex justify-center" style={{ paddingTop: '5px' }}>
-          <MiniPiano activeOctaves={activeOctaves} />
-        </div>
-      </SectionCard>
+      </div>
 
       {/* ── Last session stats ──────────────────────────────────────────────── */}
       {!loadingStats && (

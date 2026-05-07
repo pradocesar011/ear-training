@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 
-export default function InfoTip({ text, position = 'top' }) {
+export default function InfoTip({ text, position = 'top', highlighted = false, onFirstInteract }) {
   const [visible, setVisible] = useState(false)
   const ref = useRef(null)
+  const interactedRef = useRef(false)
 
   useEffect(() => {
     if (!visible) return
@@ -17,6 +18,13 @@ export default function InfoTip({ text, position = 'top' }) {
     }
   }, [visible])
 
+  function handleInteract() {
+    if (!interactedRef.current && onFirstInteract) {
+      interactedRef.current = true
+      onFirstInteract()
+    }
+  }
+
   const tipPositionStyle = position === 'top'
     ? { bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: 8 }
     : { top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: 8 }
@@ -30,14 +38,14 @@ export default function InfoTip({ text, position = 'top' }) {
   return (
     <div ref={ref} style={{ position: 'relative', display: 'inline-flex', flexShrink: 0 }}>
       <button
-        onClick={() => setVisible(v => !v)}
-        onMouseEnter={() => setVisible(true)}
+        onClick={() => { setVisible(v => !v); handleInteract() }}
+        onMouseEnter={() => { setVisible(true); handleInteract() }}
         onMouseLeave={() => setVisible(false)}
         style={{
           width: 16, height: 16,
           borderRadius: '50%',
-          background: 'rgba(85,221,224,0.15)',
-          border: '1px solid rgba(85,221,224,0.4)',
+          background: highlighted ? 'rgba(85,221,224,0.3)' : 'rgba(85,221,224,0.15)',
+          border: highlighted ? '1px solid rgba(85,221,224,0.9)' : '1px solid rgba(85,221,224,0.4)',
           color: '#55dde0',
           fontSize: 10,
           fontWeight: 700,
@@ -46,6 +54,7 @@ export default function InfoTip({ text, position = 'top' }) {
           cursor: 'pointer',
           lineHeight: 1,
           flexShrink: 0,
+          animation: highlighted ? 'srHighlight 1.6s ease-in-out infinite' : 'none',
         }}
         aria-label="Info"
       >

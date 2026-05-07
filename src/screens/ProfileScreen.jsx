@@ -219,6 +219,32 @@ export default function ProfileScreen() {
         )}
       </Card>
 
+      {/* ── Contact ───────────────────────────────────────────────────────── */}
+      <Card>
+        <div className="flex items-start gap-3">
+          <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg className="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-white text-sm font-medium">{t('profile.contact_heading')}</p>
+            <p className="text-zinc-500 text-xs mt-0.5 leading-snug" style={{ paddingTop: '10px', paddingBottom: '10px' }}>
+              {t('profile.contact_body')}
+            </p>
+          </div>
+        </div>
+        <a
+          href={`mailto:pradocesar011@gmail.com?subject=Sound Reef Feedback`}
+          className="mt-3 w-full py-3 bg-zinc-800 text-zinc-300 rounded-xl text-sm font-medium
+            hover:bg-zinc-700 transition-colors text-center block"
+          style={{ paddingTop: '10px', paddingBottom: '10px' }}
+        >
+          {t('profile.contact_button')}
+        </a>
+      </Card>
+
       {/* ── Language ──────────────────────────────────────────────────────── */}
       <Card>
         <SectionLabel>{t('profile.language_label')}</SectionLabel>
