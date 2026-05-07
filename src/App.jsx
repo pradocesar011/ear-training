@@ -15,6 +15,7 @@ import ReviewScreen         from './screens/ReviewScreen.jsx'
 import ProfileScreen        from './screens/ProfileScreen.jsx'
 import ReefScreen           from './screens/ReefScreen.jsx'
 import PracticeScreen      from './screens/PracticeScreen.jsx'
+import OnboardingFlow      from './components/onboarding/OnboardingFlow.jsx'
 
 import AdminLogin       from './admin/AdminLogin.jsx'
 import AdminShell       from './admin/AdminShell.jsx'
@@ -85,6 +86,11 @@ function TrainTab() {
         onChangeLanguage={user.changeLanguage}
       />
     )
+  }
+
+  // New user: confirmed code but hasn't completed onboarding yet
+  if (!user.onboardingDone) {
+    return <OnboardingFlow onComplete={user.completeOnboarding} />
   }
 
   if (phase === 'exercise' && currentExercise) {

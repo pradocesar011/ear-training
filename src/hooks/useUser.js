@@ -21,11 +21,12 @@ import {
 export function useUser() {
   const { i18n } = useTranslation()
 
-  const [userCode,      setUserCode]      = useState(null)    // confirmed, saved code
-  const [suggestedCode, setSuggestedCode] = useState(null)    // pre-generated, not yet saved
-  const [userId,        setUserId]        = useState(null)
-  const [loading,       setLoading]       = useState(true)
-  const [error,         setError]         = useState(null)
+  const [userCode,       setUserCode]       = useState(null)
+  const [suggestedCode,  setSuggestedCode]  = useState(null)
+  const [userId,         setUserId]         = useState(null)
+  const [onboardingDone, setOnboardingDone] = useState(true)   // true until we know otherwise
+  const [loading,        setLoading]        = useState(true)
+  const [error,          setError]          = useState(null)
 
   useEffect(() => { initUser() }, [])
 
@@ -61,7 +62,7 @@ export function useUser() {
     const upper = code.trim().toUpperCase()
     const { data, error: err } = await supabase
       .from('users')
-      .select('id, code, language')
+      .select('id, code, language, onboarding_done')
       .eq('code', upper)
       .single()
 
@@ -70,6 +71,7 @@ export function useUser() {
     storeCode(data.code)
     setUserCode(data.code)
     setUserId(data.id)
+    setOnboardingDone(data.onboarding_done ?? true)
     setSuggestedCode(null)
     if (data.language && data.language !== i18n.language) {
       i18n.changeLanguage(data.language)
@@ -83,7 +85,7 @@ export function useUser() {
     for (let attempt = 0; attempt < 5; attempt++) {
       const { data, error: err } = await supabase
         .from('users')
-        .insert({ code, language: i18n.language.slice(0, 2) })
+        .insert({ code, language: i18n.language.slice(0, 2), onboarding_done: false })
         .select('id, code')
         .single()
 
@@ -91,6 +93,7 @@ export function useUser() {
         storeCode(data.code)
         setUserCode(data.code)
         setUserId(data.id)
+        setOnboardingDone(false)
         setSuggestedCode(null)
         return true
       }
@@ -103,6 +106,7 @@ export function useUser() {
         storeCode(code)
         setUserCode(code)
         setUserId(null)
+        setOnboardingDone(false)
         setSuggestedCode(null)
         return true
       }
@@ -149,6 +153,13 @@ export function useUser() {
     setSuggestedCode(suggestion)
   }, [])
 
+  const completeOnboarding = useCallback(async () => {
+    setOnboardingDone(true)
+    if (userId) {
+      await supabase.from('users').update({ onboarding_done: true }).eq('id', userId)
+    }
+  }, [userId])
+
   const changeLanguage = useCallback(async (lang) => {
     i18n.changeLanguage(lang)
     storeLanguage(lang)
@@ -161,11 +172,13 @@ export function useUser() {
     userCode,
     suggestedCode,
     userId,
+    onboardingDone,
     loading,
     error,
     confirmCode,
     enterCode,
     logout,
     changeLanguage,
+    completeOnboarding,
   }
 }

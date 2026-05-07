@@ -63,3 +63,35 @@ body {
 .screen-enter {
   animation: screenEnter 0.2s ease-out;
 }
+
+/* ── Onboarding underwater animations ─────────────────────────── */
+@keyframes srBubble {
+  0%   { transform: translate(0, 0) scale(0.85); opacity: 0; }
+  10%  { opacity: var(--o, 0.4); }
+  90%  { opacity: var(--o, 0.4); }
+  100% { transform: translate(var(--drift, 0px), -900px) scale(1); opacity: 0; }
+}
+@keyframes srRipple {
+  0%   { transform: scale(0.4); opacity: 0.7; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+@keyframes srFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+@keyframes srSwim {
+  from { transform: translateX(0) translateY(0) scaleX(var(--sx, 1)); }
+  to   { transform: translateX(-8px) translateY(-4px) scaleX(var(--sx, 1)); }
+}
+@keyframes srPanel {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes srSlideIn {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes srSlideBack {
+  from { opacity: 0; transform: translateX(-28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
