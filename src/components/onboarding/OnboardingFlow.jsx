@@ -68,7 +68,7 @@ export default function OnboardingFlow({ onComplete }) {
         }}>
           <OnboardingProgressBar current={step} total={TOTAL_STEPS} />
 
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginTop: 20, overflow: 'hidden' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginTop: 20, minHeight: 0 }}>
             {step === 1 && (
               <TermsStep onNext={() => goTo(2)} />
             )}

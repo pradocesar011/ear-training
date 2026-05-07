@@ -256,5 +256,71 @@
     "ascending": "ascending",
     "descending": "descending",
     "harmonic": "harmonic"
+  },
+  "onboarding": {
+    "terms": {
+      "heading": "Before you begin",
+      "collect_title": "What we collect",
+      "collect_body": "Sound Reef stores a random identification code, your language preference, and training performance metrics — such as which intervals you practiced, precision scores, and session timing. No name, email address, or any other personal information is required or stored.",
+      "use_title": "How we use it",
+      "use_body": "Your data is used solely to power the app (track your progress, feed your fish) and to research and improve ear-training methods. It is never sold or shared with third parties.",
+      "control_title": "Your control",
+      "control_body": "You can delete all your data at any time via Profile → Reset Progress. Continuing past this screen means you accept these terms.",
+      "accept": "I Accept & Continue"
+    },
+    "survey": {
+      "heading": "Tell us about yourself",
+      "subheading": "Helps us understand our users and improve the app",
+      "formal_training": "Do you have formal musical training?",
+      "how_many_years": "How many years?",
+      "plays_instrument": "Do you play an instrument?",
+      "dictation": "Have you practiced melodic dictation before?",
+      "age_range": "Your age range",
+      "main_goal": "Main goal",
+      "yes": "Yes",
+      "no": "No",
+      "skip": "Skip for now",
+      "continue": "Continue",
+      "age_under_18": "Under 18",
+      "age_18_25": "18–25",
+      "age_26_35": "26–35",
+      "age_36_45": "36–45",
+      "age_46_plus": "46+",
+      "goal_learn_scratch": "Learn from scratch",
+      "goal_improve": "Improve existing skills",
+      "goal_music_school": "Prepare for music school",
+      "goal_fun": "Just for fun"
+    },
+    "app_intro": {
+      "heading": "What is Sound Reef?",
+      "sub": "Train your ears to recognize melodies note by note.",
+      "hear": "Hear the melody",
+      "identify": "Identify the notes",
+      "train_ear": "Train your ear",
+      "next": "Next"
+    },
+    "training_intro": {
+      "heading": "How training works",
+      "step": "Step {{n}}",
+      "listen": "Listen to the melody",
+      "first_note": "First note is free",
+      "play_seq": "Play the sequence",
+      "see_result": "See how you did",
+      "next": "Next"
+    },
+    "reef_intro": {
+      "heading": "Explore your Reef",
+      "sub": "Collect, feed, and discover rare fish as you train.",
+      "train": "Train",
+      "algae": "Algae",
+      "feed": "Feed",
+      "pearls": "Pearls",
+      "new_fish": "New Fish",
+      "common": "Common",
+      "rare": "Rare",
+      "legendary": "Legendary",
+      "fish_count": "{{count}} fish",
+      "start": "Start Training"
+    }
   }
 }

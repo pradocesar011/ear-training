@@ -13,6 +13,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import BubbleLayer from '../components/BubbleLayer.jsx'
 import { supabase } from '../lib/supabase.js'
 import { useAppContext } from '../context/AppContext.jsx'
 import { estimateHalfLife, recallProbability } from '../engines/srs.js'
@@ -610,7 +611,8 @@ export default function ReviewScreen() {
     .map(({ interval }) => interval)
 
   return (
-    <div className="screen-enter flex flex-col items-center min-h-full px-4 pt-8 pb-24 gap-6">
+    <div className="relative screen-enter flex flex-col items-center min-h-full px-4 pt-8 pb-24 gap-6">
+      <BubbleLayer />
       <div className="w-full max-w-2xl" style={{ paddingTop: '20px' }}>
         <h1 className="text-2xl font-bold text-white text-center mb-6">{t('review.title')}</h1>
         {/* ── Tabs ───────────────────────────────────────────────────── */}

@@ -11,6 +11,7 @@ import {
 } from '../config/reefConstants.js'
 import { AlgaeIcon, PearlIcon, PearlAmount } from '../components/reef/ReefIcons.jsx'
 import InfoTip from '../components/InfoTip.jsx'
+import ReefBackdrop from '../components/onboarding/ReefBackdrop.jsx'
 
 // ── Swimming animation ────────────────────────────────────────────────────────
 
@@ -396,23 +397,15 @@ export default function ReefScreen() {
   return (
     <div
       className="relative flex flex-col"
-      style={{
-        minHeight: '100%',
-        backgroundImage: 'url("/Reef/Backgrounds/Reef%20Background.webp")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
+      style={{ minHeight: '100%' }}
     >
-      {/* Dark overlay for readability */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(5,15,30,0.28)', zIndex: 0 }} />
+      <ReefBackdrop />
 
-      {/* ── Decorative bubbles ───────────────────────────────────────────── */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+      {/* ── placeholder so nothing below breaks (kept for layout parity) ── */}
+      <div style={{ display: 'none' }}>
         {[...Array(8)].map((_, i) => (
           <div
             key={i}
-            className="absolute rounded-full border border-white/10"
             style={{
               width:     6 + (i % 4) * 4,
               height:    6 + (i % 4) * 4,

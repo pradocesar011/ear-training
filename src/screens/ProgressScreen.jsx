@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
+import BubbleLayer from '../components/BubbleLayer.jsx'
 import { supabase } from '../lib/supabase.js'
 import { useAppContext } from '../context/AppContext.jsx'
 import { formatDuration, formatPrecision } from '../lib/utils.js'
@@ -118,7 +119,8 @@ export default function ProgressScreen() {
   }
 
   return (
-    <div className="screen-enter flex flex-col items-center min-h-full px-4 pt-8 pb-24 gap-7">
+    <div className="relative screen-enter flex flex-col items-center min-h-full px-4 pt-8 pb-24 gap-7">
+      <BubbleLayer />
       <h1 className="text-2xl font-bold text-white text-center w-full max-w-2xl" style={{ paddingTop: '20px' }}>{t('progress.heading')}</h1>
 
       <div className="w-full max-w-2xl flex flex-col gap-6">

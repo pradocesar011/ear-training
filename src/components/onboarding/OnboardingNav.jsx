@@ -1,4 +1,4 @@
-export default function OnboardingNav({ onBack, onNext, nextLabel = 'Continue', showSkip = false, onSkip, loading = false }) {
+export default function OnboardingNav({ onBack, onNext, nextLabel = 'Continue', showSkip = false, onSkip, skipLabel = 'Skip for now', loading = false }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 24 }}>
       <div style={{ flex: 1 }}>
@@ -23,7 +23,7 @@ export default function OnboardingNav({ onBack, onNext, nextLabel = 'Continue', 
             color: '#6a9ab5', fontSize: 13, padding: '8px 12px', textDecoration: 'underline',
           }}
         >
-          Skip for now
+          {skipLabel}
         </button>
       )}
 

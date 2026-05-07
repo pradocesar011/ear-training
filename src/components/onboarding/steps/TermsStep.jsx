@@ -6,51 +6,30 @@ export default function TermsStep({ onNext }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <h2 style={{ color: '#e8f8f9', fontSize: 24, fontWeight: 700, margin: '0 0 20px' }}>
-        Before you begin
+      <h2 style={{ color: '#e8f8f9', fontSize: 24, fontWeight: 700, margin: '0 0 16px', flexShrink: 0 }}>
+        {t('onboarding.terms.heading')}
       </h2>
 
-      <div
-        style={{
-          flex: 1, overflowY: 'auto',
-          background: '#243545', borderRadius: 12,
-          padding: '16px 18px', marginBottom: 8,
-          border: '1px solid #3d5f73',
-          color: '#b8dde0', fontSize: 14, lineHeight: 1.7,
-        }}
-      >
+      <div style={{
+        flex: 1, overflowY: 'auto', minHeight: 0,
+        background: '#243545', borderRadius: 12,
+        padding: '16px 18px', marginBottom: 8,
+        border: '1px solid #3d5f73',
+        color: '#b8dde0', fontSize: 14, lineHeight: 1.7,
+      }}>
         <p style={{ marginTop: 0 }}>
-          <strong style={{ color: '#e8f8f9' }}>What we collect</strong>
+          <strong style={{ color: '#e8f8f9' }}>{t('onboarding.terms.collect_title')}</strong>
         </p>
-        <p>
-          Sound Reef stores a random identification code, your language preference, and training
-          performance metrics — such as which intervals you practiced, precision scores, and
-          session timing. No name, email address, or any other personal information is required
-          or stored.
-        </p>
+        <p>{t('onboarding.terms.collect_body')}</p>
 
-        <p>
-          <strong style={{ color: '#e8f8f9' }}>How we use it</strong>
-        </p>
-        <p>
-          Your data is used solely to power the app (track your progress, feed your fish) and
-          to research and improve ear-training methods. It is never sold or shared with
-          third parties.
-        </p>
+        <p><strong style={{ color: '#e8f8f9' }}>{t('onboarding.terms.use_title')}</strong></p>
+        <p>{t('onboarding.terms.use_body')}</p>
 
-        <p>
-          <strong style={{ color: '#e8f8f9' }}>Your control</strong>
-        </p>
-        <p style={{ marginBottom: 0 }}>
-          You can delete all your data at any time via <strong>Profile → Reset Progress</strong>.
-          Continuing past this screen means you accept these terms.
-        </p>
+        <p><strong style={{ color: '#e8f8f9' }}>{t('onboarding.terms.control_title')}</strong></p>
+        <p style={{ marginBottom: 0 }}>{t('onboarding.terms.control_body')}</p>
       </div>
 
-      <OnboardingNav
-        onNext={onNext}
-        nextLabel="I Accept & Continue"
-      />
+      <OnboardingNav onNext={onNext} nextLabel={t('onboarding.terms.accept')} />
     </div>
   )
 }

@@ -256,5 +256,71 @@
     "ascending": "ascendente",
     "descending": "descendente",
     "harmonic": "armónico"
+  },
+  "onboarding": {
+    "terms": {
+      "heading": "Antes de comenzar",
+      "collect_title": "Qué recopilamos",
+      "collect_body": "Sound Reef almacena un código de identificación aleatorio, tu preferencia de idioma y métricas de rendimiento — como qué intervalos practicaste, puntuaciones de precisión y tiempo de sesión. No se requiere ni almacena nombre, correo electrónico u otra información personal.",
+      "use_title": "Cómo lo usamos",
+      "use_body": "Tus datos se usan únicamente para la app (seguir tu progreso, alimentar tus peces) y para investigar y mejorar los métodos de entrenamiento auditivo. Nunca se venden ni se comparten con terceros.",
+      "control_title": "Tu control",
+      "control_body": "Puedes eliminar todos tus datos en cualquier momento desde Perfil → Reiniciar progreso. Al continuar aceptas estos términos.",
+      "accept": "Acepto y continúo"
+    },
+    "survey": {
+      "heading": "Cuéntanos sobre ti",
+      "subheading": "Nos ayuda a entender a nuestros usuarios y mejorar la app",
+      "formal_training": "¿Tienes formación musical formal?",
+      "how_many_years": "¿Cuántos años?",
+      "plays_instrument": "¿Tocas algún instrumento?",
+      "dictation": "¿Has practicado dictado melódico antes?",
+      "age_range": "Tu rango de edad",
+      "main_goal": "Objetivo principal",
+      "yes": "Sí",
+      "no": "No",
+      "skip": "Omitir por ahora",
+      "continue": "Continuar",
+      "age_under_18": "Menor de 18",
+      "age_18_25": "18–25",
+      "age_26_35": "26–35",
+      "age_36_45": "36–45",
+      "age_46_plus": "46+",
+      "goal_learn_scratch": "Aprender desde cero",
+      "goal_improve": "Mejorar habilidades existentes",
+      "goal_music_school": "Prepararme para la escuela de música",
+      "goal_fun": "Solo por diversión"
+    },
+    "app_intro": {
+      "heading": "¿Qué es Sound Reef?",
+      "sub": "Entrena tu oído para reconocer melodías nota por nota.",
+      "hear": "Escucha la melodía",
+      "identify": "Identifica las notas",
+      "train_ear": "Entrena tu oído",
+      "next": "Siguiente"
+    },
+    "training_intro": {
+      "heading": "Cómo funciona el entrenamiento",
+      "step": "Paso {{n}}",
+      "listen": "Escucha la melodía",
+      "first_note": "La primera nota es gratis",
+      "play_seq": "Toca la secuencia",
+      "see_result": "Ve cómo te fue",
+      "next": "Siguiente"
+    },
+    "reef_intro": {
+      "heading": "Explora tu Reef",
+      "sub": "Colecciona, alimenta y descubre peces raros mientras entrenas.",
+      "train": "Entrenar",
+      "algae": "Algas",
+      "feed": "Alimentar",
+      "pearls": "Perlas",
+      "new_fish": "Pez Nuevo",
+      "common": "Común",
+      "rare": "Raro",
+      "legendary": "Legendario",
+      "fish_count": "{{count}} peces",
+      "start": "Empezar entrenamiento"
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAppContext } from '../context/AppContext.jsx'
+import BubbleLayer from '../components/BubbleLayer.jsx'
 import { supabase } from '../lib/supabase.js'
 import { formatDuration, formatPrecision } from '../lib/utils.js'
 import {
@@ -126,7 +127,8 @@ export default function TrainScreen() {
   }
 
   return (
-    <div className="screen-enter flex flex-col items-center justify-start min-h-full px-4 pt-8 pb-24 gap-4">
+    <div className="relative screen-enter flex flex-col items-center justify-start min-h-full px-4 pt-8 pb-24 gap-4">
+      <BubbleLayer />
 
       {/* Heading */}
       <div className="text-center mb-2" style={{ paddingTop: '20px' }}>

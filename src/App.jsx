@@ -146,11 +146,11 @@ function TrainTab() {
 
 // ── AppShell — wraps all tabs; hides nav during active exercise ───────────────
 function AppShell() {
-  const { session, reviewInExercise } = useAppContext()
+  const { session, reviewInExercise, user } = useAppContext()
   const { phase } = session
 
-  // Hide nav so exercise keyboard has full screen; also hide during review exercise
-  const hideNav = phase === 'exercise' || reviewInExercise
+  // Hide nav during exercise, review exercise, welcome screen, and onboarding
+  const hideNav = phase === 'exercise' || reviewInExercise || !user.userCode || !user.onboardingDone
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
