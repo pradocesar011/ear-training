@@ -25,6 +25,7 @@ import AdminUserDetail  from './admin/AdminUserDetail.jsx'
 import AdminComparison  from './admin/AdminComparison.jsx'
 import AdminIntervals   from './admin/AdminIntervals.jsx'
 import AdminSessionLog  from './admin/AdminSessionLog.jsx'
+import AdminSurvey      from './admin/AdminSurvey.jsx'
 
 import { SESSION } from './config/constants.js'
 
@@ -40,6 +41,7 @@ function AdminRoute() {
         <Route path="comparison"    element={<AdminComparison />} />
         <Route path="intervals"     element={<AdminIntervals />} />
         <Route path="sessions"      element={<AdminSessionLog />} />
+        <Route path="survey"        element={<AdminSurvey />} />
       </Route>
       <Route path="user/:userId"    element={<AdminUserDetail />} />
     </Routes>

@@ -6,6 +6,7 @@ const TABS = [
   { to: '/admin/comparison', label: 'Comparison'           },
   { to: '/admin/intervals',  label: 'Intervals'            },
   { to: '/admin/sessions',   label: 'Sessions'             },
+  { to: '/admin/survey',     label: 'Survey'               },
 ]
 
 export default function AdminShell() {
