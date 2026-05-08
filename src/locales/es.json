@@ -206,7 +206,7 @@
     "attemptsToCorrect": "Intentos hasta correcto",
     "unlimitedListens": "Escuchas ilimitadas",
     "completed": "Completado",
-    "tip_errors": "Muestra tus ejercicios recientes con menor precisión. Reprodúcelos para practicar y márcalos como revisados.",
+    "tip_errors": "Muestra tus ejercicios recientes con menor precisión. Reprodúcelos para practicar y márcalos como revisados. Cada error corregido te da una escucha extra para tu próxima sesión de entrenamiento.",
     "tip_practice": "Muestra los intervalos programados para revisión de repetición espaciada. Los más urgentes aparecen primero."
   },
   "reef": {
@@ -331,7 +331,7 @@
       "legendary": "Legendario",
       "fish_count": "{{count}} peces",
       "start": "Empezar entrenamiento",
-      "feedback_msg": "¿Tienes una sugerencia o encontraste un error? Nos encantaría saber."
+      "feedback_msg": "¿Tienes una sugerencia o encontraste un error? Escríbenos desde Perfil → Contacto."
     }
   }
 }

@@ -206,7 +206,7 @@
     "attemptsToCorrect": "Attempts to correct",
     "unlimitedListens": "Unlimited listens",
     "completed": "Completed",
-    "tip_errors": "Shows your recent exercises with the lowest precision. Replay them to practice and mark as reviewed when done.",
+    "tip_errors": "Shows your recent exercises with the lowest precision. Replay them to practice and mark as reviewed when done. Each error you correct earns you an extra hearing for your next training session.",
     "tip_practice": "Shows your intervals scheduled for spaced repetition review. Items due or overdue appear first."
   },
   "reef": {
@@ -331,7 +331,7 @@
       "legendary": "Legendary",
       "fish_count": "{{count}} fish",
       "start": "Start Training",
-      "feedback_msg": "Have a suggestion or found a bug? We'd love to hear from you."
+      "feedback_msg": "Have a suggestion or found a bug? Reach us via Profile → Contact."
     }
   }
 }

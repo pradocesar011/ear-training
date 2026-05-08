@@ -236,7 +236,7 @@ export default function ProfileScreen() {
           </div>
         </div>
         <a
-          href={`mailto:pradocesar011@gmail.com?subject=Sound Reef Feedback`}
+          href={`mailto:soundreefcontact@gmail.com?subject=Sound Reef Feedback`}
           className="mt-3 w-full py-3 bg-zinc-800 text-zinc-300 rounded-xl text-sm font-medium
             hover:bg-zinc-700 transition-colors text-center block"
           style={{ paddingTop: '10px', paddingBottom: '10px' }}

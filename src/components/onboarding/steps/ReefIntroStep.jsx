@@ -204,9 +204,13 @@ export default function ReefIntroStep({ onStart, loading }) {
         </div>
 
         {/* Feedback nudge */}
-        <p style={{ textAlign: 'center', fontSize: 12, color: '#7db8bb', marginTop: 16, lineHeight: 1.5 }}>
+        <div style={{
+          marginTop: 16, padding: '10px 14px', borderRadius: 12,
+          background: 'rgba(85,221,224,0.08)', border: '1px solid rgba(85,221,224,0.2)',
+          textAlign: 'center', fontSize: 12, color: '#7db8bb', lineHeight: 1.6,
+        }}>
           {t('onboarding.reef_intro.feedback_msg')}
-        </p>
+        </div>
 
         {/* CTA */}
         <button onClick={onStart} disabled={loading} style={{
