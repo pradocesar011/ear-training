@@ -21,7 +21,7 @@ export default function TrainScreen() {
   const [lastSession,  setLastSession]  = useState(null)
   const [dueCount,     setDueCount]     = useState(0)
   const [loadingStats, setLoadingStats] = useState(true)
-  const [targetLength, setTargetLength] = useState(null)
+  const [targetLength, setTargetLength] = useState(10)
   const [tonalMode,    setTonalMode]    = useState(getStoredTonalMode)
   const [activeOctaves, setActiveOctaves] = useState(getStoredActiveOctaves)
 
@@ -168,13 +168,7 @@ export default function TrainScreen() {
 
       {/* ── Session length ─────────────────────────────────────────────────── */}
       <SectionCard label={t('train.session_length')}>
-        <div className="grid grid-cols-4 gap-2">
-          <OptionButton
-            label="∞"
-            sublabel={t('nav.train').toLowerCase()}
-            active={targetLength === null}
-            onClick={() => setTargetLength(null)}
-          />
+        <div className="grid grid-cols-3 gap-2">
           {SESSION_LENGTHS.map(n => (
             <OptionButton
               key={n}
