@@ -158,7 +158,10 @@
     "logout": "Switch account",
     "contact_heading": "Contact",
     "contact_body": "Found a bug or have a suggestion? We'd love to hear from you.",
-    "contact_button": "Send feedback"
+    "contact_placeholder": "Write your message here…",
+    "contact_button": "Send",
+    "contact_sent": "Message sent! Thank you.",
+    "contact_error": "Something went wrong. Please try again."
   },
   "admin": {
     "login_heading": "Admin panel",

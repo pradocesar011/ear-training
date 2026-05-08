@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import BubbleLayer from '../components/BubbleLayer.jsx'
+import ContactModal from '../components/ContactModal.jsx'
 import { supabase } from '../lib/supabase.js'
 import { useAppContext } from '../context/AppContext.jsx'
 import LanguageSelector from '../components/LanguageSelector.jsx'
@@ -25,6 +26,7 @@ export default function ProfileScreen() {
   const [showCheatPwd,  setShowCheatPwd]  = useState(false)
   const [cheatPwdInput, setCheatPwdInput] = useState('')
   const [cheatPwdError, setCheatPwdError] = useState(false)
+  const [showContact,   setShowContact]   = useState(false)
 
   const CHEAT_PASSWORD = 'sonicidm'
 
@@ -235,14 +237,14 @@ export default function ProfileScreen() {
             </p>
           </div>
         </div>
-        <a
-          href={`mailto:soundreefcontact@gmail.com?subject=Sound Reef Feedback`}
+        <button
+          onClick={() => setShowContact(true)}
           className="mt-3 w-full py-3 bg-zinc-800 text-zinc-300 rounded-xl text-sm font-medium
-            hover:bg-zinc-700 transition-colors text-center block"
+            hover:bg-zinc-700 transition-colors text-center"
           style={{ paddingTop: '10px', paddingBottom: '10px' }}
         >
           {t('profile.contact_button')}
-        </a>
+        </button>
       </Card>
 
       {/* ── Language ──────────────────────────────────────────────────────── */}
@@ -414,6 +416,8 @@ export default function ProfileScreen() {
       </div>{/* /max-w-sm */}
 
       <div className="w-full" style={{ height: 100 }} />
+
+      {showContact && <ContactModal onClose={() => setShowContact(false)} />}
     </div>
   )
 }

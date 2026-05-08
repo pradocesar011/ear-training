@@ -158,7 +158,10 @@
     "logout": "Cambiar cuenta",
     "contact_heading": "Contacto",
     "contact_body": "¿Encontraste un error o tienes una sugerencia? Escríbenos.",
-    "contact_button": "Enviar comentarios"
+    "contact_placeholder": "Escribe tu mensaje aquí…",
+    "contact_button": "Enviar",
+    "contact_sent": "¡Mensaje enviado! Gracias.",
+    "contact_error": "Algo salió mal. Por favor intenta de nuevo."
   },
   "admin": {
     "login_heading": "Panel de administración",
