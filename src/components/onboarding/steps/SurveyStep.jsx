@@ -99,7 +99,7 @@ export default function SurveyStep({ surveyData, onChange, onNext, onBack, onSki
             value={surveyData.hasFormalTraining}
             labelYes={t('onboarding.survey.yes')}
             labelNo={t('onboarding.survey.no')}
-            onChange={v => { set('hasFormalTraining', v); if (!v) set('trainingYears', null) }}
+            onChange={v => onChange({ ...surveyData, hasFormalTraining: v, trainingYears: v ? surveyData.trainingYears : null })}
           />
           <div style={{ maxHeight: surveyData.hasFormalTraining ? 80 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
             <div style={{ paddingTop: 12 }}>
@@ -123,7 +123,7 @@ export default function SurveyStep({ surveyData, onChange, onNext, onBack, onSki
             value={surveyData.playsInstrument}
             labelYes={t('onboarding.survey.yes')}
             labelNo={t('onboarding.survey.no')}
-            onChange={v => { set('playsInstrument', v); if (!v) set('mainInstrument', null) }}
+            onChange={v => onChange({ ...surveyData, playsInstrument: v, mainInstrument: v ? surveyData.mainInstrument : null })}
           />
           <div style={{ maxHeight: surveyData.playsInstrument ? 200 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
             <div style={{ paddingTop: 12 }}>
