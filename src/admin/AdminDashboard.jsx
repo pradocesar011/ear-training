@@ -274,29 +274,22 @@ export default function AdminDashboard() {
 
         {/* Mean IDM per session */}
         <Section title="Mean IDM per session">
-          <div className="overflow-y-auto" style={{ maxHeight: 192 }}>
-            {idmPerSessionData.length === 0 ? (
-              <p className="text-zinc-500 text-sm">No data yet.</p>
-            ) : (
-              <table className="w-full text-sm">
-                <thead className="sticky top-0 bg-zinc-900">
-                  <tr className="text-zinc-500 text-xs border-b border-zinc-800">
-                    <th className="text-left py-1.5 px-2 font-medium">Session</th>
-                    <th className="text-right py-1.5 px-2 font-medium">Mean IDM</th>
-                    <th className="text-right py-1.5 px-2 font-medium">Users</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {idmPerSessionData.map(row => (
-                    <tr key={row.n} className="border-b border-zinc-800/50 hover:bg-zinc-800/30">
-                      <td className="py-1.5 px-2 text-zinc-400">#{row.n}</td>
-                      <td className="py-1.5 px-2 text-right font-mono text-orange-400 font-semibold">{row.mean}</td>
-                      <td className="py-1.5 px-2 text-right text-zinc-500">{row.count}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={idmPerSessionData} margin={{ top: 4, right: 4, left: -20, bottom: 4 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+                <XAxis dataKey="n" stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }} />
+                <YAxis stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }} />
+                <Tooltip
+                  contentStyle={{ background: '#27272a', border: '1px solid #3f3f46', borderRadius: 6 }}
+                  labelStyle={{ color: '#71717a', fontSize: 11 }}
+                  itemStyle={{ color: '#f97316' }}
+                  formatter={v => [v, 'Mean IDM']}
+                />
+                <Line type="monotone" dataKey="mean" stroke="#f97316" strokeWidth={2}
+                  dot={false} connectNulls />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </Section>
       </div>
