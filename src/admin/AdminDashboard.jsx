@@ -16,7 +16,7 @@ export default function AdminDashboard() {
   const [globalStats,      setGlobalStats]      = useState(null)
   const [newUsersData,     setNewUsersData]     = useState([])
   const [precTrendData,    setPrecTrendData]    = useState([])
-  const [idmDistData,      setIdmDistData]      = useState([])
+  const [idmPerSessionData, setIdmPerSessionData] = useState([])
   const [loading,          setLoading]          = useState(true)
   const [timeRange,        setTimeRange]        = useState('30d')
   const [sortCol,          setSortCol]          = useState('created_at')
@@ -125,14 +125,26 @@ export default function AdminDashboard() {
       .filter(d => d.precision != null)
     setPrecTrendData(precTrend)
 
-    // ── IDM distribution histogram ────────────────────────────────
-    const buckets = {}
-    enriched.filter(u => u.current_idm != null).forEach(u => {
-      const b = Math.floor(u.current_idm)
-      buckets[b] = (buckets[b] ?? 0) + 1
+    // ── Mean IDM per session number (across all users) ───────────
+    const idmByN = {}
+    Object.values(sessionsByUser).forEach(userSessions => {
+      ;[...userSessions]
+        .sort((a, b) => new Date(a.started_at) - new Date(b.started_at))
+        .forEach((s, i) => {
+          if (s.idm_end == null) return
+          const n = i + 1
+          if (!idmByN[n]) idmByN[n] = []
+          idmByN[n].push(s.idm_end)
+        })
     })
-    setIdmDistData(
-      Object.keys(buckets).sort((a, b) => +a - +b).map(k => ({ idm: +k, users: buckets[k] }))
+    setIdmPerSessionData(
+      Object.keys(idmByN)
+        .sort((a, b) => +a - +b)
+        .map(n => ({
+          n: +n,
+          mean: +(idmByN[n].reduce((a, b) => a + b, 0) / idmByN[n].length).toFixed(2),
+          count: idmByN[n].length,
+        }))
     )
 
     setLoading(false)
@@ -260,22 +272,31 @@ export default function AdminDashboard() {
           </div>
         </Section>
 
-        {/* IDM distribution */}
-        <Section title="IDM distribution">
-          <div className="h-48">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={idmDistData} margin={{ top: 4, right: 4, left: -20, bottom: 4 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-                <XAxis dataKey="idm" stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }} />
-                <YAxis stroke="#3f3f46" tick={{ fill: '#71717a', fontSize: 10 }} allowDecimals={false} />
-                <Tooltip
-                  contentStyle={{ background: '#27272a', border: '1px solid #3f3f46', borderRadius: 6 }}
-                  labelStyle={{ color: '#71717a', fontSize: 11 }}
-                  itemStyle={{ color: '#f97316' }}
-                />
-                <Bar dataKey="users" fill="#f97316" radius={[3, 3, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+        {/* Mean IDM per session */}
+        <Section title="Mean IDM per session">
+          <div className="overflow-y-auto" style={{ maxHeight: 192 }}>
+            {idmPerSessionData.length === 0 ? (
+              <p className="text-zinc-500 text-sm">No data yet.</p>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="sticky top-0 bg-zinc-900">
+                  <tr className="text-zinc-500 text-xs border-b border-zinc-800">
+                    <th className="text-left py-1.5 px-2 font-medium">Session</th>
+                    <th className="text-right py-1.5 px-2 font-medium">Mean IDM</th>
+                    <th className="text-right py-1.5 px-2 font-medium">Users</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {idmPerSessionData.map(row => (
+                    <tr key={row.n} className="border-b border-zinc-800/50 hover:bg-zinc-800/30">
+                      <td className="py-1.5 px-2 text-zinc-400">#{row.n}</td>
+                      <td className="py-1.5 px-2 text-right font-mono text-orange-400 font-semibold">{row.mean}</td>
+                      <td className="py-1.5 px-2 text-right text-zinc-500">{row.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </Section>
       </div>
